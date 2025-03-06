@@ -1,5 +1,4 @@
-import ImageComp from "@/components/Image/Images";
-
+import ImageComp from "@/components/Image/Image"
 interface PropType {
   row?: number;
   col?: number;
@@ -11,7 +10,7 @@ function Banpick({ row = 5, col = 5 }: PropType) {
 
   return (
     <div className="w-xl h-xl bg-red-50">
-      밴픽영역입니다
+      <ImageComp src="/images/test.png"/>
     </div>
   );
 }
