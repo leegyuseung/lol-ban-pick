@@ -1,5 +1,5 @@
 import React from 'react';
-import Banpick from './(banpick)/page';
+import Banpick from './@banpick/page';
 
 function page() {
   return (
