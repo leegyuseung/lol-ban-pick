@@ -9,7 +9,7 @@ async function fetchImages(): Promise<{ img: string }[]> {
 
 export default async function BanpickPage() {
   // 서버에서 데이터를 가져와 SSG로 제공
-  const images = await fetchImages();
-  
-  return <Banpick champs={images} />;
+  // const images = await fetchImages();
+  // champs={images}
+  return <Banpick  />;
 }
