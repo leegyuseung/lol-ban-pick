@@ -24,6 +24,7 @@ function ImageComp({ src, width = 100, height = 100, alt = 'image', onLoad, onEr
           setImageSrc('/images/default_champ.png');
           if (onError) onError(e);
         }}
+        priority={true} // 즉시 로드
       />
     </>
   );
