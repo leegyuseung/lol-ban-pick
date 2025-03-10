@@ -1,24 +1,27 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import Image from 'next/image';
-
-type FormData = {
-  blueTeam: string;
-  redTeam: string;
-  banpickMode: 'tournament' | 'peerless';
-  peopleMode: 'solo' | 'one' | 'five';
-  timeUnlimited?: boolean;
-  teamSide?: 'red' | 'blue';
-};
+import { useForm } from 'react-hook-form';
+import { useRulesStore } from '@/store/rules';
+import { FormsData } from '@/types/types';
+import { useRouter } from 'next/navigation';
 
 export default function Form() {
-  const { register, handleSubmit, watch } = useForm<FormData>();
+  const { setRules } = useRulesStore();
+  const { register, handleSubmit, watch } = useForm<FormsData>({
+    defaultValues: {
+      banpickMode: 'tournament',
+      peopleMode: 'solo',
+      timeUnlimited: true,
+      teamSide: 'blue',
+    },
+  });
+  const router = useRouter();
+  const selectedMode = watch('peopleMode');
 
-  const selectedMode = watch('peopleMode'); // 현재 선택된 참여 모드 감지
-
-  const onSubmit = (data: FormData) => {
-    console.log('form', data);
+  const onSubmit = async (data: FormsData) => {
+    setRules(data);
+    router.push('/banpick');
   };
 
   return (
@@ -71,7 +74,8 @@ export default function Form() {
               </label>
             </div>
           </div>
-          {/* solo일때는 시간무제한여부 그외에는 진영선택으로 변경예정 */}
+
+          {/* 시간제한 */}
           {selectedMode === 'solo' && (
             <div>
               <label className="text-lg font-semibold mb-2 block">시간 무제한</label>
@@ -88,7 +92,7 @@ export default function Form() {
             </div>
           )}
 
-          {/* SOLO 모드가 아닐 때 -> 진영 선택 */}
+          {/* 진영선택 */}
           {selectedMode !== 'solo' && (
             <div>
               <label className="text-lg font-semibold mb-2 block">진영</label>
