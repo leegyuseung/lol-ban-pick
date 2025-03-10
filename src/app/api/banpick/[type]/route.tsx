@@ -17,9 +17,7 @@ export async function GET(req: Request, { params }: { params: { type: string } }
       `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/en_US/champion.json`,
     );
     const championInfo = (await championsRes.json()).data;
-    console.log(Object.entries(championInfo)[0]);
     Object.entries(championInfo as Record<string, ChampType>).forEach(([name, info]) => {
-      // console.log(championInfo,a,"@@")
       info.imagePath = `/images/champions/tiles/${name}_0.jpg`;
     });
     return NextResponse.json({ championInfo });

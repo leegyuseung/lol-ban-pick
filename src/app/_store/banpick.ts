@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type Store = {
@@ -14,11 +14,10 @@ export const useBanpickStore = create<Store>()(
         try {
           const response = await fetch('/api/banpick/name');
           const { championInfo } = await response.json();
-          console.log(championInfo,"response")
 
           set({ championInfo });
         } catch (error) {
-          console.error('이미지 목록을 불러오는 중 오류 발생:', error);
+          console.error('챔피언 가져오는데 에러가 발생:', error);
         }
       },
     }),

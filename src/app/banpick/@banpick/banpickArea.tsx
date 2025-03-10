@@ -12,7 +12,7 @@ interface ChampType extends Record<string, unknown> {
   imagePath: string;
 }
 
-export default function Banpick({ champs }: PropType) {
+export default function Banpick() {
   const { championInfo, setChampionInfo } = useBanpickStore();
 
   useEffect(() => {
@@ -21,10 +21,11 @@ export default function Banpick({ champs }: PropType) {
 
   return (
     <div className="w-xl h-xl bg-red-50">
-      {/* TODO: 현재 cdn 방식으로 이미지를 로드할 수 있게 변경함
-      하지만 추후에 이미지를 다시 사용할 수도 있어서 public/images/champions는 둠. 이후 사용하지 않으면 삭제 필 */}
-      {Object.entries(championInfo).map(([name, info]: [string, ChampType], idx: number) => (
-        <ImageComp src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`} key={idx} />
+      {Object.entries(championInfo).map(([name, info], idx) => (
+        <ImageComp
+          src={`https://ddragon.leagueoflegends.com/cdn/${(info as ChampType).version}/img/champion/${name}.png`}
+          key={idx}
+        />
       ))}
     </div>
   );
