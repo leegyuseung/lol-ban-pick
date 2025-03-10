@@ -1,10 +1,10 @@
 import React from 'react';
-import Banpick from './(banpick)/page';
+import SelectChampions from './@selectChampions/page';
 
 function page() {
   return (
     <div>
-      <Banpick />
+      <SelectChampions />
     </div>
   );
 }
