@@ -1,4 +1,4 @@
-import Banpick from './banpickArea';
+import Banpick from './selectChampionsArea';
 import { ApiResponse } from '@/types/types';
 
 async function fetchImages(): Promise<{ img: string }[]> {

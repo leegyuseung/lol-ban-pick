@@ -1,13 +1,13 @@
 function layout({
   children,
-  banpick,
+  selectChampions,
 }: Readonly<{
   children: React.ReactNode;
-  banpick: React.ReactNode;
+  selectChampions: React.ReactNode;
 }>) {
   return (
-    <div className="flex align-middle">
-      <div className="w-4/5 h-4/5 bg-black border-l-pink-500">{banpick}</div>
+    <div className="flex justify-center items-center">
+      <div className="w-4/5 h-4/5 bg-black border-l-pink-500">{selectChampions}</div>
     </div>
   );
 }
