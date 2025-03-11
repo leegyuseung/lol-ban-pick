@@ -1,12 +1,7 @@
-import React from 'react';
-import SelectChampions from './@selectChampions/page';
+import BanPickMain from './BanPickMain';
 
-function page() {
-  return (
-    <div>
-      <SelectChampions />
-    </div>
-  );
+function Banpick() {
+  return <BanPickMain></BanPickMain>;
 }
 
-export default page;
+export default Banpick;
