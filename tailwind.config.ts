@@ -14,6 +14,20 @@ const config: Config = {
         mainGold: '#8b5a1d',
         subGold: '#a76a1f80',
       },
+      keyframes: {
+        fillLeftHalf: {
+          '0%': { width: '70%', transform: 'translateX(70%)' },
+          '100%': { width: '100%', transform: 'translateX(0)' },
+        },
+        fillRightHalf: {
+          '0%': { width: '70%', transform: 'translateX(-70%)' },
+          '100%': { width: '100%', transform: 'translateX(0)' },
+        },
+      },
+      animation: {
+        'fill-left-half': 'fillLeftHalf 1s linear infinite',
+        'fill-right-half': 'fillRightHalf 1s linear infinite',
+      },
     },
   },
   plugins: [],
