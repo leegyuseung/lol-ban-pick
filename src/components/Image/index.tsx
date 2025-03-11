@@ -8,8 +8,9 @@ interface PropType {
   alt?: string;
   onLoad?: ReactEventHandler<HTMLImageElement> | undefined;
   onError?: ReactEventHandler<HTMLImageElement> | undefined;
+  className?: string | undefined;
 }
-function ImageComp({ src, width = 100, height = 100, alt = 'image', onLoad, onError }: PropType) {
+function ImageComp({ src, width = 100, height = 100, alt = 'image', onLoad, onError, className = '' }: PropType) {
   const [imageSrc, setImageSrc] = useState<string>(src);
   useEffect(() => setImageSrc(src), [src]);
   return (
@@ -24,6 +25,7 @@ function ImageComp({ src, width = 100, height = 100, alt = 'image', onLoad, onEr
           setImageSrc('/images/default_champ.png');
           if (onError) onError(e);
         }}
+        className={className}
         priority={true} // 즉시 로드
       />
     </>

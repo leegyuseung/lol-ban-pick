@@ -11,6 +11,8 @@ const config: Config = {
       colors: {
         mainBlack: '#1b1b1b',
         mainText: '#cccccc',
+        mainGold: '#8b5a1d',
+        subGold: '#a76a1f80',
       },
     },
   },

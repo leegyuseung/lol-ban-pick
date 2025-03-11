@@ -1,14 +1,11 @@
+import BanPickBody from './(components)/BanPickBody';
 import BanPickHeader from './(components)/BanPickHeader';
-import PickChampions from './(components)/PickChampions';
-import SelectChampions from './(components)/SelectChampions';
 
 export default function BanPickMain() {
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <BanPickHeader />
-      <PickChampions></PickChampions>
-      <SelectChampions></SelectChampions>
-      <PickChampions></PickChampions>
-    </>
+      <BanPickBody />
+    </div>
   );
 }
