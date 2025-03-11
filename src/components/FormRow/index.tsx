@@ -5,8 +5,25 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore } from '@/store/rules';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
-
+import { useEffect, useLayoutEffect } from 'react';
+import { useBanpickStore } from '@/store';
 export default function Form() {
+  const { championInfo, setChampionInfo } = useBanpickStore();
+  useLayoutEffect(() => {
+    const hoverImgPreload = (src: string) => {
+      const img = new window.Image();
+      img.src = src;
+    };
+    if (!Object.keys(championInfo).length) {
+      setChampionInfo();
+    } else {
+      Object.entries(championInfo).map(([name, info], idx) =>
+        hoverImgPreload(
+          `https://ddragon.leagueoflegends.com/cdn/${(info).version}/img/champion/${name}.png`,
+        ),
+      );
+    }
+  }, [championInfo]);
   const { setRules } = useRulesStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
@@ -18,11 +35,14 @@ export default function Form() {
   });
   const router = useRouter();
   const selectedMode = watch('peopleMode');
-
   const onSubmit = async (data: FormsData) => {
     setRules(data);
     router.push('/banpick');
   };
+
+  useEffect(() => {
+    router.prefetch("/banpick");  // /next-page 경로의 페이지를 미리 로드
+  }, [router]);
 
   return (
     <div className="flex flex-col items-center p-7 h-auto">
