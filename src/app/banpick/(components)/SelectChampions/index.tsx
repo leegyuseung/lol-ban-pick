@@ -1,13 +1,13 @@
 'use client';
-import { useBanpickStore } from '@/store';
 import ImageComp from '@/components/Image';
+import { useBanpickStore } from '@/store';
 import { useEffect } from 'react';
 
 interface ChampType extends Record<string, unknown> {
   imagePath: string;
 }
 
-export default function Banpick() {
+export default function SelectChampions() {
   const { championInfo, setChampionInfo } = useBanpickStore();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function Banpick() {
   return (
     <div className=" flex flex-wrap justify-start gap-2">
       {Object.entries(championInfo).map(([name, info], idx) => (
-        <div key={idx} className='w-16'>
+        <div key={idx} className="w-16">
           <ImageComp
             src={`https://ddragon.leagueoflegends.com/cdn/${(info as ChampType).version}/img/champion/${name}.png`}
           />
