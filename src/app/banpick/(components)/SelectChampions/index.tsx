@@ -3,10 +3,6 @@ import ImageComp from '@/components/Image';
 import { useBanpickStore } from '@/store';
 import { useEffect } from 'react';
 
-interface ChampType extends Record<string, unknown> {
-  imagePath: string;
-}
-
 export default function SelectChampions() {
   const { championInfo, setChampionInfo } = useBanpickStore();
 
@@ -17,11 +13,9 @@ export default function SelectChampions() {
   return (
     <div className=" flex flex-wrap justify-start gap-2">
       {Object.entries(championInfo).map(([name, info], idx) => (
-        <div key={idx} className="w-16">
-          <ImageComp
-            src={`https://ddragon.leagueoflegends.com/cdn/${(info as ChampType).version}/img/champion/${name}.png`}
-          />
-          <p className="text-center text-white">{name}</p>
+        <div key={idx}>
+          <ImageComp src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`} />
+          <p className="text-xs text-center text-mainText">{info.name}</p>
         </div>
       ))}
     </div>
