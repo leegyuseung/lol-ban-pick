@@ -12,3 +12,14 @@ export type FormsData = {
   timeUnlimited: string;
   teamSide: 'red' | 'blue' | 'solo';
 };
+
+export interface InfoI {
+  blurb: string;
+  id: string;
+  key: string;
+  name: string;
+  partype: string;
+  tags: string[];
+  title: string;
+  version: string;
+}

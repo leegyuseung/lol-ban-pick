@@ -1,28 +1,33 @@
 'use client';
 import Image from 'next/image';
-import { useBanStore, useRulesStore } from '@/store';
+import { useHeaderStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 
 export default function BanPickHeader() {
   const { blueTeam, redTeam, banpickMode, timeUnlimited } = useRulesStore();
-  const { selectedTeam } = useBanStore();
+  const { selectedTeam, selectedTeamIndex, setSelectedTeamIndex } = useHeaderStore();
 
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [second, setSecond] = useState(timeUnlimited == 'true' ? '∞' : '5');
   const [currentColor, setCurrentColor] = useState('');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const secondRef = useRef(second);
+
+  useEffect(() => {
+    secondRef.current = second;
+  }, [second]);
 
   useEffect(() => {
     if (timeUnlimited === 'true' || second === '') return;
 
     timerRef.current = setInterval(() => {
-      setSecond((prev) => {
-        if (prev === '0') {
-          setCurrentIndex((prevIndex) => (prevIndex < selectedTeam.length - 1 ? prevIndex + 1 : prevIndex));
-          return '5'; // 여기서 바로 30으로 바꿔줌
-        }
-        return String(Number(prev) - 1);
-      });
+      if (secondRef.current === '0') {
+        setSelectedTeamIndex();
+        secondRef.current = '3';
+        setSecond('3');
+      } else {
+        secondRef.current = String(Number(secondRef.current) - 1);
+        setSecond(secondRef.current);
+      }
     }, 1000);
 
     return () => {
@@ -31,15 +36,17 @@ export default function BanPickHeader() {
   }, [second]);
 
   useEffect(() => {
-    if (selectedTeam[currentIndex] === '') {
-      setSecond('');
+    if (selectedTeam[selectedTeamIndex] === '') {
+      setTimeout(() => setSecond(''), 0);
+      setCurrentColor(selectedTeam[selectedTeamIndex]);
+    } else if (selectedTeam[selectedTeamIndex] === 'blue' || selectedTeam[selectedTeamIndex] === 'red') {
+      if (timeUnlimited !== 'true') {
+        secondRef.current = '4';
+        setSecond('4');
+      }
+      setCurrentColor(selectedTeam[selectedTeamIndex]);
     }
-    const timeout = setTimeout(() => {
-      setCurrentColor(selectedTeam[currentIndex]);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex]);
+  }, [selectedTeamIndex]);
 
   return (
     <div className="flex h-20  text-white">

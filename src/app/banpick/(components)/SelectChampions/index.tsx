@@ -1,16 +1,51 @@
 'use client';
-import ImageComp from '@/components/Image';
 import Image from 'next/image';
-import { useBanpickStore } from '@/store';
-import { useEffect } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import { useBanpickStore, useBanStore, useHeaderStore } from '@/store';
+import { useEffect, useState } from 'react';
+import { FaSearch, FaTimes } from 'react-icons/fa';
+import { InfoI } from '@/types/types';
 
 export default function SelectChampions() {
   const { championInfo, setChampionInfo } = useBanpickStore();
-
+  const { setSelectedTeamIndex } = useHeaderStore();
+  const {
+    clearCurrentSelectedPick,
+    setCureentSelectedPick,
+    setCurrentLocation,
+    currentLocation,
+    setBanPickObject,
+    banPickObject,
+  } = useBanStore();
+  const [pickname, setPickName] = useState('');
+  const [pickObject, setPickObject] = useState<InfoI>({
+    blurb: '',
+    id: '',
+    key: '',
+    name: '',
+    partype: '',
+    tags: [],
+    title: '',
+    version: '',
+  });
   useEffect(() => {
     setChampionInfo();
   }, []);
+
+  const onClick = (pickName: string, info: InfoI) => {
+    setCureentSelectedPick(pickName, info);
+    setPickName(pickName);
+    setPickObject(info);
+  };
+
+  const onClickButton = () => {
+    let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
+
+    setBanPickObject(index, pickname, pickObject);
+    index++;
+    setCurrentLocation(index);
+    clearCurrentSelectedPick();
+    setSelectedTeamIndex();
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -32,19 +67,28 @@ export default function SelectChampions() {
       </div>
       <div className="grid grid-cols-7 overflow-auto h-[365px]">
         {Object.entries(championInfo).map(([name, info], idx) => (
-          <div className="w-[70px] flex flex-col items-center hover:opacity-50" key={idx}>
-            <ImageComp
-              className="border border-mainGold cursor-pointer hover:"
+          <div
+            className={`w-[70px] flex flex-col items-center cursor-pointer hover:opacity-50 ${name === pickname ? 'opacity-20' : ''}`}
+            key={idx}
+          >
+            <Image
+              alt="champion"
+              className="border border-mainGold"
               width={60}
               height={60}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
+              onClick={() => onClick(name, info)}
             />
             <p className="text-[9px] text-center text-mainText">{info.name}</p>
+            {name === pickname && <FaTimes className="absolute text-6xl text-red-500" />}
           </div>
         ))}
       </div>
       <div className="flex justify-center">
-        <button className="h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65">
+        <button
+          onClick={onClickButton}
+          className="h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65"
+        >
           챔피언 선택
         </button>
       </div>
