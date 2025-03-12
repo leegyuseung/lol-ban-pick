@@ -1,12 +1,15 @@
+import PeerlessList from '../PeerlessList';
 import PickChampions from '../PickChampions';
 import SelectChampions from '../SelectChampions';
 
 export default function BanPickBody() {
   return (
     <div className="flex justify-center h-full">
-      <PickChampions></PickChampions>
+      <PeerlessList></PeerlessList>
+      <PickChampions side="left"></PickChampions>
       <SelectChampions></SelectChampions>
-      <PickChampions></PickChampions>
+      <PickChampions side="right"></PickChampions>
+      <PeerlessList></PeerlessList>
     </div>
   );
 }
