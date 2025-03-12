@@ -61,7 +61,7 @@ export default function Form() {
           <div>
             {/* 밴픽 모드 */}
             <label className="text-lg font-semibold mb-2 block">밴픽 모드</label>
-            <div className="flex w-full justify-center gap-x-32">
+            <div className="flex w-full justify-center gap-x-5">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
                 <input type="radio" value="tournament" {...register('banpickMode')} defaultChecked />
                 토너먼트 드리프트
