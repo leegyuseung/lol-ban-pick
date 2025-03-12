@@ -1,5 +1,6 @@
 'use client';
 import ImageComp from '@/components/Image';
+import Image from 'next/image';
 import { useBanpickStore } from '@/store';
 import { useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
@@ -13,7 +14,14 @@ export default function SelectChampions() {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2 mt-2 ml-2">
+          <Image src="/images/icon-position-top.png" alt="top" width={20} height={20} />
+          <Image src="/images/icon-position-jungle.png" alt="jungle" width={20} height={20} />
+          <Image src="/images/icon-position-middle.png" alt="middle" width={20} height={20} />
+          <Image src="/images/icon-position-bottom.png" alt="bottom" width={20} height={20} />
+          <Image src="/images/icon-position-utility.png" alt="utility" width={20} height={20} />
+        </div>
         <div className="flex items-center border border-subGold w-full max-w-[200px] px-3">
           <FaSearch className="text-mainText text-sm mr-2" />
           <input
