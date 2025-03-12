@@ -4,8 +4,8 @@ import { create } from 'zustand';
 type RulesState = {
   blueTeam: string;
   redTeam: string;
-  banpickMode: 'tournament' | 'peerless';
-  peopleMode: 'solo' | 'one' | 'five';
+  banpickMode: 'tournament' | 'peerless3' | 'peerless5';
+  peopleMode: 'solo' | 'team';
   timeUnlimited?: boolean;
   teamSide?: 'red' | 'blue' | 'solo';
   setRules: (data: FormsData) => void;

@@ -80,18 +80,14 @@ export default function Form() {
           {/* 참여 모드 */}
           <div>
             <label className="text-lg font-semibold mb-2 block">참여 모드</label>
-            <div className="flex w-full justify-between">
+            <div className="flex w-full justify-center gap-x-32">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
                 <input type="radio" value="solo" {...register('peopleMode')} defaultChecked />
                 SOLO
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="one" {...register('peopleMode')} />
-                1:1
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="five" {...register('peopleMode')} />
-                5:5
+                <input type="radio" value="team" {...register('peopleMode')} />
+                TEAM
               </label>
             </div>
           </div>

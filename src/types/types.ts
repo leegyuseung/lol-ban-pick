@@ -8,7 +8,7 @@ export type FormsData = {
   blueTeam: string;
   redTeam: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
-  peopleMode: 'solo' | 'one' | 'five';
+  peopleMode: 'solo' | 'team';
   timeUnlimited: boolean;
   teamSide: 'red' | 'blue' | 'solo';
 };
