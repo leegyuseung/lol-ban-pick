@@ -6,6 +6,10 @@ type Store = {
   setChampionInfo: () => Promise<void>;
 };
 
+type BanSeq = {
+  selectedTeam: string[];
+};
+
 export const useBanpickStore = create<Store>()(
   devtools(
     (set) => ({
@@ -23,3 +27,29 @@ export const useBanpickStore = create<Store>()(
     { name: 'championInfo' },
   ),
 );
+
+export const useBanStore = create<BanSeq>()(() => ({
+  selectedTeam: [
+    'blue',
+    'red',
+    'blue',
+    'red',
+    'blue',
+    'red', // 1번 밴 끝
+    'blue',
+    'red',
+    'red',
+    'blue',
+    'blue',
+    'red', // 1번 픽 끝
+    'red',
+    'blue',
+    'red',
+    'blue', // 2번 밴 끝
+    'red',
+    'blue',
+    'blue',
+    'red', // 2번 픽 끝
+    '',
+  ],
+}));

@@ -27,7 +27,7 @@ export default function Form() {
     defaultValues: {
       banpickMode: 'tournament',
       peopleMode: 'solo',
-      timeUnlimited: true,
+      timeUnlimited: 'true',
       teamSide: 'blue',
     },
   });

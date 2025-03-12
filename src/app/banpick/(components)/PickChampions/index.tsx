@@ -9,7 +9,7 @@ export default async function PickChampions({ side }: PropsType) {
     <div className="flex flex-col flex-[3] m-1">
       <div className="flex flex-col flex-[2]">
         <div
-          className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side == 'left' ? 'justify-end items-end' : 'items-end'}`}
+          className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
           <Image
             src={'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_0.jpg'}
@@ -22,22 +22,22 @@ export default async function PickChampions({ side }: PropsType) {
           <span className="absolute bg-opacity-50 m-2">Top</span>
         </div>
         <div
-          className={`flex flex-[1] border border-mainGold ${side == 'left' ? 'justify-end items-end' : 'items-end'}`}
+          className={`flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
           <span className="m-2">Jungle</span>
         </div>
         <div
-          className={`flex flex-[1] border border-mainGold ${side == 'left' ? 'justify-end items-end' : 'items-end'}`}
+          className={`flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
           <span className="m-2">Mid</span>
         </div>
         <div
-          className={`flex flex-[1] border border-mainGold ${side == 'left' ? 'justify-end items-end' : 'items-end'}`}
+          className={`flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
           <span className="m-2">Ad</span>
         </div>
         <div
-          className={`flex flex-[1] border border-mainGold ${side == 'left' ? 'justify-end items-end' : 'items-end'}`}
+          className={`flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
           <span className="m-2">Sup</span>
         </div>
