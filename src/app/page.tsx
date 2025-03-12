@@ -1,4 +1,4 @@
-import Form from '@/components/FormRow';
+import Form from '@/components/FormRow/index2';
 import Header from '@/components/Header';
 
 export default function Home() {
