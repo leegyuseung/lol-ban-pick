@@ -17,10 +17,8 @@ export default function Form() {
     if (!Object.keys(championInfo).length) {
       setChampionInfo();
     } else {
-      Object.entries(championInfo).map(([name, info], idx) =>
-        hoverImgPreload(
-          `https://ddragon.leagueoflegends.com/cdn/${(info).version}/img/champion/${name}.png`,
-        ),
+      Object.entries(championInfo).map(([name, info]) =>
+        hoverImgPreload(`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`),
       );
     }
   }, [championInfo]);
@@ -41,7 +39,7 @@ export default function Form() {
   };
 
   useEffect(() => {
-    router.prefetch("/banpick");  // /next-page 경로의 페이지를 미리 로드
+    router.prefetch('/banpick'); // /next-page 경로의 페이지를 미리 로드
   }, [router]);
 
   return (
@@ -68,10 +66,13 @@ export default function Form() {
                 <input type="radio" value="tournament" {...register('banpickMode')} defaultChecked />
                 토너먼트 드리프트
               </label>
-
               <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="peerless" {...register('banpickMode')} />
-                피어리스(HARD)
+                <input type="radio" value="peerless3" {...register('banpickMode')} />
+                피어리스(3판)
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input type="radio" value="peerless5" {...register('banpickMode')} />
+                피어리스(5판)
               </label>
             </div>
           </div>

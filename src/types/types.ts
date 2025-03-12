@@ -7,7 +7,7 @@ export interface ApiResponse<T> {
 export type FormsData = {
   blueTeam: string;
   redTeam: string;
-  banpickMode: 'tournament' | 'peerless';
+  banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'one' | 'five';
   timeUnlimited: boolean;
   teamSide: 'red' | 'blue' | 'solo';
