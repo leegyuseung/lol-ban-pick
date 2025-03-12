@@ -5,24 +5,42 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore } from '@/store/rules';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
-
+import { useEffect, useLayoutEffect } from 'react';
+import { useBanpickStore } from '@/store';
 export default function Form() {
+  const { championInfo, setChampionInfo } = useBanpickStore();
+  useLayoutEffect(() => {
+    const hoverImgPreload = (src: string) => {
+      const img = new window.Image();
+      img.src = src;
+    };
+    if (!Object.keys(championInfo).length) {
+      setChampionInfo();
+    } else {
+      Object.entries(championInfo).map(([name, info]) =>
+        hoverImgPreload(`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`),
+      );
+    }
+  }, [championInfo]);
   const { setRules } = useRulesStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
       banpickMode: 'tournament',
       peopleMode: 'solo',
-      timeUnlimited: true,
+      timeUnlimited: 'true',
       teamSide: 'blue',
     },
   });
   const router = useRouter();
   const selectedMode = watch('peopleMode');
-
   const onSubmit = async (data: FormsData) => {
     setRules(data);
     router.push('/banpick');
   };
+
+  useEffect(() => {
+    router.prefetch('/banpick'); // /next-page 경로의 페이지를 미리 로드
+  }, [router]);
 
   return (
     <div className="flex flex-col items-center p-7 h-auto">
@@ -43,15 +61,18 @@ export default function Form() {
           <div>
             {/* 밴픽 모드 */}
             <label className="text-lg font-semibold mb-2 block">밴픽 모드</label>
-            <div className="flex w-full justify-center gap-x-32">
+            <div className="flex w-full justify-center gap-x-5">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
                 <input type="radio" value="tournament" {...register('banpickMode')} defaultChecked />
                 토너먼트 드리프트
               </label>
-
               <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="peerless" {...register('banpickMode')} />
-                피어리스(HARD)
+                <input type="radio" value="peerless3" {...register('banpickMode')} />
+                피어리스(3판)
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input type="radio" value="peerless5" {...register('banpickMode')} />
+                피어리스(5판)
               </label>
             </div>
           </div>
@@ -59,18 +80,14 @@ export default function Form() {
           {/* 참여 모드 */}
           <div>
             <label className="text-lg font-semibold mb-2 block">참여 모드</label>
-            <div className="flex w-full justify-between">
+            <div className="flex w-full justify-center gap-x-32">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
                 <input type="radio" value="solo" {...register('peopleMode')} defaultChecked />
                 SOLO
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="one" {...register('peopleMode')} />
-                1:1
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="five" {...register('peopleMode')} />
-                5:5
+                <input type="radio" value="team" {...register('peopleMode')} />
+                TEAM
               </label>
             </div>
           </div>
