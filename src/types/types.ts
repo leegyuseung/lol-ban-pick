@@ -13,7 +13,7 @@ export type FormsData = {
   teamSide: 'red' | 'blue' | 'solo';
 };
 
-export interface InfoI {
+export interface ChampionInfoI {
   blurb: string;
   id: string;
   key: string;
@@ -22,4 +22,5 @@ export interface InfoI {
   tags: string[];
   title: string;
   version: string;
+  status: string;
 }

@@ -1,9 +1,9 @@
-import { InfoI } from '@/types/types';
+import { ChampionInfoI } from '@/types/types';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type Store = {
-  championInfo: InfoI;
+  championInfo: ChampionInfoI;
   setChampionInfo: () => Promise<void>;
 };
 
@@ -13,27 +13,33 @@ type HeaderType = {
   setSelectedTeamIndex: () => void;
 };
 
-type BanType = {
-  cureentSelectedPick: {
-    name: string;
-    info: InfoI;
-  }[];
-  setCureentSelectedPick: (name: string, info: InfoI) => void;
+export type BanPickObjectType = {
+  index: number;
+  location: string;
+  name: string;
+  info: ChampionInfoI;
+  use: boolean;
+}[];
+
+export type currentSelectedPickType = {
+  name: string;
+  info: ChampionInfoI;
+}[];
+
+interface BanI {
+  currentSelectedPick: currentSelectedPickType;
+
+  setCurrentSelectedPick: (name: string, info: ChampionInfoI) => void;
   clearCurrentSelectedPick: () => void;
 
-  banPickObject: {
-    index: number;
-    location: string;
-    name: string;
-    info: InfoI;
-    use: boolean;
-  }[];
-  setBanPickObject: (index: number, name: string, info: InfoI) => void;
+  banPickObject: BanPickObjectType;
+  setBanPickObject: (index: number, name: string, info: ChampionInfoI) => void;
 
   currentLocation: string;
   setCurrentLocation: (index: number) => void;
-};
+}
 
+// 챔피언 정보 불러오기
 export const useBanpickStore = create<Store>()(
   devtools(
     (set) => ({
@@ -42,6 +48,7 @@ export const useBanpickStore = create<Store>()(
         try {
           const response = await fetch('/api/banpick/name');
           const { championInfo } = await response.json();
+
           set({ championInfo });
         } catch (error) {
           console.error('챔피언 가져오는데 에러가 발생:', error);
@@ -52,6 +59,7 @@ export const useBanpickStore = create<Store>()(
   ),
 );
 
+// BanPickHeader에서 사용
 export const useHeaderStore = create<HeaderType>()((set) => ({
   selectedTeamIndex: 0,
   setSelectedTeamIndex: () =>
@@ -84,20 +92,21 @@ export const useHeaderStore = create<HeaderType>()((set) => ({
   ],
 }));
 
-export const useBanStore = create<BanType>()((set) => ({
-  cureentSelectedPick: [],
+// BanPickBody에서 사용
+export const useBanStore = create<BanI>()((set) => ({
+  currentSelectedPick: [],
 
   clearCurrentSelectedPick: () =>
     set(() => {
-      return { cureentSelectedPick: [] };
+      return { currentSelectedPick: [] };
     }),
 
-  setCureentSelectedPick: (name, info) =>
+  setCurrentSelectedPick: (name, info) =>
     set((state) => {
-      const updatedPick = [...state.cureentSelectedPick];
+      const updatedPick = [...state.currentSelectedPick];
       updatedPick[0] = { name, info };
 
-      return { cureentSelectedPick: updatedPick };
+      return { currentSelectedPick: updatedPick };
     }),
 
   currentLocation: 'blueBan1',
@@ -122,6 +131,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -138,6 +148,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -154,6 +165,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -170,6 +182,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -186,6 +199,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -202,6 +216,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -218,6 +233,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -234,6 +250,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -250,6 +267,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -266,6 +284,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -282,6 +301,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -298,6 +318,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -314,6 +335,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -330,6 +352,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -346,6 +369,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -362,6 +386,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -378,6 +403,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -394,6 +420,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -410,6 +437,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },
@@ -426,6 +454,7 @@ export const useBanStore = create<BanType>()((set) => ({
         tags: [],
         title: '',
         version: '',
+        status: '',
       },
       use: false,
     },

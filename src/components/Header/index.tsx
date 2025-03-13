@@ -12,9 +12,9 @@ export default function Header() {
         </Link>
 
         {/* 네비게이션 */}
+        {/* TODO : 선택된 NavItem 표시하기 */}
         <nav className="flex space-x-6">
-          <NavItem href={'/'} text={'밴픽'} />
-          <NavItem href={'/'} text={'밴픽2'} />
+          <NavItem href={'/'} text={'밴픽 시뮬레이터'} />
         </nav>
       </div>
     </header>

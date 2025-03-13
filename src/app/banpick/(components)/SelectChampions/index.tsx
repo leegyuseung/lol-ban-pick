@@ -3,21 +3,21 @@ import Image from 'next/image';
 import { useBanpickStore, useBanStore, useHeaderStore } from '@/store';
 import { useEffect, useState } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
-import { InfoI } from '@/types/types';
+import { ChampionInfoI } from '@/types/types';
 
 export default function SelectChampions() {
   const { championInfo, setChampionInfo } = useBanpickStore();
   const { setSelectedTeamIndex } = useHeaderStore();
   const {
     clearCurrentSelectedPick,
-    setCureentSelectedPick,
+    setCurrentSelectedPick,
     setCurrentLocation,
     currentLocation,
     setBanPickObject,
     banPickObject,
   } = useBanStore();
   const [pickname, setPickName] = useState('');
-  const [pickObject, setPickObject] = useState<InfoI>({
+  const [pickObject, setPickObject] = useState<ChampionInfoI>({
     blurb: '',
     id: '',
     key: '',
@@ -26,31 +26,37 @@ export default function SelectChampions() {
     tags: [],
     title: '',
     version: '',
+    status: '',
   });
+
   useEffect(() => {
     setChampionInfo();
   }, []);
 
-  const onClick = (pickName: string, info: InfoI) => {
-    setCureentSelectedPick(pickName, info);
+  // Image 클릭시
+  const onClick = (pickName: string, info: ChampionInfoI) => {
+    setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
+
     setPickName(pickName);
     setPickObject(info);
   };
 
+  // 챔피언 선택 버튼 클릭시
   const onClickButton = () => {
     let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
 
-    setBanPickObject(index, pickname, pickObject);
+    setBanPickObject(index, pickname, pickObject); // 현재 선택된 챔피언을 세팅해준다
     index++;
-    setCurrentLocation(index);
-    clearCurrentSelectedPick();
-    setSelectedTeamIndex();
+    setCurrentLocation(index); // 다음 위치를 저장한다
+    clearCurrentSelectedPick(); // 현재 선택 챔피언 초기화
+    setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
   };
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
+          {/* TODO : 라인 선택시 챔피언 정렬 */}
           <Image src="/images/icon-position-top.png" alt="top" width={20} height={20} />
           <Image src="/images/icon-position-jungle.png" alt="jungle" width={20} height={20} />
           <Image src="/images/icon-position-middle.png" alt="middle" width={20} height={20} />
@@ -59,6 +65,7 @@ export default function SelectChampions() {
         </div>
         <div className="flex items-center border border-subGold w-full max-w-[200px] px-3">
           <FaSearch className="text-mainText text-sm mr-2" />
+          {/* TODO : 챔피언 검색 기능 */}
           <input
             className="text-mainText text-xs w-full py-2 bg-transparent focus:ring-0 focus:border-subGold focus:outline-none placeholder:text-xs placeholder:text-mainText"
             placeholder="검색"

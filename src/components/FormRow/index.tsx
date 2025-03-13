@@ -7,6 +7,8 @@ import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useLayoutEffect } from 'react';
 import { useBanpickStore } from '@/store';
+
+// TODO : 픽창 Image 불러오기 추가, Icon 선택 팝업 추가 및 저장
 export default function Form() {
   const { championInfo, setChampionInfo } = useBanpickStore();
   useLayoutEffect(() => {
@@ -22,6 +24,7 @@ export default function Form() {
       );
     }
   }, [championInfo]);
+
   const { setRules } = useRulesStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
@@ -33,13 +36,15 @@ export default function Form() {
   });
   const router = useRouter();
   const selectedMode = watch('peopleMode');
+
   const onSubmit = async (data: FormsData) => {
     setRules(data);
     router.push('/banpick');
   };
 
+  // 경로의 페이지를 미리 로드
   useEffect(() => {
-    router.prefetch('/banpick'); // /next-page 경로의 페이지를 미리 로드
+    router.prefetch('/banpick');
   }, [router]);
 
   return (

@@ -9,6 +9,7 @@ export default function BanPickHeader() {
 
   const [second, setSecond] = useState(timeUnlimited == 'true' ? '∞' : '5');
   const [currentColor, setCurrentColor] = useState('');
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const secondRef = useRef(second);
 
@@ -16,14 +17,15 @@ export default function BanPickHeader() {
     secondRef.current = second;
   }, [second]);
 
+  // 시간
   useEffect(() => {
     if (timeUnlimited === 'true' || second === '') return;
 
     timerRef.current = setInterval(() => {
       if (secondRef.current === '0') {
         setSelectedTeamIndex();
-        secondRef.current = '3';
-        setSecond('3');
+        secondRef.current = '30';
+        setSecond('30');
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
         setSecond(secondRef.current);
@@ -35,14 +37,15 @@ export default function BanPickHeader() {
     };
   }, [second]);
 
+  // 색상변경
   useEffect(() => {
     if (selectedTeam[selectedTeamIndex] === '') {
       setTimeout(() => setSecond(''), 0);
       setCurrentColor(selectedTeam[selectedTeamIndex]);
     } else if (selectedTeam[selectedTeamIndex] === 'blue' || selectedTeam[selectedTeamIndex] === 'red') {
       if (timeUnlimited !== 'true') {
-        secondRef.current = '4';
-        setSecond('4');
+        secondRef.current = '30';
+        setSecond('30');
       }
       setCurrentColor(selectedTeam[selectedTeamIndex]);
     }
