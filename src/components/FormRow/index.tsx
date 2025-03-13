@@ -7,24 +7,11 @@ import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useLayoutEffect } from 'react';
 import { useBanpickStore } from '@/store';
+import useImageLoaded from '@/hooks/useImageLoaded';
 
 // TODO : 픽창 Image 불러오기 추가, Icon 선택 팝업 추가 및 저장
 export default function Form() {
-  const { championInfo, setChampionInfo } = useBanpickStore();
-  useLayoutEffect(() => {
-    const hoverImgPreload = (src: string) => {
-      const img = new window.Image();
-      img.src = src;
-    };
-    if (!Object.keys(championInfo).length) {
-      setChampionInfo();
-    } else {
-      Object.entries(championInfo).map(([name, info]) =>
-        hoverImgPreload(`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`),
-      );
-    }
-  }, [championInfo]);
-
+  useImageLoaded();
   const { setRules } = useRulesStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {

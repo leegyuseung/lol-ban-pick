@@ -4,6 +4,7 @@ import { useBanpickStore, useBanStore, useHeaderStore } from '@/store';
 import { useEffect, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { ChampionInfoI } from '@/types/types';
+import ImageComp from '@/components/Image';
 
 export default function SelectChampions() {
   const { championInfo, setChampionInfo, setChangeChampionInfo } = useBanpickStore();
@@ -153,8 +154,8 @@ export default function SelectChampions() {
             className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === pickname ? 'opacity-20' : ''}`}
             key={idx}
           >
-            <Image
-              alt="champion"
+            <ImageComp
+              alt={name}
               className="border border-mainGold"
               width={60}
               height={60}
