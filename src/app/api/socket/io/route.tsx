@@ -27,17 +27,17 @@ export async function GET() {
 
             ws.on('message', (message: string) => {
                 const data = JSON.parse(message);
-
 				// 개인에게 메시지 전송
-                if (data.type === 'private') {
-                    const recipient = clients.find(client => client.id === data.to)
-                    if (recipient) {
+                if (true) {
+                    const recipient:any = clients.find(client => client.id === data.to)
+                    console.log(data.type,recipient,"data.type")
+                    // if (recipient) {
                         recipient.ws.send(JSON.stringify({
                             type: 'private',
-                            from: data.from,
+                            from: 1,
                             message: data.message
                         }))
-                    }
+                    // }
                     
                 // 전역으로 메시지 전송
                 } else if (data.type === 'broadcast') {

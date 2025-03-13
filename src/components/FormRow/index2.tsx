@@ -17,19 +17,21 @@ export default function ChatPage() {
     const socketRef = useRef<WebSocket | null>(null)
 
     useEffect(() => {
+        if (socketRef.current) return // ✅ 중복 연결 방지
+
         const connectWebSocket = async () => {
             await fetch('/api/socket/io') // WebSocket 서버 초기화
             const ws = new WebSocket('ws://localhost:3001')
-            
-            ws.onopen = () => {
-                console.log('WebSocket connection established')
-            }
+
+            ws.onopen = () => console.log('✅ WebSocket connected')
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data)
+                console.log(data,"data")
                 if (data.type === 'id') {
                     setUserId(data.id)
                 } else if (data.type === 'private' || data.type === 'broadcast') {
+                    
                     setMessages((prevMessages) => [...prevMessages, { 
                         text: data.message, 
                         isSent: false, 
@@ -38,13 +40,8 @@ export default function ChatPage() {
                 }
             }
 
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error)
-            }
-
-            ws.onclose = () => {
-                console.log('WebSocket connection closed')
-            }
+            ws.onerror = (error) => console.error('❌ WebSocket error:', error)
+            ws.onclose = () => console.log('❌ WebSocket disconnected')
 
             socketRef.current = ws
         }
@@ -52,29 +49,27 @@ export default function ChatPage() {
         connectWebSocket()
 
         return () => {
-            if (socketRef.current) {
-                socketRef.current.close()
-            }
+            socketRef.current?.close()
+            socketRef.current = null
         }
     }, [])
 
     const sendMessage = (e: React.FormEvent) => {
         e.preventDefault()
-        if (message && socketRef.current && userId) {
-          alert()
-            const messageData = recipientId 
-                ? { type: 'private', from: userId, to: recipientId, message }
-                : { type: 'broadcast', from: userId, message }
-            
-            socketRef.current.send(JSON.stringify(messageData))
-            setMessages((prevMessages) => [...prevMessages, { 
-                text: message, 
-                isSent: true, 
-                from: userId,
-                to: recipientId || 'all'
-            }])
-            setMessage('')
-        }
+        // if (!message || !socketRef.current || !userId) return
+        
+        const messageData = recipientId 
+            ? { type: 'private', from: userId, to: recipientId, message }
+            : { type: 'broadcast', from: userId, message }
+
+        socketRef.current.send(JSON.stringify(messageData))
+        setMessages((prevMessages) => [...prevMessages, { 
+            text: message, 
+            isSent: true, 
+            from: userId,
+            to: recipientId || 'all'
+        }])
+        setMessage('')
     }
 
     return (
@@ -110,8 +105,8 @@ export default function ChatPage() {
                         className="flex-1 border rounded-l px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Recipient ID (leave empty for broadcast)"
                     />
-                    </div>
-                    <div className="flex">
+                </div>
+                <div className="flex">
                     <input
                         type="text"
                         value={message}
