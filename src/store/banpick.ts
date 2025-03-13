@@ -5,6 +5,7 @@ import { devtools } from 'zustand/middleware';
 type Store = {
   championInfo: Record<string, ChampionInfoI>;
   setChampionInfo: () => Promise<void>;
+  setChangeChampionInfo: (name: string, banPick: string) => void;
 };
 
 type HeaderType = {
@@ -63,6 +64,21 @@ export const useBanpickStore = create<Store>()(
           console.error('챔피언 가져오는데 에러 발생:', error);
         }
       },
+
+      // status Change
+      setChangeChampionInfo: (name: string, banpick: string) =>
+        set((state) => {
+          const updatedChampionInfo = { ...state.championInfo };
+
+          if (updatedChampionInfo[name]) {
+            updatedChampionInfo[name] = {
+              ...updatedChampionInfo[name],
+              status: banpick,
+            };
+          }
+
+          return { championInfo: updatedChampionInfo };
+        }),
     }),
     { name: 'championInfo' },
   ),
