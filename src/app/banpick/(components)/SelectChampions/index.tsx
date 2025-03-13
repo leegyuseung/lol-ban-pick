@@ -26,16 +26,30 @@ export default function SelectChampions() {
     title: '',
     version: '',
     status: '',
+    line: [],
   };
   const [pickname, setPickName] = useState('');
   const [pickObject, setPickObject] = useState<ChampionInfoI>(INITIAL_PICKOBJ);
+  const [filteredChampions, setFilteredChampions] = useState(championInfo);
+  const [selectedFilter, setSelectedFilter] = useState(false);
 
   useEffect(() => {
     setChampionInfo();
   }, []);
 
+  useEffect(() => {
+    setFilteredChampions(championInfo); // 챔피언 정보가 변경될 때 필터링 데이터 초기화
+    setSelectedFilter(false);
+  }, [championInfo]);
+
   const onClickFilter = (type: string) => {
-    console.log(type, 'filter', championInfo);
+    setSelectedFilter((prev) => !prev);
+    if (selectedFilter) {
+      const filtered = Object.fromEntries(Object.entries(championInfo).filter(([_, info]) => info.line.includes(type)));
+      setFilteredChampions(filtered);
+    } else {
+      setFilteredChampions(championInfo);
+    }
   };
 
   // Image 클릭시
@@ -66,14 +80,21 @@ export default function SelectChampions() {
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
           {/* TODO : 라인 선택시 챔피언 정렬 */}
-          <Image className="cursor-pointer" src="/images/icon-position-top.png" alt="top" width={20} height={20} />
+          <Image
+            className="cursor-pointer"
+            src="/images/icon-position-top.png"
+            alt="top"
+            width={20}
+            height={20}
+            onClick={() => onClickFilter('top')}
+          />
           <Image
             className="cursor-pointer"
             src="/images/icon-position-jungle.png"
             alt="jungle"
             width={20}
             height={20}
-            onClick={() => onClickFilter('top')}
+            onClick={() => onClickFilter('jungle')}
           />
           <Image
             className="cursor-pointer"
@@ -81,6 +102,7 @@ export default function SelectChampions() {
             alt="middle"
             width={20}
             height={20}
+            onClick={() => onClickFilter('mid')}
           />
           <Image
             className="cursor-pointer"
@@ -88,6 +110,7 @@ export default function SelectChampions() {
             alt="bottom"
             width={20}
             height={20}
+            onClick={() => onClickFilter('ad')}
           />
           <Image
             className="cursor-pointer"
@@ -95,6 +118,7 @@ export default function SelectChampions() {
             alt="utility"
             width={20}
             height={20}
+            onClick={() => onClickFilter('sup')}
           />
         </div>
         <div className="flex items-center border border-subGold w-full max-w-[200px] px-3">
@@ -107,7 +131,7 @@ export default function SelectChampions() {
         </div>
       </div>
       <div className="grid grid-cols-7 overflow-auto h-[365px]">
-        {Object.entries(championInfo).map(([name, info], idx) => (
+        {Object.entries(filteredChampions).map(([name, info], idx) => (
           <div
             className={`relative w-[70px] flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === pickname ? 'opacity-20' : ''}`}
             key={idx}

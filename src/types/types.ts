@@ -23,4 +23,5 @@ export interface ChampionInfoI {
   title: string;
   version: string;
   status: string;
+  line: string[];
 }
