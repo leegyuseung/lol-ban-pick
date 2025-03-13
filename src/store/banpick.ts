@@ -3,12 +3,15 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type Store = {
-  championInfo: ChampionInfoI;
+  championInfo: Record<string, ChampionInfoI>;
   setChampionInfo: () => Promise<void>;
 };
 
 type HeaderType = {
-  selectedTeam: string[];
+  selectedTeam: {
+    color: string;
+    banpick: string;
+  }[];
   selectedTeamIndex: number;
   setSelectedTeamIndex: () => void;
 };
@@ -43,15 +46,21 @@ interface BanI {
 export const useBanpickStore = create<Store>()(
   devtools(
     (set) => ({
-      championInfo: {},
+      championInfo: {} as Record<string, ChampionInfoI>,
       setChampionInfo: async () => {
         try {
           const response = await fetch('/api/banpick/name');
           const { championInfo } = await response.json();
 
-          set({ championInfo });
+          const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
+            Object.entries(championInfo)
+              .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
+              .map(([key, value]) => [key, { ...(value as ChampionInfoI), status: '' }]),
+          );
+
+          set({ championInfo: updatedChampionInfo });
         } catch (error) {
-          console.error('챔피언 가져오는데 에러가 발생:', error);
+          console.error('챔피언 가져오는데 에러 발생:', error);
         }
       },
     }),
@@ -68,27 +77,30 @@ export const useHeaderStore = create<HeaderType>()((set) => ({
     })),
 
   selectedTeam: [
-    'blue',
-    'red',
-    'blue',
-    'red',
-    'blue',
-    'red', // 1번 밴 끝
-    'blue',
-    'red',
-    'red',
-    'blue',
-    'blue',
-    'red', // 1번 픽 끝
-    'red',
-    'blue',
-    'red',
-    'blue', // 2번 밴 끝
-    'red',
-    'blue',
-    'blue',
-    'red', // 2번 픽 끝
-    '',
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    // 1번 밴 끝
+    { color: 'blue', banpick: 'pick' },
+    { color: 'red', banpick: 'pick' },
+    { color: 'red', banpick: 'pick' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'red', banpick: 'pick' },
+    // 1번 픽 끝
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'red', banpick: 'ban' },
+    // 2번 픽 끝
+    { color: '', banpick: '' },
   ],
 }));
 

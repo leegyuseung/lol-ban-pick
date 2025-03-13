@@ -39,15 +39,17 @@ export default function BanPickHeader() {
 
   // 색상변경
   useEffect(() => {
-    if (selectedTeam[selectedTeamIndex] === '') {
+    if (!selectedTeam[selectedTeamIndex]) return;
+
+    if (selectedTeam[selectedTeamIndex].color === '') {
       setTimeout(() => setSecond(''), 0);
-      setCurrentColor(selectedTeam[selectedTeamIndex]);
-    } else if (selectedTeam[selectedTeamIndex] === 'blue' || selectedTeam[selectedTeamIndex] === 'red') {
+      setCurrentColor(selectedTeam[selectedTeamIndex].color);
+    } else if (selectedTeam[selectedTeamIndex].color === 'blue' || selectedTeam[selectedTeamIndex].color === 'red') {
       if (timeUnlimited !== 'true') {
         secondRef.current = '30';
         setSecond('30');
       }
-      setCurrentColor(selectedTeam[selectedTeamIndex]);
+      setCurrentColor(selectedTeam[selectedTeamIndex].color);
     }
   }, [selectedTeamIndex]);
 

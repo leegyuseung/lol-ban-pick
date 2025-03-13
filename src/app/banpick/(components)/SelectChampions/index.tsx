@@ -94,7 +94,8 @@ export default function SelectChampions() {
       <div className="flex justify-center">
         <button
           onClick={onClickButton}
-          className="h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65"
+          className={`${pickname == '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
+          disabled={pickname == ''}
         >
           챔피언 선택
         </button>
