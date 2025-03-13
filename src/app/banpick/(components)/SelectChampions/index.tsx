@@ -31,7 +31,7 @@ export default function SelectChampions() {
   const [pickname, setPickName] = useState('');
   const [pickObject, setPickObject] = useState<ChampionInfoI>(INITIAL_PICKOBJ);
   const [filteredChampions, setFilteredChampions] = useState(championInfo);
-  const [selectedFilter, setSelectedFilter] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
   useEffect(() => {
     setChampionInfo();
@@ -39,16 +39,31 @@ export default function SelectChampions() {
 
   useEffect(() => {
     setFilteredChampions(championInfo); // 챔피언 정보가 변경될 때 필터링 데이터 초기화
-    setSelectedFilter(false);
+    setSelectedFilter(null);
   }, [championInfo]);
 
   const onClickFilter = (type: string) => {
-    setSelectedFilter((prev) => !prev);
-    if (selectedFilter) {
+    if (selectedFilter === type) {
+      setSelectedFilter(null);
+      setFilteredChampions(championInfo);
+    } else {
+      setSelectedFilter(type);
       const filtered = Object.fromEntries(Object.entries(championInfo).filter(([_, info]) => info.line.includes(type)));
       setFilteredChampions(filtered);
-    } else {
+    }
+  };
+
+  // 검색기능
+  const onTextFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value.toLowerCase();
+
+    if (searchTerm === '') {
       setFilteredChampions(championInfo);
+    } else {
+      const filtered = Object.fromEntries(
+        Object.entries(championInfo).filter(([_, info]) => info.name.toLowerCase().includes(searchTerm)),
+      );
+      setFilteredChampions(filtered); // 필터링된 챔피언 목록으로 설정
     }
   };
 
@@ -76,10 +91,9 @@ export default function SelectChampions() {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 min-w-[508px]">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
-          {/* TODO : 라인 선택시 챔피언 정렬 */}
           <Image
             className="cursor-pointer"
             src="/images/icon-position-top.png"
@@ -123,17 +137,20 @@ export default function SelectChampions() {
         </div>
         <div className="flex items-center border border-subGold w-full max-w-[200px] px-3">
           <FaSearch className="text-mainText text-sm mr-2" />
-          {/* TODO : 챔피언 검색 기능 */}
           <input
             className="text-mainText text-xs w-full py-2 bg-transparent focus:ring-0 focus:border-subGold focus:outline-none placeholder:text-xs placeholder:text-mainText"
             placeholder="검색"
+            onChange={onTextFilter}
           />
         </div>
       </div>
-      <div className="grid grid-cols-7 overflow-auto h-[365px]">
+      <div
+        className="grid grid-cols-7 overflow-auto h-[365px] gap-2"
+        style={{ gridTemplateRows: 'repeat(auto-fill, 70px)' }}
+      >
         {Object.entries(filteredChampions).map(([name, info], idx) => (
           <div
-            className={`relative w-[70px] flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === pickname ? 'opacity-20' : ''}`}
+            className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === pickname ? 'opacity-20' : ''}`}
             key={idx}
           >
             <Image

@@ -57,7 +57,7 @@ export default function BanPickHeader() {
     <div className="flex h-20  text-white">
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex flex-[4] w-full justify-between items-center">
-          <Image className="ml-10" src="/images/t1.png" alt="logo" width={80} height={80} />
+          <Image className="ml-10" src="/images/t1.png" alt="logo" width={80} height={31.56} />
           <span className="text-2xl mr-10">{blueTeam}</span>
         </div>
         <div className="flex-[1] w-full relative overflow-hidden">
@@ -73,7 +73,7 @@ export default function BanPickHeader() {
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex flex-[4] w-full items-center justify-between">
           <span className="text-2xl ml-10">{redTeam}</span>
-          <Image className="mr-10" src="/images/t1.png" alt="logo" width={80} height={80} />
+          <Image className="mr-10" src="/images/t1.png" alt="logo" width={80} height={31.56} />
         </div>
         <div className="flex-[1] w-full relative overflow-hidden">
           <div
