@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import ImageComp from '@/components/Image';
 import { useBanStore } from '@/store';
 import { useEffect, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
