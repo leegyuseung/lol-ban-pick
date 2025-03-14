@@ -6,6 +6,7 @@
 body {
   @apply bg-mainBlack text-mainText;
 }
+
 /* 스크롤바 넓이 지정 */
 ::-webkit-scrollbar {
   width: 5px;
@@ -13,17 +14,12 @@ body {
 
 /* 스크롤바 트랙 꾸미기 */
 ::-webkit-scrollbar-track {
-  background: #888;
+  background: #888888;
   border-radius: 5px;
 }
 
-/* 스크롤바 손잡이 꾸미기 */
+/* 스크롤바 손잡이 꾸미기 8b5a1d */
 ::-webkit-scrollbar-thumb {
-  background: #000;
+  background: #8b5a1d;
   border-radius: 5px;
-}
-
-/* 스크롤바 손잡이 호버 시 색 */
-::-webkit-scrollbar-thumb:hover {
-  background: red;
 }

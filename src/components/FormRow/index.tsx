@@ -5,14 +5,19 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore } from '@/store/rules';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
+import { useEffect, useLayoutEffect } from 'react';
+import { useBanpickStore } from '@/store';
+import useImageLoaded from '@/hooks/useImageLoaded';
 
+// TODO : 픽창 Image 불러오기 추가, Icon 선택 팝업 추가 및 저장
 export default function Form() {
+  useImageLoaded();
   const { setRules } = useRulesStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
       banpickMode: 'tournament',
       peopleMode: 'solo',
-      timeUnlimited: true,
+      timeUnlimited: 'true',
       teamSide: 'blue',
     },
   });
@@ -24,13 +29,20 @@ export default function Form() {
     router.push('/banpick');
   };
 
+  // 경로의 페이지를 미리 로드
+  useEffect(() => {
+    router.prefetch('/banpick');
+  }, [router]);
+
   return (
-    <div className="flex flex-col items-center p-7 h-auto">
+    <div className="flex flex-col items-center p-7">
       <span className="text-4xl font-bold pb-6">밴픽 시뮬레이터</span>
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
-          <Image className="cursor-pointer" src="/images/t1.png" alt="logo" width={200} height={200} />
+          <div>
+            <Image className="cursor-pointer" src="/images/t1.png" alt="logo" width={200} height={79.06} />
+          </div>
           <label className="text-lg font-semibold mb-2">블루팀</label>
           <input
             className="p-3 bg-blue-700 rounded-md border-mainText placeholder-mainText w-full"
@@ -43,15 +55,18 @@ export default function Form() {
           <div>
             {/* 밴픽 모드 */}
             <label className="text-lg font-semibold mb-2 block">밴픽 모드</label>
-            <div className="flex w-full justify-center gap-x-32">
+            <div className="flex w-full justify-center gap-x-5">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
                 <input type="radio" value="tournament" {...register('banpickMode')} defaultChecked />
                 토너먼트 드리프트
               </label>
-
               <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="peerless" {...register('banpickMode')} />
-                피어리스(HARD)
+                <input type="radio" value="peerless3" {...register('banpickMode')} />
+                피어리스(3판)
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input type="radio" value="peerless5" {...register('banpickMode')} />
+                피어리스(5판)
               </label>
             </div>
           </div>
@@ -59,18 +74,14 @@ export default function Form() {
           {/* 참여 모드 */}
           <div>
             <label className="text-lg font-semibold mb-2 block">참여 모드</label>
-            <div className="flex w-full justify-between">
+            <div className="flex w-full justify-center gap-x-32">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
                 <input type="radio" value="solo" {...register('peopleMode')} defaultChecked />
                 SOLO
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="one" {...register('peopleMode')} />
-                1:1
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="radio" value="five" {...register('peopleMode')} />
-                5:5
+                <input type="radio" value="team" {...register('peopleMode')} />
+                TEAM
               </label>
             </div>
           </div>
@@ -118,7 +129,9 @@ export default function Form() {
 
         {/* 레드팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
-          <Image className="cursor-pointer" src="/images/t1.png" alt="logo" width={200} height={200} />
+          <div>
+            <Image className="cursor-pointer" src="/images/t1.png" alt="logo" width={200} height={79.06} />
+          </div>
           <label className="text-lg font-semibold mb-2">레드팀</label>
           <input
             className="p-3 bg-red-700 rounded-md border-mainText placeholder-mainText w-full"
