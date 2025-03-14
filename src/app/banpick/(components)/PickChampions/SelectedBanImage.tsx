@@ -20,7 +20,7 @@ export default function SelectedBanImage({
 }: SelectedChampionImageProps) {
   return (
     (banPickObject[index].use ||
-      (currentLocation === banPickObject[index].location && currentSelectedPick.length > 0)) &&
+      (currentLocation === banPickObject[index].location && currentSelectedPick[0].name !== '')) &&
     side === location && (
       <Image
         src={

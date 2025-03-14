@@ -1,35 +1,27 @@
 'use client';
 import Image from 'next/image';
-import { useBanpickStore, useBanStore, useHeaderStore } from '@/store';
+import { useBanStore } from '@/store';
 import { useEffect, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { ChampionInfoI } from '@/types/types';
+import { InfoData } from '@/store/banpick';
 
 export default function SelectChampions() {
-  const { championInfo, setChampionInfo, setChangeChampionInfo } = useBanpickStore();
-  const { setSelectedTeamIndex, selectedTeam, selectedTeamIndex } = useHeaderStore();
   const {
-    clearCurrentSelectedPick,
+    championInfo,
+    setChampionInfo,
+    setChangeChampionInfo,
+    setSelectedTeamIndex,
+    selectedTeam,
+    selectedTeamIndex,
     setCurrentSelectedPick,
+    currentSelectedPick,
     setCurrentLocation,
     currentLocation,
     setBanPickObject,
     banPickObject,
   } = useBanStore();
-  const INITIAL_PICKOBJ = {
-    blurb: '',
-    id: '',
-    key: '',
-    name: '',
-    partype: '',
-    tags: [],
-    title: '',
-    version: '',
-    status: '',
-    line: [],
-  };
-  const [pickname, setPickName] = useState('');
-  const [pickObject, setPickObject] = useState<ChampionInfoI>(INITIAL_PICKOBJ);
+
   const [filteredChampions, setFilteredChampions] = useState(championInfo);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
@@ -71,22 +63,20 @@ export default function SelectChampions() {
   const onClick = (pickName: string, info: ChampionInfoI) => {
     if (pickName === '') return;
     setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
-
-    setPickName(pickName);
-    setPickObject(info);
   };
 
   // 챔피언 선택 버튼 클릭시
   const onClickButton = () => {
+    console.log('data', championInfo);
     let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
 
-    setBanPickObject(index, pickname, pickObject); // 현재 선택된 챔피언을 세팅해준다
-    setChangeChampionInfo(pickname, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
+    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info); // 현재 선택된 챔피언을 세팅해준다
+    setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
     index++;
     setCurrentLocation(index); // 다음 위치를 저장한다
-    setPickName('');
-    setPickObject(INITIAL_PICKOBJ);
-    clearCurrentSelectedPick(); // 현재 선택 챔피언 초기화
+
+    setCurrentSelectedPick('', InfoData); // 초기화
+
     setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
   };
 
@@ -150,10 +140,11 @@ export default function SelectChampions() {
       >
         {Object.entries(filteredChampions).map(([name, info], idx) => (
           <div
-            className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === pickname ? 'opacity-20' : ''}`}
+            className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === currentSelectedPick[0].name ? 'opacity-20' : ''}`}
             key={idx}
           >
             <Image
+              priority={true}
               alt="champion"
               className="border border-mainGold"
               width={60}
@@ -163,15 +154,15 @@ export default function SelectChampions() {
             />
             <p className="text-[9px] text-center text-mainText">{info.name}</p>
             {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}
-            {name === pickname && <FaCheck className="absolute text-6xl text-blue-500" />}
+            {name === currentSelectedPick[0].name && <FaCheck className="absolute text-6xl text-blue-500" />}
           </div>
         ))}
       </div>
       <div className="flex justify-center">
         <button
           onClick={onClickButton}
-          className={`${pickname === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
-          disabled={pickname === ''}
+          className={`${currentSelectedPick[0].name === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
+          disabled={currentSelectedPick[0].name === ''}
         >
           챔피언 선택
         </button>

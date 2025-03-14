@@ -9,15 +9,6 @@ type Store = {
   setChangeChampionInfo: (name: string, banPick: string) => void;
 };
 
-type HeaderType = {
-  selectedTeam: {
-    color: string;
-    banpick: string;
-  }[];
-  selectedTeamIndex: number;
-  setSelectedTeamIndex: () => void;
-};
-
 export type BanPickObjectType = {
   index: number;
   location: string;
@@ -31,7 +22,7 @@ export type currentSelectedPickType = {
   info: ChampionInfoI;
 }[];
 
-const InfoData = {
+export const InfoData = {
   blurb: '',
   id: '',
   key: '',
@@ -45,16 +36,27 @@ const InfoData = {
 };
 
 interface BanI {
+  championInfo: Record<string, ChampionInfoI>;
+  setChampionInfo: () => Promise<void>;
+  setChangeChampionInfo: (name: string, banPick: string) => void;
+
   currentSelectedPick: currentSelectedPickType;
 
   setCurrentSelectedPick: (name: string, info: ChampionInfoI) => void;
-  clearCurrentSelectedPick: () => void;
 
   banPickObject: BanPickObjectType;
   setBanPickObject: (index: number, name: string, info: ChampionInfoI) => void;
 
   currentLocation: string;
   setCurrentLocation: (index: number) => void;
+
+  selectedTeam: {
+    color: string;
+    banpick: string;
+  }[];
+  selectedTeamIndex: number;
+  setSelectedTeamIndex: () => void;
+  RandomPick: () => void;
 }
 
 // 챔피언 정보 불러오기
@@ -87,7 +89,7 @@ export const useBanpickStore = create<Store>()(
       },
 
       // status Change
-      setChangeChampionInfo: (name: string, banpick: string) =>
+      setChangeChampionInfo: async (name: string, banpick: string) =>
         set((state) => {
           const updatedChampionInfo = { ...state.championInfo };
 
@@ -105,50 +107,54 @@ export const useBanpickStore = create<Store>()(
   ),
 );
 
-// BanPickHeader에서 사용
-export const useHeaderStore = create<HeaderType>()((set) => ({
-  selectedTeamIndex: 0,
-  setSelectedTeamIndex: () =>
-    set((state) => ({
-      selectedTeamIndex: state.selectedTeamIndex + 1,
-    })),
+// BanPick에서 사용
+export const useBanStore = create<BanI>()((set, get) => ({
+  championInfo: {} as Record<string, ChampionInfoI>,
+  setChampionInfo: async () => {
+    try {
+      const response = await fetch('/api/banpick/name');
+      const { championInfo } = await response.json();
 
-  selectedTeam: [
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    // 1번 밴 끝
-    { color: 'blue', banpick: 'pick' },
-    { color: 'red', banpick: 'pick' },
-    { color: 'red', banpick: 'pick' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'red', banpick: 'pick' },
-    // 1번 픽 끝
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'red', banpick: 'ban' },
-    // 2번 픽 끝
-    { color: '', banpick: '' },
-  ],
-}));
+      const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
+        Object.entries(championInfo)
+          .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
+          .map(([key, value]) => [
+            key,
+            {
+              ...(value as ChampionInfoI),
+              status: '',
+              line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
+            },
+          ]),
+      );
 
-// BanPickBody에서 사용
-export const useBanStore = create<BanI>()((set) => ({
-  currentSelectedPick: [],
+      set({ championInfo: updatedChampionInfo });
+    } catch (error) {
+      console.error('챔피언 가져오는데 에러 발생:', error);
+    }
+  },
 
-  clearCurrentSelectedPick: () =>
-    set(() => {
-      return { currentSelectedPick: [] };
+  // status Change
+  setChangeChampionInfo: (name: string, banpick: string) =>
+    set((state) => {
+      const updatedChampionInfo = { ...state.championInfo };
+
+      if (updatedChampionInfo[name]) {
+        updatedChampionInfo[name] = {
+          ...updatedChampionInfo[name],
+          status: banpick,
+        };
+      }
+
+      return { championInfo: updatedChampionInfo };
     }),
+
+  currentSelectedPick: [
+    {
+      name: '',
+      info: InfoData,
+    },
+  ],
 
   setCurrentSelectedPick: (name, info) =>
     set((state) => {
@@ -316,4 +322,66 @@ export const useBanStore = create<BanI>()((set) => ({
       );
       return { banPickObject: updatedBanPickObject };
     }),
+
+  selectedTeamIndex: 0,
+  setSelectedTeamIndex: () =>
+    set((state) => ({
+      selectedTeamIndex: state.selectedTeamIndex + 1,
+    })),
+
+  selectedTeam: [
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    // 1번 밴 끝
+    { color: 'blue', banpick: 'pick' },
+    { color: 'red', banpick: 'pick' },
+    { color: 'red', banpick: 'pick' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'red', banpick: 'pick' },
+    // 1번 픽 끝
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban' },
+    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'blue', banpick: 'pick' },
+    { color: 'red', banpick: 'ban' },
+    // 2번 픽 끝
+    { color: '', banpick: '' },
+  ],
+
+  RandomPick: () => {
+    const {
+      championInfo,
+      banPickObject,
+      currentLocation,
+      selectedTeam,
+      selectedTeamIndex,
+      setBanPickObject,
+      setChangeChampionInfo,
+      setCurrentLocation,
+      setSelectedTeamIndex,
+      setCurrentSelectedPick,
+    } = get();
+
+    let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
+
+    // pickname과 pickObject를 가져와야한다.
+    const availableChampions = Object.entries(championInfo).filter(([_, info]) => info.status === '');
+    const randomIndex = Math.floor(Math.random() * availableChampions.length);
+    const [randomName, randomInfo] = availableChampions[randomIndex];
+
+    setChangeChampionInfo(randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
+    setBanPickObject(index, randomName, randomInfo); // 랜덤 챔피언을 선택해준다
+    index++;
+    setCurrentLocation(index); // 다음 위치를 저장한다
+    setCurrentSelectedPick('', InfoData); // 초기화
+    setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
+  },
 }));

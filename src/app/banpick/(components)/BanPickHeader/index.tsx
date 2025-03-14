@@ -1,11 +1,11 @@
 'use client';
 import Image from 'next/image';
-import { useHeaderStore, useRulesStore } from '@/store';
+import { useBanStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 
 export default function BanPickHeader() {
   const { blueTeam, redTeam, banpickMode, timeUnlimited } = useRulesStore();
-  const { selectedTeam, selectedTeamIndex, setSelectedTeamIndex } = useHeaderStore();
+  const { selectedTeam, selectedTeamIndex, RandomPick } = useBanStore();
 
   const [second, setSecond] = useState(timeUnlimited == 'true' ? '∞' : '5');
   const [currentColor, setCurrentColor] = useState('');
@@ -23,9 +23,10 @@ export default function BanPickHeader() {
 
     timerRef.current = setInterval(() => {
       if (secondRef.current === '0') {
-        setSelectedTeamIndex();
-        secondRef.current = '30';
-        setSecond('30');
+        // 30초가 그냥 지나갈 경우 랜덤픽으로 넣어야한다
+        RandomPick();
+        secondRef.current = '5';
+        setSecond('5');
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
         setSecond(secondRef.current);
@@ -46,8 +47,8 @@ export default function BanPickHeader() {
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
     } else if (selectedTeam[selectedTeamIndex].color === 'blue' || selectedTeam[selectedTeamIndex].color === 'red') {
       if (timeUnlimited !== 'true') {
-        secondRef.current = '30';
-        setSecond('30');
+        secondRef.current = '5';
+        setSecond('5');
       }
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
     }
