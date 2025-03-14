@@ -26,7 +26,9 @@ export default function SelectedBanImage({
           <Image
             src={
               banPickObject[index].use
-                ? `https://ddragon.leagueoflegends.com/cdn/${banPickObject[index]?.info.version}/img/champion/${banPickObject[index]?.name}.png`
+                ? banPickObject[index].random
+                  ? `/images/default_champ.png`
+                  : `https://ddragon.leagueoflegends.com/cdn/${banPickObject[index]?.info.version}/img/champion/${banPickObject[index]?.name}.png`
                 : currentLocation === banPickObject[index].location
                   ? `https://ddragon.leagueoflegends.com/cdn/${currentSelectedPick[0]?.info.version}/img/champion/${currentSelectedPick[0]?.name}.png`
                   : ``

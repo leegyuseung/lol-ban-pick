@@ -70,7 +70,7 @@ export default function SelectChampions() {
   const onClickButton = () => {
     let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
 
-    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info); // 현재 선택된 챔피언을 세팅해준다
+    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false); // 현재 선택된 챔피언을 세팅해준다
     setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
     index++;
     setCurrentLocation(index); // 다음 위치를 저장한다

@@ -15,6 +15,8 @@ export type BanPickObjectType = {
   name: string;
   info: ChampionInfoI;
   use: boolean;
+  random: boolean;
+  status: string;
 }[];
 
 export type currentSelectedPickType = {
@@ -45,7 +47,7 @@ interface BanI {
   setCurrentSelectedPick: (name: string, info: ChampionInfoI) => void;
 
   banPickObject: BanPickObjectType;
-  setBanPickObject: (index: number, name: string, info: ChampionInfoI) => void;
+  setBanPickObject: (index: number, name: string, info: ChampionInfoI, ran: boolean) => void;
 
   currentLocation: string;
   setCurrentLocation: (index: number) => void;
@@ -179,6 +181,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 1,
@@ -186,6 +190,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 2,
@@ -193,6 +199,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 3,
@@ -200,6 +208,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 4,
@@ -207,6 +217,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 5,
@@ -214,6 +226,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 6,
@@ -221,6 +235,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 7,
@@ -228,6 +244,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 8,
@@ -235,6 +253,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 9,
@@ -242,6 +262,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 10,
@@ -249,6 +271,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 11,
@@ -256,6 +280,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 12,
@@ -263,6 +289,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 13,
@@ -270,6 +298,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 14,
@@ -277,6 +307,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 15,
@@ -284,6 +316,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'ban',
     },
     {
       index: 16,
@@ -291,6 +325,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 17,
@@ -298,6 +334,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 18,
@@ -305,6 +343,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
     {
       index: 19,
@@ -312,13 +352,15 @@ export const useBanStore = create<BanI>()((set, get) => ({
       name: '',
       info: InfoData,
       use: false,
+      random: false,
+      status: 'pick',
     },
   ],
 
-  setBanPickObject: (index, name, info) =>
+  setBanPickObject: (index, name, info, ban) =>
     set((state) => {
       const updatedBanPickObject = state.banPickObject.map((obj) =>
-        obj.index === index ? { ...obj, name, info, use: true } : obj,
+        obj.index === index ? { ...obj, name, info, use: true, random: ban } : obj,
       );
       return { banPickObject: updatedBanPickObject };
     }),
@@ -377,8 +419,13 @@ export const useBanStore = create<BanI>()((set, get) => ({
     const randomIndex = Math.floor(Math.random() * availableChampions.length);
     const [randomName, randomInfo] = availableChampions[randomIndex];
 
-    setBanPickObject(index, randomName, randomInfo); // 랜덤 챔피언을 선택해준다
-    setChangeChampionInfo(randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
+    if (selectedTeam[selectedTeamIndex].banpick == 'ban') {
+      setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
+    } else {
+      setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
+      setChangeChampionInfo(randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
+    }
+
     index++;
     setCurrentLocation(index); // 다음 위치를 저장한다
     setCurrentSelectedPick('', InfoData); // 초기화
