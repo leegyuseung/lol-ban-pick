@@ -1,6 +1,6 @@
-
 import { useLayoutEffect } from 'react';
 import { useBanpickStore } from '@/store';
+
 function useImageLoaded() {
   const { championInfo, setChampionInfo } = useBanpickStore();
   useLayoutEffect(() => {

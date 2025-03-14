@@ -5,8 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore } from '@/store/rules';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
-import { useEffect, useLayoutEffect } from 'react';
-import { useBanpickStore } from '@/store';
+import { useEffect } from 'react';
 import useImageLoaded from '@/hooks/useImageLoaded';
 
 // TODO : 픽창 Image 불러오기 추가, Icon 선택 팝업 추가 및 저장

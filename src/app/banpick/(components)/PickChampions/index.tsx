@@ -24,6 +24,7 @@ export default function PickChampions({ side }: PropsType) {
             index={6}
             side={side}
             location={'left'}
+            line={'Top'}
           />
 
           <SelectedChampionImage
@@ -33,8 +34,8 @@ export default function PickChampions({ side }: PropsType) {
             index={7}
             side={side}
             location={'right'}
+            line={'Top'}
           />
-          <span className="absolute bg-opacity-50 m-2">Top</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
@@ -46,6 +47,7 @@ export default function PickChampions({ side }: PropsType) {
             index={9}
             side={side}
             location={'left'}
+            line={'Jungle'}
           />
 
           <SelectedChampionImage
@@ -55,8 +57,8 @@ export default function PickChampions({ side }: PropsType) {
             index={8}
             side={side}
             location={'right'}
+            line={'Jungle'}
           />
-          <span className="absolute bg-opacity-50 m-2">Jungle</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
@@ -68,6 +70,7 @@ export default function PickChampions({ side }: PropsType) {
             index={10}
             side={side}
             location={'left'}
+            line={'Mid'}
           />
           <SelectedChampionImage
             banPickObject={banPickObject}
@@ -76,8 +79,8 @@ export default function PickChampions({ side }: PropsType) {
             index={11}
             side={side}
             location={'right'}
+            line={'Mid'}
           />
-          <span className="absolute bg-opacity-50 m-2">Mid</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
@@ -89,6 +92,7 @@ export default function PickChampions({ side }: PropsType) {
             index={17}
             side={side}
             location={'left'}
+            line={'Ad'}
           />
           <SelectedChampionImage
             banPickObject={banPickObject}
@@ -97,8 +101,8 @@ export default function PickChampions({ side }: PropsType) {
             index={16}
             side={side}
             location={'right'}
+            line={'Ad'}
           />
-          <span className="absolute bg-opacity-50 m-2">Ad</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
@@ -110,6 +114,7 @@ export default function PickChampions({ side }: PropsType) {
             index={18}
             side={side}
             location={'left'}
+            line={'Sup'}
           />
 
           <SelectedChampionImage
@@ -119,15 +124,15 @@ export default function PickChampions({ side }: PropsType) {
             index={19}
             side={side}
             location={'right'}
+            line={'Sup'}
           />
-          <span className="absolute bg-opacity-50 m-2">Sup</span>
         </div>
       </div>
 
       {/* 하단부 */}
       <div className="flex flex-col flex-[1] gap-2 pt-5">
         <div className="flex gap-2 justify-center w-full">
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -146,7 +151,7 @@ export default function PickChampions({ side }: PropsType) {
               location={'right'}
             />
           </div>
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -164,7 +169,7 @@ export default function PickChampions({ side }: PropsType) {
               location={'right'}
             />
           </div>
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -184,7 +189,7 @@ export default function PickChampions({ side }: PropsType) {
           </div>
         </div>
         <div className="flex gap-2 justify-center w-full">
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -202,7 +207,7 @@ export default function PickChampions({ side }: PropsType) {
               location={'right'}
             />
           </div>
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}

@@ -68,7 +68,6 @@ export default function SelectChampions() {
 
   // 챔피언 선택 버튼 클릭시
   const onClickButton = () => {
-    console.log('data', championInfo);
     let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
 
     setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info); // 현재 선택된 챔피언을 세팅해준다

@@ -377,8 +377,8 @@ export const useBanStore = create<BanI>()((set, get) => ({
     const randomIndex = Math.floor(Math.random() * availableChampions.length);
     const [randomName, randomInfo] = availableChampions[randomIndex];
 
-    setChangeChampionInfo(randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
     setBanPickObject(index, randomName, randomInfo); // 랜덤 챔피언을 선택해준다
+    setChangeChampionInfo(randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
     index++;
     setCurrentLocation(index); // 다음 위치를 저장한다
     setCurrentSelectedPick('', InfoData); // 초기화
