@@ -1,70 +1,67 @@
-// app/api/ws/route.ts
-
-import { NextResponse } from 'next/server'
-import { WebSocketServer, WebSocket } from 'ws'
+import { NextRequest, NextResponse } from 'next/server';
+import { WebSocketServer, WebSocket } from 'ws';
 
 interface Client {
-    id: string;
-    ws: WebSocket;
+  id: string;
+  ws: WebSocket;
 }
 
-let wss: WebSocketServer | null = null
-let clients: Client[] = []
+let wss: WebSocketServer | null = null;
+let clients: Client[] = [];
 
-export async function GET() {
-    if (!wss) {
-        console.log('WebSocket server is initializing')
-        
-        // 포트번호는 원하는 포트로 변경하여 사용
-        wss = new WebSocketServer({ port: 3001 })
+export async function GET(req: NextRequest) {
+  try {
+    // const roomId = req.nextUrl.searchParams.get('roomId');
+    
+    const roomId = "test3"
 
-        wss.on('connection', (ws) => {
-            const clientId = "1"
-            clients.push({ id: clientId, ws })
-            console.log(`New client connected: ${clientId}`)
+    if (!wss && roomId) {
+      console.log('🛠️ WebSocket 서버 초기화...');
+      wss = new WebSocketServer({ port: 3001 });
 
-            ws.send(JSON.stringify({ type: 'id', id: clientId }))
+      wss.on('connection', (ws) => {
+        const clientRoomId = roomId;  // 클라이언트가 가진 roomId
+        if(clients.findIndex((client) => client.id === roomId)<=-1){
 
-            ws.on('message', (message: string) => {
-                const data = JSON.parse(message);
-				// 개인에게 메시지 전송
-                if (true) {
-                    const recipient:any = clients.find(client => client.id === data.to)
-                    console.log(data.type,recipient,"data.type")
-                    // if (recipient) {
-                        recipient.ws.send(JSON.stringify({
-                            type: 'private',
-                            from: 1,
-                            message: data.message
-                        }))
-                    // }
-                    
-                // 전역으로 메시지 전송
-                } else if (data.type === 'broadcast') {
-                    clients.forEach(client => {
-                        if (client.id !== data.from) {
-                            client.ws.send(JSON.stringify({
-                                type: 'broadcast',
-                                from: data.from,
-                                message: data.message
-                            }))
-                        }
-                    })
-                }
-            })
-
-            ws.on('close', () => {
-                clients = clients.filter(client => client.ws !== ws)
-                console.log(`Client disconnected: ${clientId}`)
-            })
-        })
+            clients.push({ id: clientRoomId, ws });
+        }
+        console.log(`✅ 새로운 클라이언트 연결됨: ${clientRoomId}`);
+      
+        ws.send(JSON.stringify({ type: 'id', id: clientRoomId }));
+      
+        ws.on('message', (message: string) => {
+          const data = JSON.parse(message);
+          console.log('📩 받은 메시지:', data);
+      
+          // 특정 클라이언트에게 메시지 전송
+          if (data.type === 'private') {
+            console.log(clients);
+            const recipient = clients.find((client) => client.id === data.to);  // 대상 클라이언트를 찾음
+            if (recipient) {
+              recipient.ws.send(
+                JSON.stringify({
+                  type: 'private',
+                  from: clientRoomId,  // 보낸 사람의 roomId
+                  message: data.message,
+                })
+              );
+            } else {
+              console.warn(`⚠️ 대상 (${data.to})을 찾을 수 없음`);
+            }
+          }
+        });
+      
+        ws.on('close', () => {
+          clients = clients.filter((client) => client.ws !== ws);
+          console.log(`❌ 클라이언트 연결 종료: ${clientRoomId}`);
+        });
+      });
     }
 
-    return NextResponse.json({ message: 'WebSocket server is running' })
+    return NextResponse.json({ message: 'WebSocket server is running' });
+  } catch (e) {
+    console.log(e);
+  }
 }
 
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-}
+export const runtime = 'nodejs'; // ✅ 최신 Next.js 규칙 적용
