@@ -7,11 +7,15 @@ export default function BanPickHeader() {
   const { blueTeam, redTeam, banpickMode, timeUnlimited } = useRulesStore();
   const { selectedTeam, selectedTeamIndex, RandomPick } = useBanStore();
 
-  const [second, setSecond] = useState(timeUnlimited == 'true' ? '∞' : '5');
+  const [second, setSecond] = useState(timeUnlimited === 'true' ? '∞' : '5');
   const [currentColor, setCurrentColor] = useState('');
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const secondRef = useRef(second);
+
+  useEffect(() => {
+    setSecond(timeUnlimited === 'true' ? '∞' : '5');
+  }, [timeUnlimited]);
 
   useEffect(() => {
     secondRef.current = second;
@@ -36,7 +40,7 @@ export default function BanPickHeader() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [second]);
+  }, [second, timeUnlimited]);
 
   // 색상변경
   useEffect(() => {
