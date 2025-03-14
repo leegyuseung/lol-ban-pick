@@ -143,9 +143,8 @@ export default function SelectChampions() {
             className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === currentSelectedPick[0].name ? 'opacity-20' : ''}`}
             key={idx}
           >
-            <Image
-              priority={true}
-              alt="champion"
+            <ImageComp
+              alt={name}
               className="border border-mainGold"
               width={60}
               height={60}
