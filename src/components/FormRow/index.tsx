@@ -39,8 +39,8 @@ export default function Form() {
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
-          <div>
-            <Image className="cursor-pointer" src="/images/t1.png" alt="logo" width={200} height={79.06} />
+          <div className="relative w-[200px] h-[200px] cursor-pointer">
+            <Image className="object-contain" src="/images/t1.webp" alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">블루팀</label>
           <input
@@ -128,8 +128,8 @@ export default function Form() {
 
         {/* 레드팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
-          <div>
-            <Image className="cursor-pointer" src="/images/t1.png" alt="logo" width={200} height={79.06} />
+          <div className="relative w-[200px] h-[200px] cursor-pointer">
+            <Image className="object-contain" src="/images/t1.webp" alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">레드팀</label>
           <input
