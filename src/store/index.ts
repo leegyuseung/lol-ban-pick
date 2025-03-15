@@ -1,4 +1,4 @@
-import { useBanpickStore, useBanStore, useHeaderStore } from './banpick';
+import { useBanpickStore, useBanStore } from './banpick';
 import { useRulesStore } from './rules';
 
-export { useBanpickStore, useRulesStore, useBanStore, useHeaderStore };
+export { useBanpickStore, useRulesStore, useBanStore };

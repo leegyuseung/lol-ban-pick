@@ -6,6 +6,8 @@ export interface ApiResponse<T> {
 
 export type FormsData = {
   blueTeam: string;
+  blueImg: string;
+  redImg: string;
   redTeam: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
@@ -13,7 +15,7 @@ export type FormsData = {
   teamSide: 'red' | 'blue' | 'solo';
 };
 
-export interface InfoI {
+export interface ChampionInfoI {
   blurb: string;
   id: string;
   key: string;
@@ -22,4 +24,6 @@ export interface InfoI {
   tags: string[];
   title: string;
   version: string;
+  status: string;
+  line: string[];
 }

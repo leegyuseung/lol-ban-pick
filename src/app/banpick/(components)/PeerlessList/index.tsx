@@ -1,10 +1,8 @@
 'use client';
-import Image from 'next/image';
-import { useRulesStore, useBanStore } from '@/store';
+import { useRulesStore } from '@/store';
 
 export default function PeerlessList() {
   const { banpickMode } = useRulesStore();
-  const { cureentSelectedPick } = useBanStore();
 
   return (
     <div className="flex flex-col flex-[2]">

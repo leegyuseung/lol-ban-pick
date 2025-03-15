@@ -13,6 +13,8 @@ const config: Config = {
         mainText: '#cccccc',
         mainGold: '#8b5a1d',
         subGold: '#a76a1f80',
+        redLineColor: '#ff2d2db1',
+        blueLineColor: '#2d3bffb0',
       },
       keyframes: {
         fillLeftHalf: {
