@@ -7,8 +7,10 @@ type RulesState = {
   redTeam: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
-  timeUnlimited?: string;
-  teamSide?: 'red' | 'blue' | 'solo';
+  timeUnlimited: string;
+  teamSide: 'red' | 'blue' | 'solo';
+  blueImg: string;
+  redImg: string;
   setRules: (data: FormsData) => void;
 };
 
@@ -21,6 +23,8 @@ export const useRulesStore = create<RulesState>()(
       peopleMode: 'solo',
       timeUnlimited: 'true',
       teamSide: 'solo',
+      blueImg: '/images/t1.webp',
+      redImg: '/images/hanwha.webp',
       setRules: (data: FormsData) =>
         set({
           blueTeam: data.blueTeam !== '' ? data.blueTeam : '블루팀',
@@ -29,6 +33,8 @@ export const useRulesStore = create<RulesState>()(
           peopleMode: data.peopleMode,
           timeUnlimited: data.peopleMode !== 'solo' ? 'false' : data.timeUnlimited,
           teamSide: data.peopleMode === 'solo' ? 'solo' : data.teamSide,
+          blueImg: data.blueImg,
+          redImg: data.redImg,
         }),
     }),
     { name: 'rules-store' },
