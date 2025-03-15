@@ -1,14 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import useImageLoaded from '@/hooks/useImageLoaded';
 import React, { useEffect, useState } from 'react';
+import useImageLoaded from '@/hooks/useImageLoaded';
+import TeamLogoPopup from '../TeamLogoPopup';
 import { useForm } from 'react-hook-form';
 import { useRulesStore } from '@/store/rules';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
-// TODO : 픽창 Image 불러오기 추가, Icon 선택 팝업 추가 및 저장
 export default function Form() {
   useImageLoaded();
   const { setRules } = useRulesStore();
@@ -32,12 +32,25 @@ export default function Form() {
   const [blueImage, setBlueImage] = useState('/images/t1.webp');
   const [redImage, setRedImage] = useState('/images/hanwha.webp');
 
+  // 팝업관련
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTeamColor, setSelectedTeamColor] = useState('');
+
   const onSubmit = async (data: FormsData) => {
     // 이미지 넣어주기
     data.blueImg = blueImage;
     data.redImg = redImage;
     setRules(data);
     router.push('/banpick');
+  };
+
+  const openPopup = (teamColor: string) => {
+    setSelectedTeamColor(teamColor);
+    setIsOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsOpen(false);
   };
 
   // 경로의 페이지를 미리 로드
@@ -51,7 +64,7 @@ export default function Form() {
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
-          <div className="relative w-[200px] h-[200px] cursor-pointer">
+          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('blue')}>
             <Image className="object-contain" src={blueImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{blueTeam}</label>
@@ -132,7 +145,7 @@ export default function Form() {
           )}
           <button
             type="submit"
-            className="w-full border border-white text-mainText p-3 rounded-md font-bold hover:bg-gray-500 transition"
+            className="w-full border border-mainText text-mainText p-3 rounded-md font-semibold hover:bg-gray-500 transition"
           >
             시작하기
           </button>
@@ -140,7 +153,7 @@ export default function Form() {
 
         {/* 레드팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
-          <div className="relative w-[200px] h-[200px] cursor-pointer">
+          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('red')}>
             <Image className="object-contain" src={redImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{redTeam}</label>
@@ -151,6 +164,18 @@ export default function Form() {
           />
         </div>
       </form>
+
+      {/* 이미지 선택 팝업 */}
+      {isOpen && (
+        <TeamLogoPopup
+          closePopup={closePopup}
+          setBlueImage={setBlueImage}
+          setRedImage={setRedImage}
+          blueImage={blueImage}
+          redImage={redImage}
+          selectedTeamColor={selectedTeamColor}
+        />
+      )}
     </div>
   );
 }
