@@ -1,12 +1,12 @@
 'use client';
 
 import Image from 'next/image';
+import useImageLoaded from '@/hooks/useImageLoaded';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRulesStore } from '@/store/rules';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import useImageLoaded from '@/hooks/useImageLoaded';
 
 // TODO : 픽창 Image 불러오기 추가, Icon 선택 팝업 추가 및 저장
 export default function Form() {
@@ -14,16 +14,28 @@ export default function Form() {
   const { setRules } = useRulesStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
+      blueTeam: '',
+      redTeam: '',
       banpickMode: 'tournament',
       peopleMode: 'solo',
       timeUnlimited: 'true',
       teamSide: 'blue',
+      blueImg: '/images/t1.webp',
+      redImg: '/images/hanwha.webp',
     },
   });
+
+  const blueTeam = watch('blueTeam') || '블루팀';
+  const redTeam = watch('redTeam') || '레드팀';
   const router = useRouter();
   const selectedMode = watch('peopleMode');
+  const [blueImage, setBlueImage] = useState('/images/t1.webp');
+  const [redImage, setRedImage] = useState('/images/hanwha.webp');
 
   const onSubmit = async (data: FormsData) => {
+    // 이미지 넣어주기
+    data.blueImg = blueImage;
+    data.redImg = redImage;
     setRules(data);
     router.push('/banpick');
   };
@@ -40,9 +52,9 @@ export default function Form() {
         {/* 블루팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
           <div className="relative w-[200px] h-[200px] cursor-pointer">
-            <Image className="object-contain" src="/images/t1.webp" alt="logo" fill priority />
+            <Image className="object-contain" src={blueImage} alt="logo" fill priority />
           </div>
-          <label className="text-lg font-semibold mb-2">블루팀</label>
+          <label className="text-lg font-semibold mb-2">{blueTeam}</label>
           <input
             className="p-3 bg-blue-700 rounded-md border-mainText placeholder-mainText w-full"
             {...register('blueTeam')}
@@ -129,9 +141,9 @@ export default function Form() {
         {/* 레드팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
           <div className="relative w-[200px] h-[200px] cursor-pointer">
-            <Image className="object-contain" src="/images/t1.webp" alt="logo" fill priority />
+            <Image className="object-contain" src={redImage} alt="logo" fill priority />
           </div>
-          <label className="text-lg font-semibold mb-2">레드팀</label>
+          <label className="text-lg font-semibold mb-2">{redTeam}</label>
           <input
             className="p-3 bg-red-700 rounded-md border-mainText placeholder-mainText w-full"
             {...register('redTeam')}
