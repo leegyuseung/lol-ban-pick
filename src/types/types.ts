@@ -11,7 +11,7 @@ export type FormsData = {
   redTeam: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
-  timeUnlimited: string;
+  timeUnlimited: 'false' | 'true';
   teamSide: 'red' | 'blue' | 'solo';
 };
 

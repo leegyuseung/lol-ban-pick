@@ -58,7 +58,11 @@ interface BanI {
   }[];
   selectedTeamIndex: number;
   setSelectedTeamIndex: () => void;
+
   RandomPick: () => void;
+
+  headerSecond: string;
+  setHeaderSecond: (second: string) => void;
 }
 
 // 챔피언 정보 불러오기
@@ -431,4 +435,10 @@ export const useBanStore = create<BanI>()((set, get) => ({
     setCurrentSelectedPick('', InfoData); // 초기화
     setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
   },
+
+  headerSecond: '',
+  setHeaderSecond: (second) =>
+    set(() => ({
+      headerSecond: second,
+    })),
 }));
