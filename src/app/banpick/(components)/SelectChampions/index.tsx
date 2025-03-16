@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import ImageComp from '@/components/Image';
+import Button from '@/components/Button';
 import { useBanStore } from '@/store';
 import { useEffect, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
@@ -21,8 +22,8 @@ export default function SelectChampions() {
     currentLocation,
     setBanPickObject,
     banPickObject,
+    headerSecond,
   } = useBanStore();
-
   const [filteredChampions, setFilteredChampions] = useState(championInfo);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
@@ -102,7 +103,7 @@ export default function SelectChampions() {
           />
           <Image
             className="cursor-pointer"
-            src="/images/icon-position-middle.png"
+            src="/images/icon-position-mid.png"
             alt="middle"
             width={20}
             height={20}
@@ -110,7 +111,7 @@ export default function SelectChampions() {
           />
           <Image
             className="cursor-pointer"
-            src="/images/icon-position-bottom.png"
+            src="/images/icon-position-ad.png"
             alt="bottom"
             width={20}
             height={20}
@@ -118,7 +119,7 @@ export default function SelectChampions() {
           />
           <Image
             className="cursor-pointer"
-            src="/images/icon-position-utility.png"
+            src="/images/icon-position-sup.png"
             alt="utility"
             width={20}
             height={20}
@@ -157,14 +158,28 @@ export default function SelectChampions() {
           </div>
         ))}
       </div>
-      <div className="flex justify-center">
-        <button
-          onClick={onClickButton}
-          className={`${currentSelectedPick[0].name === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
-          disabled={currentSelectedPick[0].name === ''}
-        >
-          챔피언 선택
-        </button>
+      <div className={`flex ${headerSecond === '' ? 'justify-between' : 'justify-center'}`}>
+        {headerSecond === '' && (
+          <Button
+            text={'뒤로가기'}
+            className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm hover:bg-opacity-65`}
+            onClick={() => (window.location.href = '/')}
+          />
+        )}
+        {headerSecond !== '' && (
+          <Button
+            text={'챔피언 선택'}
+            className={`${currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
+            onClick={currentSelectedPick[0].name === '' || headerSecond === '' ? undefined : onClickButton}
+          />
+        )}
+        {headerSecond === '' && (
+          <Button
+            text={'다시하기'}
+            className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm hover:bg-opacity-65`}
+            onClick={() => location.reload()}
+          />
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import Button from '../Button';
 import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
 import { useForm } from 'react-hook-form';
@@ -20,8 +21,8 @@ export default function Form() {
       peopleMode: 'solo',
       timeUnlimited: 'true',
       teamSide: 'blue',
-      blueImg: '/images/t1.webp',
-      redImg: '/images/hanwha.webp',
+      blueImg: '',
+      redImg: '',
     },
   });
 
@@ -143,12 +144,13 @@ export default function Form() {
               </div>
             </div>
           )}
-          <button
-            type="submit"
-            className="w-full border border-mainText text-mainText p-3 rounded-md font-semibold hover:bg-gray-500 transition"
-          >
-            시작하기
-          </button>
+          <Button
+            type={'submit'}
+            className={
+              'w-full border border-mainText text-mainText p-3 rounded-md font-semibold hover:bg-gray-500 transition'
+            }
+            text={'시작하기'}
+          />
         </div>
 
         {/* 레드팀 */}

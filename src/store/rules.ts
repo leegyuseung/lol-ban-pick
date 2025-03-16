@@ -7,7 +7,7 @@ type RulesState = {
   redTeam: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
-  timeUnlimited: string;
+  timeUnlimited: 'true' | 'false';
   teamSide: 'red' | 'blue' | 'solo';
   blueImg: string;
   redImg: string;
@@ -17,14 +17,14 @@ type RulesState = {
 export const useRulesStore = create<RulesState>()(
   persist(
     (set) => ({
-      blueTeam: '블루팀',
-      redTeam: '레드팀',
+      blueTeam: '',
+      redTeam: '',
       banpickMode: 'tournament',
       peopleMode: 'solo',
-      timeUnlimited: 'true',
+      timeUnlimited: 'false',
       teamSide: 'solo',
-      blueImg: '/images/t1.webp',
-      redImg: '/images/hanwha.webp',
+      blueImg: '',
+      redImg: '',
       setRules: (data: FormsData) =>
         set({
           blueTeam: data.blueTeam !== '' ? data.blueTeam : '블루팀',
