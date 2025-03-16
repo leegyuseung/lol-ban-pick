@@ -102,7 +102,7 @@ export default function SelectChampions() {
           />
           <Image
             className="cursor-pointer"
-            src="/images/icon-position-middle.png"
+            src="/images/icon-position-mid.png"
             alt="middle"
             width={20}
             height={20}
@@ -110,7 +110,7 @@ export default function SelectChampions() {
           />
           <Image
             className="cursor-pointer"
-            src="/images/icon-position-bottom.png"
+            src="/images/icon-position-ad.png"
             alt="bottom"
             width={20}
             height={20}
@@ -118,7 +118,7 @@ export default function SelectChampions() {
           />
           <Image
             className="cursor-pointer"
-            src="/images/icon-position-utility.png"
+            src="/images/icon-position-sup.png"
             alt="utility"
             width={20}
             height={20}

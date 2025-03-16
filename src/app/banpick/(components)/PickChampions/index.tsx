@@ -2,6 +2,7 @@
 import SelectedChampionImage from './SelectedChampionImage';
 import SelectedBanImage from './SelectedBanImage';
 import { useBanStore } from '@/store';
+import Image from 'next/image';
 
 type PropsType = {
   side: string;
@@ -17,6 +18,14 @@ export default function PickChampions({ side }: PropsType) {
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <Image
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-top.png`}
+            alt="top"
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -24,7 +33,6 @@ export default function PickChampions({ side }: PropsType) {
             index={6}
             side={side}
             location={'left'}
-            line={'Top'}
           />
 
           <SelectedChampionImage
@@ -34,12 +42,19 @@ export default function PickChampions({ side }: PropsType) {
             index={7}
             side={side}
             location={'right'}
-            line={'Top'}
           />
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <Image
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-jungle.png`}
+            alt="jungle"
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -47,7 +62,6 @@ export default function PickChampions({ side }: PropsType) {
             index={9}
             side={side}
             location={'left'}
-            line={'Jungle'}
           />
 
           <SelectedChampionImage
@@ -57,12 +71,19 @@ export default function PickChampions({ side }: PropsType) {
             index={8}
             side={side}
             location={'right'}
-            line={'Jungle'}
           />
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <Image
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-mid.png`}
+            alt="mid"
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -70,7 +91,6 @@ export default function PickChampions({ side }: PropsType) {
             index={10}
             side={side}
             location={'left'}
-            line={'Mid'}
           />
           <SelectedChampionImage
             banPickObject={banPickObject}
@@ -79,12 +99,19 @@ export default function PickChampions({ side }: PropsType) {
             index={11}
             side={side}
             location={'right'}
-            line={'Mid'}
           />
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <Image
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-ad.png`}
+            alt="ad"
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -92,7 +119,6 @@ export default function PickChampions({ side }: PropsType) {
             index={17}
             side={side}
             location={'left'}
-            line={'Ad'}
           />
           <SelectedChampionImage
             banPickObject={banPickObject}
@@ -101,12 +127,19 @@ export default function PickChampions({ side }: PropsType) {
             index={16}
             side={side}
             location={'right'}
-            line={'Ad'}
           />
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <Image
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-sup.png`}
+            alt="sup"
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -114,7 +147,6 @@ export default function PickChampions({ side }: PropsType) {
             index={18}
             side={side}
             location={'left'}
-            line={'Sup'}
           />
 
           <SelectedChampionImage
@@ -124,7 +156,6 @@ export default function PickChampions({ side }: PropsType) {
             index={19}
             side={side}
             location={'right'}
-            line={'Sup'}
           />
         </div>
       </div>
