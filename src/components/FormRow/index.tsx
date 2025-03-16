@@ -11,11 +11,6 @@ import { useSocketStore } from '@/store';
 
 // TODO : 픽창 Image 불러오기 추가, Icon 선택 팝업 추가 및 저장
 export default function Form() {
-  const socketRef = useRef<WebSocket | null>(null);
-  const searchParams = useSearchParams();
-  const getRoomId = searchParams?.get("roomId")
-  const randamId = Math.random().toString(36).substr(2, 20)
-  const { roomId, setRoomId } = useSocketStore();
   const router = useRouter();
   useImageLoaded();
   const { setRules } = useRulesStore();
@@ -38,76 +33,8 @@ export default function Form() {
   useEffect(() => {
     router.prefetch('/banpick');
   }, [router]);
-  const [a,setA] = useState("")
-  // useEffect(() => {
-    
-  // }, [roomId]);
-
-  const onShare = useCallback(() => {
-    console.log(roomId, ':roomId');
-    window.open(`/?roomId=${roomId}`, '_blank');
-  }, [roomId]);
-
-  const sendMessage = () => {
-    if (!socketRef.current) {
-      console.warn('❌ WebSocket이 연결되지 않음');
-      return;
-    }
-
-    socketRef.current.send(
-      JSON.stringify({ type: 'private', from:roomId,to: roomId, message: 'test' }), // ✅ `to` 필드 추가
-    );
-  };
-  useEffect(() => {
-    if (!getRoomId) {
-      setRoomId(Math.random().toString(36).substr(2, 20));
-    } else {
-      setRoomId(getRoomId as string);
-    }
-    // WebSocket이 연결되지 않으면 새로 연결 시도
-    if (!socketRef.current) {
-      const connectWebSocket = async () => {
-        console.log(`${searchParams!.get('roomId')?`/api/socket/io?roomId=${getRoomId}`:`/api/socket/io`}`)
-        const response = await fetch(`${searchParams!.get('roomId')?`/api/socket/io?roomId=${getRoomId}`:`/api/socket/io`}`); // WebSocket 서버 확인 요청
-        if (!response.ok) throw new Error('WebSocket server not ready');
-
-        const ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001${searchParams!.get('roomId')?`?roomId=${searchParams!.get('roomId')}`:``}`); // WebSocket 서버 주소로 변경
-
-        ws.onopen = () => console.log('✅ WebSocket connected');
-
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          console.log('📩 받은 메시지:', data);
-          setA(JSON.stringify(data))
-
-          // 메시지 타입에 따라 알림을 띄움
-          if (data.type === 'private') {
-            setA(`📩 새 메시지: ${data.message}`)
-            console.log(`📩 새 메시지: ${data.message}`); // 다른 창에서 메시지를 받으면 alert
-          }
-        };
-
-        ws.onerror = (error) => console.error('❌ WebSocket error:', error);
-        ws.onclose = () => console.log('❌ WebSocket disconnected');
-
-        socketRef.current = ws;
-      };
-
-      connectWebSocket();
-    }
-
-    return () => {
-      socketRef.current?.close();
-      socketRef.current = null;
-    };
-  }, []);
-  useEffect(() => {
-    console.log(socketRef.current);
-  }, [socketRef]);
   return (
     <div className="flex flex-col items-center p-7">
-      <button onClick={onShare}>공유하기 {roomId}</button>
-      <button onClick={sendMessage}>메세지 보내기</button>
       <span className="text-4xl font-bold pb-6">밴픽 시뮬레이터</span>
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
@@ -215,4 +142,3 @@ export default function Form() {
     </div>
   );
 }
-
