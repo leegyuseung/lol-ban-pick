@@ -2,8 +2,9 @@
 import Image from 'next/image';
 import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
+import MiniIcon from '@/components/MiniIcon';
 import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
-import { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { ChampionInfoI } from '@/types/types';
 import { BanArray, InfoData } from '@/store/banpick';
@@ -16,6 +17,8 @@ const lineMapping: Record<string, number> = {
   ad: 3,
   sup: 4,
 };
+
+const MemoizedFaSearch = memo(FaSearch);
 
 export default function SelectChampions() {
   const {
@@ -43,6 +46,7 @@ export default function SelectChampions() {
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]);
   const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]);
+  const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
 
   const router = useRouter();
 
@@ -59,42 +63,54 @@ export default function SelectChampions() {
     setSelectedFilter(null);
   }, [championInfo]);
 
-  const onClickFilter = (type: string) => {
-    if (selectedFilter === type) {
-      setSelectedFilter(null);
-      setFilteredChampions(championInfo);
-    } else {
-      setSelectedFilter(type);
-      const filtered = Object.fromEntries(Object.entries(championInfo).filter(([_, info]) => info.line.includes(type)));
-      setFilteredChampions(filtered);
-    }
-  };
+  const onClickFilter = useCallback(
+    (type: string) => {
+      if (selectedFilter === type) {
+        setSelectedFilter(null);
+        setFilteredChampions(championInfo);
+      } else {
+        setSelectedFilter(type);
+        const filtered = Object.fromEntries(
+          Object.entries(championInfo).filter(([_, info]) => info.line.includes(type)),
+        );
+        setFilteredChampions(filtered);
+      }
+    },
+    [championInfo],
+  );
 
   // 검색기능
-  const onTextFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value.toLowerCase();
+  const onTextFilter = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const searchTerm = e.target.value.toLowerCase();
 
-    if (searchTerm === '') {
-      setFilteredChampions(championInfo);
-    } else {
-      const filtered = Object.fromEntries(
-        Object.entries(championInfo).filter(([_, info]) => info.name.toLowerCase().includes(searchTerm)),
-      );
-      setFilteredChampions(filtered); // 필터링된 챔피언 목록으로 설정
-    }
-  };
+      if (searchTerm === '') {
+        setFilteredChampions(championInfo);
+      } else {
+        const filtered = Object.fromEntries(
+          Object.entries(championInfo).filter(([_, info]) => info.name.toLowerCase().includes(searchTerm)),
+        );
+        setFilteredChampions(filtered); // 필터링된 챔피언 목록으로 설정
+      }
+    },
+    [championInfo],
+  );
 
   // Image 클릭시
-  const onClick = (pickName: string, info: ChampionInfoI) => {
-    if (pickName === '') return;
-    setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
-  };
+  const onClick = useCallback(
+    (pickName: string, info: ChampionInfoI) => {
+      if (pickName === '') return;
+      setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
+    },
+    [setCurrentSelectedPick],
+  );
 
   // 챔피언 선택 버튼 클릭시
-  const onClickButton = () => {
+  const onClickButton = useCallback(() => {
     let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
-    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false); // 현재 선택된 챔피언을 세팅해준다
-    setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
+
+    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
+    setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick);
 
     const selectedChampion = {
       name: currentSelectedPick[0].name,
@@ -102,17 +118,19 @@ export default function SelectChampions() {
       line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
     };
 
-    if (selectedTeam[selectedTeamIndex].banpick === 'pick' && selectedTeam[selectedTeamIndex].color === 'red') {
-      setRedPeerlessArray((prev) => [...prev, selectedChampion]);
-    } else if (selectedTeam[selectedTeamIndex].banpick === 'pick' && selectedTeam[selectedTeamIndex].color === 'blue') {
-      setBluePeerlessArray((prev) => [...prev, selectedChampion]);
+    if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+      if (selectedTeam[selectedTeamIndex].color === 'red') {
+        setRedPeerlessArray((prev) => [...prev, selectedChampion]);
+      } else {
+        setBluePeerlessArray((prev) => [...prev, selectedChampion]);
+      }
     }
 
-    index++;
-    setCurrentLocation(index); // 다음 위치를 저장한다
-    setCurrentSelectedPick('', InfoData); // 초기화
-    setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
-  };
+    index += 1;
+    setCurrentLocation(index);
+    setCurrentSelectedPick('', InfoData);
+    setSelectedTeamIndex();
+  }, [banPickObject, currentLocation, currentSelectedPick, selectedTeam, selectedTeamIndex]);
 
   const onNextSet = () => {
     // 피어리스 밴픽 추가
@@ -134,7 +152,7 @@ export default function SelectChampions() {
     router.refresh();
   };
 
-  const onReplay = () => {
+  const onReplay = useCallback(() => {
     setClearBanPickObject();
     setClearSelectTeamIndex();
     setClearCurrentLocation();
@@ -145,55 +163,33 @@ export default function SelectChampions() {
       setClearYourBan();
     }
     location.reload();
-  };
+  }, [
+    banpickMode,
+    setClearBanPickObject,
+    setClearSelectTeamIndex,
+    setClearCurrentLocation,
+    setClearMyBan,
+    setClearYourBan,
+  ]);
 
   return (
     <div className="flex flex-col gap-3 min-w-[508px]">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-top.png"
-            alt="top"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('top')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-jungle.png"
-            alt="jungle"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('jungle')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-mid.png"
-            alt="middle"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('mid')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-ad.png"
-            alt="bottom"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('ad')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-sup.png"
-            alt="utility"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('sup')}
-          />
+          {filterOptions.map((type) => (
+            <MiniIcon
+              key={type}
+              className="cursor-pointer"
+              src={`/images/icon-position-${type}.png`}
+              alt={type}
+              width={20}
+              height={20}
+              onClick={() => onClickFilter(type)}
+            />
+          ))}
         </div>
         <div className="flex items-center border border-subGold w-full max-w-[200px] px-3">
-          <FaSearch className="text-mainText text-sm mr-2" />
+          <MemoizedFaSearch className="text-mainText text-sm mr-2" />
           <input
             className="text-mainText text-xs w-full py-2 bg-transparent focus:ring-0 focus:border-subGold focus:outline-none placeholder:text-xs placeholder:text-mainText"
             placeholder="검색"

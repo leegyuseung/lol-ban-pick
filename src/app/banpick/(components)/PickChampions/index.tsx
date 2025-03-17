@@ -1,8 +1,8 @@
 'use client';
 import SelectedChampionImage from './SelectedChampionImage';
 import SelectedBanImage from './SelectedBanImage';
+import MiniIcon from '@/components/MiniIcon';
 import { useBanStore } from '@/store';
-import Image from 'next/image';
 
 type PropsType = {
   side: string;
@@ -18,10 +18,10 @@ export default function PickChampions({ side }: PropsType) {
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
-          <Image
+          <MiniIcon
             className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
             src={`/images/icon-position-top.png`}
-            alt="top"
+            alt={'top'}
             width={20}
             height={20}
           />
@@ -47,10 +47,10 @@ export default function PickChampions({ side }: PropsType) {
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
-          <Image
+          <MiniIcon
             className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
             src={`/images/icon-position-jungle.png`}
-            alt="jungle"
+            alt={'jungle'}
             width={20}
             height={20}
           />
@@ -76,10 +76,10 @@ export default function PickChampions({ side }: PropsType) {
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
-          <Image
+          <MiniIcon
             className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
             src={`/images/icon-position-mid.png`}
-            alt="mid"
+            alt={'mid'}
             width={20}
             height={20}
           />
@@ -104,10 +104,10 @@ export default function PickChampions({ side }: PropsType) {
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
-          <Image
+          <MiniIcon
             className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
             src={`/images/icon-position-ad.png`}
-            alt="ad"
+            alt={'ad'}
             width={20}
             height={20}
           />
@@ -132,10 +132,10 @@ export default function PickChampions({ side }: PropsType) {
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
-          <Image
+          <MiniIcon
             className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
             src={`/images/icon-position-sup.png`}
-            alt="sup"
+            alt={'sup'}
             width={20}
             height={20}
           />

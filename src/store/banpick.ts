@@ -403,7 +403,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
 
   currentLocation: 'blueBan1',
 
-  setCurrentLocation: (index: number) =>
+  setCurrentLocation: (index) =>
     set((state) => {
       const selectedBanPick = state.banPickObject.find((obj) => obj.index === index);
       return selectedBanPick ? { currentLocation: selectedBanPick.location } : {};
