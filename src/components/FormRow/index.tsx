@@ -6,28 +6,36 @@ import Button from '../Button';
 import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
 import { useForm } from 'react-hook-form';
-import { useRulesStore } from '@/store/rules';
+import { useRulesStore, usePeerlessStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
 export default function Form() {
   useImageLoaded();
-  const { setRules } = useRulesStore();
+  const { setRules, setClearPeerlessSet } = useRulesStore();
+  const { setClearMyBan, setClearYourBan } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
-      blueTeam: '',
-      redTeam: '',
+      myTeam: '',
+      yourTeam: '',
       banpickMode: 'tournament',
       peopleMode: 'solo',
       timeUnlimited: 'true',
-      teamSide: 'blue',
-      blueImg: '',
-      redImg: '',
+      myTeamSide: 'blue',
+      myImg: '',
+      yourImg: '',
+      nowSet: 1,
     },
   });
 
-  const blueTeam = watch('blueTeam') || '블루팀';
-  const redTeam = watch('redTeam') || '레드팀';
+  useEffect(() => {
+    setClearPeerlessSet();
+    setClearMyBan();
+    setClearYourBan();
+  }, []);
+
+  const blueTeam = watch('myTeam') || '블루팀';
+  const redTeam = watch('yourTeam') || '레드팀';
   const router = useRouter();
   const selectedMode = watch('peopleMode');
   const [blueImage, setBlueImage] = useState('/images/t1.webp');
@@ -39,8 +47,8 @@ export default function Form() {
 
   const onSubmit = async (data: FormsData) => {
     // 이미지 넣어주기
-    data.blueImg = blueImage;
-    data.redImg = redImage;
+    data.myImg = blueImage;
+    data.yourImg = redImage;
     setRules(data);
     router.push('/banpick');
   };
@@ -71,7 +79,7 @@ export default function Form() {
           <label className="text-lg font-semibold mb-2">{blueTeam}</label>
           <input
             className="p-3 bg-blue-700 rounded-md border-mainText placeholder-mainText w-full"
-            {...register('blueTeam')}
+            {...register('myTeam')}
             placeholder="블루팀 이름을 입력해주세요."
           />
         </div>
@@ -134,11 +142,11 @@ export default function Form() {
               <label className="text-lg font-semibold mb-2 block">진영</label>
               <div className="flex w-full justify-center gap-x-32">
                 <label className="flex items-center gap-2 cursor-pointer text-sm">
-                  <input type="radio" value="blue" {...register('teamSide')} defaultChecked />
+                  <input type="radio" value="blue" {...register('myTeamSide')} defaultChecked />
                   블루팀
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer text-sm">
-                  <input type="radio" value="red" {...register('teamSide')} />
+                  <input type="radio" value="red" {...register('myTeamSide')} />
                   레드팀
                 </label>
               </div>
@@ -161,7 +169,7 @@ export default function Form() {
           <label className="text-lg font-semibold mb-2">{redTeam}</label>
           <input
             className="p-3 bg-red-700 rounded-md border-mainText placeholder-mainText w-full"
-            {...register('redTeam')}
+            {...register('yourTeam')}
             placeholder="레드팀 이름을 입력해주세요."
           />
         </div>

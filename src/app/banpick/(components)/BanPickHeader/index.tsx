@@ -4,9 +4,8 @@ import { useBanStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 
 export default function BanPickHeader() {
-  const { blueTeam, redTeam, blueImg, redImg, banpickMode, timeUnlimited } = useRulesStore();
+  const { myTeam, yourTeam, myImg, yourImg, myTeamSide, banpickMode, timeUnlimited, nowSet } = useRulesStore();
   const { selectedTeam, selectedTeamIndex, RandomPick, headerSecond, setHeaderSecond } = useBanStore();
-
   const [currentColor, setCurrentColor] = useState('');
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -48,6 +47,9 @@ export default function BanPickHeader() {
       if (timeUnlimited !== 'true') {
         secondRef.current = '5';
         setHeaderSecond('5');
+      } else {
+        secondRef.current = '∞';
+        setHeaderSecond('∞');
       }
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
     }
@@ -58,9 +60,15 @@ export default function BanPickHeader() {
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
           <div className="relative w-[80px] h-[65px] ml-10">
-            {blueImg && <Image className="object-contain" src={blueImg} alt="logo" fill />}
+            {myTeamSide === 'blue'
+              ? myImg && <Image className="object-contain" src={myImg} alt="logo" fill />
+              : yourImg && <Image className="object-contain" src={yourImg} alt="logo" fill />}
           </div>
-          <span className="text-2xl mr-10">{blueTeam}</span>
+          {myTeamSide === 'blue' ? (
+            <span className="text-2xl mr-10">{myTeam}</span>
+          ) : (
+            <span className="text-2xl mr-10">{yourTeam}</span>
+          )}
         </div>
         <div className="flex-[1] w-full relative overflow-hidden h-4">
           <div
@@ -69,14 +77,20 @@ export default function BanPickHeader() {
         </div>
       </div>
       <div className="flex-[1] flex flex-col justify-center items-center">
-        <span className="text-xs">{banpickMode === 'tournament' ? '드리프트 토너먼트' : '피어리스'}</span>
+        <span className="text-xs">{banpickMode === 'tournament' ? '드리프트 토너먼트' : `${nowSet} 세트`}</span>
         <span className="text-3xl">{`:${headerSecond}`}</span>
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
-          <span className="text-2xl ml-10">{redTeam}</span>
+          {myTeamSide === 'blue' ? (
+            <span className="text-2xl ml-10">{yourTeam}</span>
+          ) : (
+            <span className="text-2xl ml-10">{myTeam}</span>
+          )}
           <div className="relative w-[80px] h-[65px] mr-10">
-            {redImg && <Image className="object-contain" src={redImg} alt="logo" fill />}
+            {myTeamSide === 'blue'
+              ? yourImg && <Image className="object-contain" src={yourImg} alt="logo" fill />
+              : myImg && <Image className="object-contain" src={myImg} alt="logo" fill />}
           </div>
         </div>
         <div className="flex-[1] w-full relative overflow-hidden">
