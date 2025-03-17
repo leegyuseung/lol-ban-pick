@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image';
+import PeerlessImage from './PeerlessImage';
 import { usePeerlessStore, useRulesStore } from '@/store';
 
 type PropsType = {
@@ -11,95 +11,42 @@ export default function PeerlessList({ side }: PropsType) {
   const { myBan, yourBan } = usePeerlessStore();
   const { myTeamSide } = useRulesStore();
 
+  const Mode = [
+    {
+      Mode: 'tournament',
+      TeamSide: 'blue',
+      Side: 'left',
+      Ban: myBan,
+    },
+    {
+      Mode: 'tournament',
+      TeamSide: 'red',
+      Side: 'left',
+      Ban: yourBan,
+    },
+    {
+      Mode: 'tournament',
+      TeamSide: 'blue',
+      Side: 'right',
+      Ban: yourBan,
+    },
+    {
+      Mode: 'tournament',
+      TeamSide: 'red',
+      Side: 'right',
+      Ban: myBan,
+    },
+  ];
+
   return (
     <div className="flex flex-col flex-[2]">
-      {banpickMode !== 'tournament' &&
-        myTeamSide === 'blue' &&
-        side === 'left' &&
-        myBan.map((ban, index) => (
-          <div className="flex flex-col gap-2 pt-5" key={index}>
-            <div className="flex justify-center w-full">
-              {ban.map((obj, index) => (
-                <div className="relative border border-mainGold w-[40px] h-[40px]" key={index}>
-                  <Image
-                    src={`https://ddragon.leagueoflegends.com/cdn/${obj.info.version}/img/champion/${obj.name}.png`}
-                    fill
-                    sizes="h-10"
-                    style={{ objectFit: 'cover', objectPosition: 'top' }}
-                    className="scale-[100%]"
-                    alt=""
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-      {banpickMode !== 'tournament' &&
-        myTeamSide === 'red' &&
-        side === 'left' &&
-        yourBan.map((ban, index) => (
-          <div className="flex flex-col gap-2 pt-5" key={index}>
-            <div className="flex justify-center w-full">
-              {ban.map((obj, index) => (
-                <div className="relative border border-mainGold w-[40px] h-[40px]" key={index}>
-                  <Image
-                    src={`https://ddragon.leagueoflegends.com/cdn/${obj.info.version}/img/champion/${obj.name}.png`}
-                    fill
-                    sizes="h-10"
-                    style={{ objectFit: 'cover', objectPosition: 'top' }}
-                    className="scale-[100%]"
-                    alt=""
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-      {banpickMode !== 'tournament' &&
-        myTeamSide === 'blue' &&
-        side === 'right' &&
-        yourBan.map((ban, index) => (
-          <div className="flex flex-col gap-2 pt-5" key={index}>
-            <div className="flex justify-center w-full">
-              {ban.map((obj, index) => (
-                <div className="relative border border-mainGold w-[40px] h-[40px]" key={index}>
-                  <Image
-                    src={`https://ddragon.leagueoflegends.com/cdn/${obj.info.version}/img/champion/${obj.name}.png`}
-                    fill
-                    sizes="h-10"
-                    style={{ objectFit: 'cover', objectPosition: 'top' }}
-                    className="scale-[100%]"
-                    alt=""
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-      {banpickMode !== 'tournament' &&
-        myTeamSide === 'red' &&
-        side === 'right' &&
-        myBan.map((ban, index) => (
-          <div className="flex flex-col gap-2 pt-5" key={index}>
-            <div className="flex justify-center w-full">
-              {ban.map((obj, index) => (
-                <div className="relative border border-mainGold w-[40px] h-[40px]" key={index}>
-                  <Image
-                    src={`https://ddragon.leagueoflegends.com/cdn/${obj.info.version}/img/champion/${obj.name}.png`}
-                    fill
-                    sizes="h-10"
-                    style={{ objectFit: 'cover', objectPosition: 'top' }}
-                    className="scale-[100%]"
-                    alt=""
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      {Mode.map(
+        (mode) =>
+          banpickMode !== mode.Mode &&
+          myTeamSide === mode.TeamSide &&
+          side === mode.Side &&
+          mode.Ban.map((ban, index) => <PeerlessImage key={index} ban={ban} />),
+      )}
     </div>
   );
 }

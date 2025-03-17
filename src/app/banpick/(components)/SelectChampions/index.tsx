@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
