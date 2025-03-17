@@ -61,8 +61,12 @@ export default function BanPickHeader() {
         <div className="flex h-[65px] w-full justify-between items-center">
           <div className="relative w-[80px] h-[65px] ml-10">
             {myTeamSide === 'blue'
-              ? myImg && <Image className="object-contain" src={myImg} alt="logo" fill />
-              : yourImg && <Image className="object-contain" src={yourImg} alt="logo" fill />}
+              ? myImg && (
+                  <Image sizes="w-[80px] h-[65px]" className="object-contain" src={myImg} alt="logo" fill priority />
+                )
+              : yourImg && (
+                  <Image sizes="w-[80px] h-[65px]" className="object-contain" src={yourImg} alt="logo" fill priority />
+                )}
           </div>
           {myTeamSide === 'blue' ? (
             <span className="text-2xl mr-10">{myTeam}</span>
@@ -89,8 +93,12 @@ export default function BanPickHeader() {
           )}
           <div className="relative w-[80px] h-[65px] mr-10">
             {myTeamSide === 'blue'
-              ? yourImg && <Image className="object-contain" src={yourImg} alt="logo" fill />
-              : myImg && <Image className="object-contain" src={myImg} alt="logo" fill />}
+              ? yourImg && (
+                  <Image className="object-contain" sizes="w-[80px] h-[65px]" src={yourImg} alt="logo" fill priority />
+                )
+              : myImg && (
+                  <Image className="object-contain" sizes="w-[80px] h-[65px]" src={myImg} alt="logo" fill priority />
+                )}
           </div>
         </div>
         <div className="flex-[1] w-full relative overflow-hidden">

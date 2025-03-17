@@ -74,7 +74,7 @@ export default function Form() {
         {/* 블루팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('blue')}>
-            <Image className="object-contain" src={blueImage} alt="logo" fill priority />
+            <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{blueTeam}</label>
           <input
@@ -164,7 +164,7 @@ export default function Form() {
         {/* 레드팀 */}
         <div className="flex flex-col justify-center items-center gap-6">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('red')}>
-            <Image className="object-contain" src={redImage} alt="logo" fill priority />
+            <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{redTeam}</label>
           <input

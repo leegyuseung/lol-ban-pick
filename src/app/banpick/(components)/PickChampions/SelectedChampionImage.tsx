@@ -19,7 +19,7 @@ export default function SelectedChampionImage({
   location,
 }: SelectedChampionImageProps) {
   return (
-    <div>
+    <>
       {(banPickObject[index].use ||
         (currentLocation === banPickObject[index].location && currentSelectedPick[0].name !== '')) &&
         side === location && (
@@ -52,6 +52,6 @@ export default function SelectedChampionImage({
           className={`${location === 'left' ? 'bg-blueLineColor' : 'bg-redLineColor'} ${currentLocation === banPickObject[index].location ? (location === 'right' ? 'absolute h-full top-0 right-0 w-[15px] z-10' : 'absolute h-full top-0 left-0 w-[15px] z-10') : ''}`}
         />
       )}
-    </div>
+    </>
   );
 }
