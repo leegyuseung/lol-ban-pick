@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
+import SharePopup from '@/app/share/sharePopup';
 
 export default function Form() {
   useImageLoaded();
@@ -45,16 +46,28 @@ export default function Form() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeamColor, setSelectedTeamColor] = useState('');
 
+  //소켓 팝업 관련
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const onSubmit = async (data: FormsData) => {
     // 이미지 넣어주기
     data.myImg = blueImage;
     data.yourImg = redImage;
     setRules(data);
-    router.push('/banpick');
+    if(data.peopleMode === "team"){
+      openSharePopup()
+    } else{
+      router.push('/banpick');
+    }
   };
 
-  const openPopup = (teamColor: string) => {
-    setSelectedTeamColor(teamColor);
+  const openSharePopup = () => {
+    setIsShareOpen(true);
+  };
+
+  const closeSharePopup = () => {
+    setIsShareOpen(false);
+  };
+  const openPopup = () => {
     setIsOpen(true);
   };
 
@@ -175,6 +188,12 @@ export default function Form() {
         </div>
       </form>
 
+      {/* 공유하기 팝업 */}
+      {isShareOpen && (
+        <SharePopup
+        closePopup={closeSharePopup}
+        />)
+      }
       {/* 이미지 선택 팝업 */}
       {isOpen && (
         <TeamLogoPopup

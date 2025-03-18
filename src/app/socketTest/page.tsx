@@ -1,13 +1,13 @@
-import SocketTestMain from './socketTestMain';
+import BanpickSocket from '../../hooks/useBanpickSocket';
 //socketTest 페이지
-//userId 발급
-function page({ userId: _userId }: { userId: string }) {
+function BanpickSocketWrapper({ userId: _userId }: { userId: string }) {
+  //userId 발급
   const userId = `${Math.floor(Math.random() * 100000000)}`;
   return (
     <>
-      <SocketTestMain userId={userId} />
+      <BanpickSocket userId={userId} />
     </>
   );
 }
 
-export default page;
+export default BanpickSocketWrapper;
