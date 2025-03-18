@@ -13,6 +13,7 @@ function SharePopup({ closePopup }: PropType) {
   //랜덤
   const randomId = Math.random().toString(36).substr(2, 20);
   const router = useRouter();
+  const { ws, closeWs } = useSocketStore();
   const { roomId, setRoomId, setHost } = useSocketStore();
   const { myTeamSide } = useRulesStore();
   //room id 설정
@@ -37,7 +38,7 @@ function SharePopup({ closePopup }: PropType) {
             </div>
             <div
               onClick={copyText}
-            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/banpick?roomId=${roomId}&side=${myTeamSide === "red"?"blue":"red"}`}</div>
+            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/banpick?roomId=${roomId}&side=${myTeamSide === 'red' ? 'blue' : 'red'}`}</div>
             <div>관전자 공유</div>
             <div
               onClick={copyText}

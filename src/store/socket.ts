@@ -9,6 +9,7 @@ type SocketState = {
   setHost: (host: boolean) => void;
   ws: WebSocket | null;
   setWs: (ws: any) => void;
+  closeWs: (ws: any) => void;
   rules: Omit<RulesState, 'setRules' | 'setPeerlessSet' | 'setClearPeerlessSet'>;
   setRules: (rule: Omit<RulesState, 'setRules' | 'setPeerlessSet' | 'setClearPeerlessSet'>) => void;
   executeFun: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
@@ -31,6 +32,13 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     set({
       ws,
     }),
+  closeWs: (ws?: WebSocket | null) => {
+    if(ws)ws?.close();
+    set({
+      ws: null,
+    });
+    return {};
+  },
   rules: {
     myTeam: '',
     yourTeam: '',

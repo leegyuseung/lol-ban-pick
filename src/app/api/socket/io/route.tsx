@@ -6,20 +6,21 @@ interface Client {
   roomId: string;
   ws: WebSocket;
   side: string;
-  host: boolean | undefined;
+  host: boolean;
   myTeamSide: 'blue' | 'red' | 'audience' | undefined; //undefined일때 host
 }
 
-let wss: WebSocketServer | null = null;
+const wss: WebSocketServer | null = null;
 let clients: Client[] = [];
+const globalForWs = global as unknown as { wss?: WebSocketServer; clients: Client[] };
 
 export async function GET(req: NextRequest) {
   try {
-    if (!wss) {
+    if (!globalForWs.wss) {
       console.log('🛠️ WebSocket 서버 초기화...');
-      wss = new WebSocketServer({ port: 3001 });
+      globalForWs.wss = new WebSocketServer({ port: 3001 });
 
-      wss.on('connection', (ws, req) => {
+      globalForWs.wss.on('connection', (ws, req) => {
         const urlParams = new URLSearchParams(req.url?.split('?')[1]);
         //room id
         const roomId = urlParams.get('roomId') as string;
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
         const userId = urlParams.get('userId') as string;
         //
         const side = urlParams.get('side') as 'blue' | 'red' | 'audience' | undefined;
+        const host = urlParams.get('host') === 'true';
         //room id와 user id 가 있고
         //room id와 user id가 둘다 없는 소켓상태
         if (roomId && userId && !clients.find((w) => w.roomId == roomId && w.userId == userId)) {
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest) {
           //공유를 시작 host 여부
           //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
           const hostRules = clients.find((client) => client.roomId === roomId && client.host);
-          clients.push({ ...(hostRules as Client), userId, roomId, ws, myTeamSide: side, host: !side ? true : false });
+          clients.push({ ...(hostRules as Client), userId, roomId, ws, myTeamSide: side, host });
         }
 
         ws.on('message', (message: string) => {
@@ -47,6 +49,7 @@ export async function GET(req: NextRequest) {
 
             if (recipients) {
               console.log(recipients, 'recipe');
+              console.log(clients, 'clients');
               recipients.forEach((e) =>
                 e.ws.send(
                   JSON.stringify({
@@ -68,7 +71,9 @@ export async function GET(req: NextRequest) {
         });
 
         ws.on('close', () => {
-          clients = clients.filter((client) => client.ws !== ws);
+          const _clients: Client[] = [];
+          clients = clients.filter((client) => client.roomId !== roomId);
+          console.log(clients, 'clients');
           console.log(`❌ 클라이언트 연결 종료: ${roomId}`);
         });
       });
@@ -79,5 +84,3 @@ export async function GET(req: NextRequest) {
     console.log(e);
   }
 }
-
-export const runtime = 'nodejs';

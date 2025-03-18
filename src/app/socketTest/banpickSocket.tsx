@@ -16,7 +16,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   useEffect(() => {
     // WebSocket이 연결되지 않으면 새로 연결 시도
     if (ws) return;
-    if (!socketRef.current) {
+    if (!ws) {
       const userId = _userId;
       setUserId(userId);
       const connectWebSocket = async () => {
@@ -24,11 +24,11 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
 
         const response = await fetch(
-          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}`,
+          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}&host=${searchParams!.get('side') ? false : true}`,
         ); // WebSocket 서버 확인 요청
         if (!response.ok) throw new Error('WebSocket server not ready');
         const _ws = new WebSocket(
-          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}`,
+          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}&host=${searchParams!.get('side') ? false : true}`,
         );
         setWs(_ws); // WebSocket 서버 주소로 변경
 
@@ -58,14 +58,19 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
       connectWebSocket();
     }
-  }, [roomId]);
+    return () => {
+      if (ws) {
+        console.log(ws);
+        if (searchParams!.get('side') ? false : true) {
+          ws!.onclose();
+        }
+      }
+    };
+  }, [ws]);
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
     executeFun(
-      () =>
-        socketRef.current?.send(
-          JSON.stringify({ type: 'ready', userId: userId, roomId: roomId, ...rules }), 
-        ),
+      () => socketRef.current?.send(JSON.stringify({ type: 'ready', userId: userId, roomId: roomId, ...rules })),
       'blue',
     );
   };
