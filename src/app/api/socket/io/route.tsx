@@ -5,6 +5,9 @@ interface Client {
   userId: string;
   roomId: string;
   ws: WebSocket;
+  side: string;
+  host: boolean | undefined;
+  myTeamSide: 'blue' | 'red' | 'audience' | undefined; //undefined일때 host
 }
 
 let wss: WebSocketServer | null = null;
@@ -12,7 +15,6 @@ let clients: Client[] = [];
 
 export async function GET(req: NextRequest) {
   try {
-
     if (!wss) {
       console.log('🛠️ WebSocket 서버 초기화...');
       wss = new WebSocketServer({ port: 3001 });
@@ -20,32 +22,38 @@ export async function GET(req: NextRequest) {
       wss.on('connection', (ws, req) => {
         const urlParams = new URLSearchParams(req.url?.split('?')[1]);
         //room id
-        const roomId = urlParams.get('roomId') as string
+        const roomId = urlParams.get('roomId') as string;
         //user id
-        const userId = urlParams.get('userId') as string
+        const userId = urlParams.get('userId') as string;
+        //
+        const side = urlParams.get('side') as 'blue' | 'red' | 'audience' | undefined;
         //room id와 user id 가 있고
         //room id와 user id가 둘다 없는 소켓상태
         if (roomId && userId && !clients.find((w) => w.roomId == roomId && w.userId == userId)) {
-          clients.push({ userId, roomId, ws });
+          //host 정보를 세팅하고 side만 반대로
+          //TODO: 기타 정보도 사용자에 맞게 변경해야함
+          //공유를 시작 host 여부
+          //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
+          const hostRules = clients.find((client) => client.roomId === roomId && client.host);
+          clients.push({ ...(hostRules as Client), userId, roomId, ws, myTeamSide: side, host: !side ? true : false });
         }
 
         ws.on('message', (message: string) => {
           const data = JSON.parse(message);
           console.log('📩 받은 메시지:', data);
-
-          // 특정 클라이언트에게 메시지 전송
           //이벤트는 추후 변경 예정
-          if (data.type === 'private') {
-            const recipient = clients.filter((client) => client.roomId === data.roomId);
-            
-            if (recipient) {
-              recipient.forEach((e) =>
+          if (data.type === 'ready') {
+            const recipients = clients.filter((client) => client.roomId === data.roomId);
+
+            if (recipients) {
+              console.log(recipients, 'recipe');
+              recipients.forEach((e) =>
                 e.ws.send(
                   JSON.stringify({
-                    type: 'private',
+                    ...data,
                     roomId,
                     userId,
-                    message: data.message,
+                    side,
                   }),
                 ),
               );
@@ -72,4 +80,4 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export const runtime = 'nodejs'; 
+export const runtime = 'nodejs';

@@ -1,4 +1,4 @@
-import BanpickSocket from '../../hooks/useBanpickSocket';
+import BanpickSocket from './banpickSocket';
 //socketTest 페이지
 function BanpickSocketWrapper({ userId: _userId }: { userId: string }) {
   //userId 발급

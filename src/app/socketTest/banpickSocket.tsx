@@ -2,7 +2,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useSocketStore, useUserStore } from '@/store';
+import { useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const searchParams = useSearchParams();
@@ -10,8 +10,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const { roomId, setRoomId } = useSocketStore();
   //user id
   const { userId, setUserId } = useUserStore();
-
-  const [ws, setWs] = useState<WebSocket | null>(null);
+  const { ws, setWs, executeFun, rules, host } = useSocketStore();
+  const { myTeamSide } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
     // WebSocket이 연결되지 않으면 새로 연결 시도
@@ -24,13 +24,13 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
 
         const response = await fetch(
-          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}`,
+          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}`,
         ); // WebSocket 서버 확인 요청
         if (!response.ok) throw new Error('WebSocket server not ready');
         const _ws = new WebSocket(
-          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}`,
+          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}`,
         );
-        setWs(() => _ws); // WebSocket 서버 주소로 변경
+        setWs(_ws); // WebSocket 서버 주소로 변경
 
         _ws.onopen = () =>
           console.log(
@@ -41,12 +41,12 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
         _ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          console.log('📩 받은 메시지:', data);
 
           // 메시지 타입에 따라 알림을 띄움
           // 페이지 별로 이벤트 추가 필요
-          if (data.type === 'private') {
-            console.log(`📩 새 메시지: ${data.message}`); // 다른 창에서 메시지를 받으면 alert
+
+          if (data.type === 'ready') {
+            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
           }
         };
 
@@ -58,15 +58,24 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
       connectWebSocket();
     }
-
-    return () => {
-      socketRef.current?.close();
-      socketRef.current = null;
-    };
   }, [roomId]);
+  const onReady = () => {
+    //현재 설정된 게임의 룰 을 전송
+    executeFun(
+      () =>
+        socketRef.current?.send(
+          JSON.stringify({ type: 'ready', userId: userId, roomId: roomId, ...rules }), 
+        ),
+      'blue',
+    );
+  };
   const goEnter = () => {
-    socketRef.current?.send(
-      JSON.stringify({ type: 'private', userId: userId, roomId: roomId, message: 'test' }), // ✅ `to` 필드 추가
+    executeFun(
+      () =>
+        socketRef.current?.send(
+          JSON.stringify({ type: 'start', userId: userId, roomId: roomId, ...rules, host, message: 'test' }), // ✅ `to` 필드 추가
+        ),
+      'blue',
     );
   };
   return (
@@ -80,10 +89,12 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
       <br />
       <br />
       <br />
+      <div>{JSON.stringify(rules)}</div>
       userId
       {userId ? <div>{userId}</div> : <></>}
       roomId
       {roomId ? <div>{roomId}</div> : <></>}
+      <button onClick={onReady}>준비하기</button>
       <button onClick={goEnter}>시작하기</button>
     </>
   );
