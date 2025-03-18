@@ -5,12 +5,15 @@ export interface ApiResponse<T> {
 }
 
 export type FormsData = {
-  blueTeam: string;
-  redTeam: string;
+  myTeam: string;
+  yourTeam: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
-  timeUnlimited: string;
-  teamSide: 'red' | 'blue' | 'solo';
+  timeUnlimited: 'true' | 'false';
+  myTeamSide: 'red' | 'blue';
+  myImg: string;
+  yourImg: string;
+  nowSet: number;
 };
 
 export interface ChampionInfoI {

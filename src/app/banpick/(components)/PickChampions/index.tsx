@@ -1,6 +1,7 @@
 'use client';
 import SelectedChampionImage from './SelectedChampionImage';
 import SelectedBanImage from './SelectedBanImage';
+import MiniIcon from '@/components/MiniIcon';
 import { useBanStore } from '@/store';
 
 type PropsType = {
@@ -17,6 +18,14 @@ export default function PickChampions({ side }: PropsType) {
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <MiniIcon
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-top.png`}
+            alt={'top'}
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -34,11 +43,18 @@ export default function PickChampions({ side }: PropsType) {
             side={side}
             location={'right'}
           />
-          <span className="absolute bg-opacity-50 m-2">Top</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <MiniIcon
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-jungle.png`}
+            alt={'jungle'}
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -56,11 +72,18 @@ export default function PickChampions({ side }: PropsType) {
             side={side}
             location={'right'}
           />
-          <span className="absolute bg-opacity-50 m-2">Jungle</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <MiniIcon
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-mid.png`}
+            alt={'mid'}
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -77,11 +100,18 @@ export default function PickChampions({ side }: PropsType) {
             side={side}
             location={'right'}
           />
-          <span className="absolute bg-opacity-50 m-2">Mid</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <MiniIcon
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-ad.png`}
+            alt={'ad'}
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -98,11 +128,18 @@ export default function PickChampions({ side }: PropsType) {
             side={side}
             location={'right'}
           />
-          <span className="absolute bg-opacity-50 m-2">Ad</span>
         </div>
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === 'left' ? 'justify-end items-end' : 'items-end'}`}
         >
+          <MiniIcon
+            className={`absolute ${side === 'left' ? 'left-0' : 'right-0'} z-10  m-2`}
+            src={`/images/icon-position-sup.png`}
+            alt={'sup'}
+            width={20}
+            height={20}
+          />
+
           <SelectedChampionImage
             banPickObject={banPickObject}
             currentLocation={currentLocation}
@@ -120,14 +157,13 @@ export default function PickChampions({ side }: PropsType) {
             side={side}
             location={'right'}
           />
-          <span className="absolute bg-opacity-50 m-2">Sup</span>
         </div>
       </div>
 
       {/* 하단부 */}
       <div className="flex flex-col flex-[1] gap-2 pt-5">
         <div className="flex gap-2 justify-center w-full">
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -146,7 +182,7 @@ export default function PickChampions({ side }: PropsType) {
               location={'right'}
             />
           </div>
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -164,7 +200,7 @@ export default function PickChampions({ side }: PropsType) {
               location={'right'}
             />
           </div>
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -184,7 +220,7 @@ export default function PickChampions({ side }: PropsType) {
           </div>
         </div>
         <div className="flex gap-2 justify-center w-full">
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -202,7 +238,7 @@ export default function PickChampions({ side }: PropsType) {
               location={'right'}
             />
           </div>
-          <div className="border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[60px] h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}

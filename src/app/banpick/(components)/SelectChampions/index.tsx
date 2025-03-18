@@ -1,133 +1,194 @@
 'use client';
-import Image from 'next/image';
 import ImageComp from '@/components/Image';
-import { useBanStore } from '@/store';
-import { useEffect, useState } from 'react';
+import Button from '@/components/Button';
+import MiniIcon from '@/components/MiniIcon';
+import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { ChampionInfoI } from '@/types/types';
-import { InfoData } from '@/store/banpick';
+import { BanArray, InfoData } from '@/store/banpick';
+import { useRouter } from 'next/navigation';
+
+const lineMapping: Record<string, number> = {
+  top: 0,
+  jungle: 1,
+  mid: 2,
+  ad: 3,
+  sup: 4,
+};
+
+const MemoizedFaSearch = memo(FaSearch);
 
 export default function SelectChampions() {
   const {
     championInfo,
     setChampionInfo,
     setChangeChampionInfo,
-    setSelectedTeamIndex,
+    setChangeChampionPeerInfo,
     selectedTeam,
     selectedTeamIndex,
-    setCurrentSelectedPick,
+    setSelectedTeamIndex,
+    setClearSelectTeamIndex,
     currentSelectedPick,
-    setCurrentLocation,
+    setCurrentSelectedPick,
     currentLocation,
-    setBanPickObject,
+    setCurrentLocation,
+    setClearCurrentLocation,
     banPickObject,
+    setBanPickObject,
+    setClearBanPickObject,
+    headerSecond,
   } = useBanStore();
-
+  const { banpickMode, nowSet, myTeamSide, setPeerlessSet } = useRulesStore();
+  const { setMyBan, setYourBan, myBan, yourBan, setClearMyBan, setClearYourBan } = usePeerlessStore();
   const [filteredChampions, setFilteredChampions] = useState(championInfo);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]);
+  const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]);
+  const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
+
+  const router = useRouter();
 
   useEffect(() => {
     setChampionInfo();
   }, []);
 
   useEffect(() => {
+    setChangeChampionPeerInfo(myBan, yourBan);
+  }, [myBan, yourBan]);
+
+  useEffect(() => {
     setFilteredChampions(championInfo); // 챔피언 정보가 변경될 때 필터링 데이터 초기화
     setSelectedFilter(null);
   }, [championInfo]);
 
-  const onClickFilter = (type: string) => {
-    if (selectedFilter === type) {
-      setSelectedFilter(null);
-      setFilteredChampions(championInfo);
-    } else {
-      setSelectedFilter(type);
-      const filtered = Object.fromEntries(Object.entries(championInfo).filter(([_, info]) => info.line.includes(type)));
-      setFilteredChampions(filtered);
-    }
-  };
+  const onClickFilter = useCallback(
+    (type: string) => {
+      if (selectedFilter === type) {
+        setSelectedFilter(null);
+        setFilteredChampions(championInfo);
+      } else {
+        setSelectedFilter(type);
+        const filtered = Object.fromEntries(
+          Object.entries(championInfo).filter(([_, info]) => info.line.includes(type)),
+        );
+        setFilteredChampions(filtered);
+      }
+    },
+    [championInfo],
+  );
 
   // 검색기능
-  const onTextFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value.toLowerCase();
+  const onTextFilter = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const searchTerm = e.target.value.toLowerCase();
 
-    if (searchTerm === '') {
-      setFilteredChampions(championInfo);
-    } else {
-      const filtered = Object.fromEntries(
-        Object.entries(championInfo).filter(([_, info]) => info.name.toLowerCase().includes(searchTerm)),
-      );
-      setFilteredChampions(filtered); // 필터링된 챔피언 목록으로 설정
-    }
-  };
+      if (searchTerm === '') {
+        setFilteredChampions(championInfo);
+      } else {
+        const filtered = Object.fromEntries(
+          Object.entries(championInfo).filter(([_, info]) => info.name.toLowerCase().includes(searchTerm)),
+        );
+        setFilteredChampions(filtered); // 필터링된 챔피언 목록으로 설정
+      }
+    },
+    [championInfo],
+  );
 
   // Image 클릭시
-  const onClick = (pickName: string, info: ChampionInfoI) => {
-    if (pickName === '') return;
-    setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
-  };
+  const onClick = useCallback(
+    (pickName: string, info: ChampionInfoI) => {
+      if (pickName === '') return;
+      setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
+    },
+    [setCurrentSelectedPick],
+  );
 
   // 챔피언 선택 버튼 클릭시
-  const onClickButton = () => {
-    console.log('data', championInfo);
+  const onClickButton = useCallback(() => {
     let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
 
-    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info); // 현재 선택된 챔피언을 세팅해준다
-    setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
-    index++;
-    setCurrentLocation(index); // 다음 위치를 저장한다
+    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
+    setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick);
 
-    setCurrentSelectedPick('', InfoData); // 초기화
+    const selectedChampion = {
+      name: currentSelectedPick[0].name,
+      info: currentSelectedPick[0].info,
+      line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+    };
 
-    setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
+    if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+      if (selectedTeam[selectedTeamIndex].color === 'red') {
+        setRedPeerlessArray((prev) => [...prev, selectedChampion]);
+      } else {
+        setBluePeerlessArray((prev) => [...prev, selectedChampion]);
+      }
+    }
+
+    index += 1;
+    setCurrentLocation(index);
+    setCurrentSelectedPick('', InfoData);
+    setSelectedTeamIndex();
+  }, [banPickObject, currentLocation, currentSelectedPick, selectedTeam, selectedTeamIndex]);
+
+  const onNextSet = () => {
+    // 피어리스 밴픽 추가
+    if (myTeamSide === 'blue') {
+      setMyBan(bluePeerlessArray);
+      setYourBan(redPeerlessArray);
+    } else {
+      setMyBan(redPeerlessArray);
+      setYourBan(bluePeerlessArray);
+    }
+    setPeerlessSet();
+
+    // 리스트들 초기화를 해줘야한다.
+    setClearBanPickObject();
+    setClearSelectTeamIndex();
+    setClearCurrentLocation();
+    setRedPeerlessArray([]);
+    setBluePeerlessArray([]);
+    router.refresh();
   };
+
+  const onReplay = useCallback(() => {
+    setClearBanPickObject();
+    setClearSelectTeamIndex();
+    setClearCurrentLocation();
+    if (banpickMode !== 'tournament') {
+      setRedPeerlessArray([]);
+      setBluePeerlessArray([]);
+      setClearMyBan();
+      setClearYourBan();
+    }
+    location.reload();
+  }, [
+    banpickMode,
+    setClearBanPickObject,
+    setClearSelectTeamIndex,
+    setClearCurrentLocation,
+    setClearMyBan,
+    setClearYourBan,
+  ]);
 
   return (
     <div className="flex flex-col gap-3 min-w-[508px]">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-top.png"
-            alt="top"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('top')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-jungle.png"
-            alt="jungle"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('jungle')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-middle.png"
-            alt="middle"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('mid')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-bottom.png"
-            alt="bottom"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('ad')}
-          />
-          <Image
-            className="cursor-pointer"
-            src="/images/icon-position-utility.png"
-            alt="utility"
-            width={20}
-            height={20}
-            onClick={() => onClickFilter('sup')}
-          />
+          {filterOptions.map((type) => (
+            <MiniIcon
+              key={type}
+              className="cursor-pointer"
+              src={`/images/icon-position-${type}.png`}
+              alt={type}
+              width={20}
+              height={20}
+              onClick={() => onClickFilter(type)}
+            />
+          ))}
         </div>
         <div className="flex items-center border border-subGold w-full max-w-[200px] px-3">
-          <FaSearch className="text-mainText text-sm mr-2" />
+          <MemoizedFaSearch className="text-mainText text-sm mr-2" />
           <input
             className="text-mainText text-xs w-full py-2 bg-transparent focus:ring-0 focus:border-subGold focus:outline-none placeholder:text-xs placeholder:text-mainText"
             placeholder="검색"
@@ -150,7 +211,7 @@ export default function SelectChampions() {
               width={60}
               height={60}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
-              onClick={() => onClick(name, info)}
+              onClick={headerSecond !== '' ? () => onClick(name, info) : undefined}
             />
             <p className="text-[9px] text-center text-mainText">{info.name}</p>
             {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}
@@ -158,14 +219,51 @@ export default function SelectChampions() {
           </div>
         ))}
       </div>
-      <div className="flex justify-center">
-        <button
-          onClick={onClickButton}
-          className={`${currentSelectedPick[0].name === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
-          disabled={currentSelectedPick[0].name === ''}
-        >
-          챔피언 선택
-        </button>
+      <div className="relative flex justify-center">
+        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
+          (banpickMode === 'tournament' && headerSecond === '') ||
+          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '')) && (
+          <div className="absolute left-0">
+            <Button
+              text={'뒤로가기'}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm hover:bg-opacity-65`}
+              onClick={() => (window.location.href = '/')}
+            />
+          </div>
+        )}
+
+        {headerSecond !== '' && (
+          <div className="absolute">
+            <Button
+              text={'챔피언 선택'}
+              className={`${currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
+              onClick={currentSelectedPick[0].name === '' || headerSecond === '' ? undefined : onClickButton}
+            />
+          </div>
+        )}
+
+        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
+          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '') ||
+          (banpickMode === 'tournament' && headerSecond === '')) && (
+          <div className="absolute right-0">
+            <Button
+              text={'다시하기'}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm hover:bg-opacity-65`}
+              onClick={onReplay}
+            />
+          </div>
+        )}
+
+        {((banpickMode !== 'tournament' && banpickMode === 'peerless3' && nowSet < 3 && headerSecond === '') ||
+          (banpickMode !== 'tournament' && banpickMode === 'peerless5' && nowSet < 5 && headerSecond === '')) && (
+          <div className="absolute right-0">
+            <Button
+              text={`${nowSet + 1}세트`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm hover:bg-opacity-65`}
+              onClick={onNextSet}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
