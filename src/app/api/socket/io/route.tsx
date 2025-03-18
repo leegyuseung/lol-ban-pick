@@ -71,8 +71,9 @@ export async function GET(req: NextRequest) {
         });
 
         ws.on('close', () => {
-          const _clients: Client[] = [];
-          clients = clients.filter((client) => client.roomId !== roomId);
+          if(host){
+            clients = clients.filter((client) => client.roomId !== roomId);
+          }
           console.log(clients, 'clients');
           console.log(`❌ 클라이언트 연결 종료: ${roomId}`);
         });

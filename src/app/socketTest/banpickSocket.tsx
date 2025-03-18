@@ -61,9 +61,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
     return () => {
       if (ws) {
         console.log(ws);
-        if (searchParams!.get('side') ? false : true) {
-          ws!.onclose();
-        }
+        ws!.onclose();
       }
     };
   }, [ws]);
