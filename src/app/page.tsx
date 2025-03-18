@@ -1,6 +1,7 @@
 import Form from '@/components/FormRow';
 import Header from '@/components/Header';
 import { Suspense } from 'react';
+import SocketExit from './socketTest/socketExit';
 
 export default function Home() {
   return (
@@ -10,6 +11,8 @@ export default function Home() {
         <Suspense>
         <Form />
         </Suspense>
+        {/* 개선 예정 */}
+        {/* <SocketExit/> */}
       </div>
     </div>
   );

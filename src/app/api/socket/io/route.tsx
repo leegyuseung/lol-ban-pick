@@ -71,6 +71,7 @@ export async function GET(req: NextRequest) {
         });
 
         ws.on('close', () => {
+          //host가 종료하면 room 삭제
           if(host){
             clients = clients.filter((client) => client.roomId !== roomId);
           }
