@@ -1,7 +1,7 @@
 import BanPickMain from './BanPickMain';
 
 function Banpick() {
-  return <BanPickMain></BanPickMain>;
+  return <BanPickMain />;
 }
 
 export default Banpick;

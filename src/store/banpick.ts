@@ -1,12 +1,26 @@
 import championData from '../mock/champions.json';
 import { ChampionInfoI } from '@/types/types';
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 
 type Store = {
   championInfo: Record<string, ChampionInfoI>;
   setChampionInfo: () => Promise<void>;
   setChangeChampionInfo: (name: string, banPick: string) => void;
+};
+
+export type BanArray = {
+  name: string;
+  info: ChampionInfoI;
+  line: number;
+};
+type PeerlessStore = {
+  myBan: BanArray[][];
+  yourBan: BanArray[][];
+  setMyBan: (array: BanArray[]) => void;
+  setYourBan: (array: BanArray[]) => void;
+  setClearMyBan: () => void;
+  setClearYourBan: () => void;
 };
 
 export type BanPickObjectType = {
@@ -37,27 +51,214 @@ export const InfoData = {
   line: [],
 };
 
+const InitializeBanPickObject = [
+  {
+    index: 0,
+    location: 'blueBan1',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 1,
+    location: 'redBan1',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 2,
+    location: 'blueBan2',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 3,
+    location: 'redBan2',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 4,
+    location: 'blueBan3',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 5,
+    location: 'redBan3',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 6,
+    location: 'bluePick1',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 7,
+    location: 'redPick1',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 8,
+    location: 'redPick2',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 9,
+    location: 'bluePick2',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 10,
+    location: 'bluePick3',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 11,
+    location: 'redPick3',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 12,
+    location: 'redBan4',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 13,
+    location: 'blueBan4',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 14,
+    location: 'redBan5',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 15,
+    location: 'blueBan5',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'ban',
+  },
+  {
+    index: 16,
+    location: 'redPick4',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 17,
+    location: 'bluePick4',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 18,
+    location: 'bluePick5',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+  {
+    index: 19,
+    location: 'redPick5',
+    name: '',
+    info: InfoData,
+    use: false,
+    random: false,
+    status: 'pick',
+  },
+];
+
 interface BanI {
   championInfo: Record<string, ChampionInfoI>;
   setChampionInfo: () => Promise<void>;
   setChangeChampionInfo: (name: string, banPick: string) => void;
+  setChangeChampionPeerInfo: (myBan: BanArray[][], yourBan: BanArray[][]) => void;
 
   currentSelectedPick: currentSelectedPickType;
-
   setCurrentSelectedPick: (name: string, info: ChampionInfoI) => void;
 
   banPickObject: BanPickObjectType;
   setBanPickObject: (index: number, name: string, info: ChampionInfoI, ran: boolean) => void;
+  setClearBanPickObject: () => void;
 
   currentLocation: string;
   setCurrentLocation: (index: number) => void;
+  setClearCurrentLocation: () => void;
 
   selectedTeam: {
     color: string;
     banpick: string;
+    line: string;
   }[];
   selectedTeamIndex: number;
   setSelectedTeamIndex: () => void;
+  setClearSelectTeamIndex: () => void;
 
   RandomPick: () => void;
 
@@ -155,6 +356,36 @@ export const useBanStore = create<BanI>()((set, get) => ({
       return { championInfo: updatedChampionInfo };
     }),
 
+  setChangeChampionPeerInfo: (myBan, yourBan) =>
+    set((state) => {
+      const bannedChampionNames = [
+        ...myBan
+          .flat()
+          .filter((champ) => champ.name)
+          .map((champ) => champ.name),
+        ...yourBan
+          .flat()
+          .filter((champ) => champ.name)
+          .map((champ) => champ.name),
+      ];
+
+      const peerChampionInfo = Object.fromEntries(
+        Object.entries(state.championInfo).map(([name, info]) => [
+          name,
+          bannedChampionNames.includes(name) ? { ...info, status: 'peer' } : info,
+        ]),
+      );
+
+      const BanInitialize = Object.fromEntries(
+        Object.entries(peerChampionInfo).map(([name, info]) => [
+          name,
+          info.status === 'ban' ? { ...info, status: '' } : info,
+        ]),
+      );
+
+      return { championInfo: BanInitialize };
+    }),
+
   currentSelectedPick: [
     {
       name: '',
@@ -172,195 +403,17 @@ export const useBanStore = create<BanI>()((set, get) => ({
 
   currentLocation: 'blueBan1',
 
-  setCurrentLocation: (index: number) =>
+  setCurrentLocation: (index) =>
     set((state) => {
       const selectedBanPick = state.banPickObject.find((obj) => obj.index === index);
       return selectedBanPick ? { currentLocation: selectedBanPick.location } : {};
     }),
+  setClearCurrentLocation: () =>
+    set(() => {
+      return { currentLocation: 'blueBan1' };
+    }),
 
-  banPickObject: [
-    {
-      index: 0,
-      location: 'blueBan1',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 1,
-      location: 'redBan1',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 2,
-      location: 'blueBan2',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 3,
-      location: 'redBan2',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 4,
-      location: 'blueBan3',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 5,
-      location: 'redBan3',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 6,
-      location: 'bluePick1',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 7,
-      location: 'redPick1',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 8,
-      location: 'redPick2',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 9,
-      location: 'bluePick2',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 10,
-      location: 'bluePick3',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 11,
-      location: 'redPick3',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 12,
-      location: 'redBan4',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 13,
-      location: 'blueBan4',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 14,
-      location: 'redBan5',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 15,
-      location: 'blueBan5',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'ban',
-    },
-    {
-      index: 16,
-      location: 'redPick4',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 17,
-      location: 'bluePick4',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 18,
-      location: 'bluePick5',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-    {
-      index: 19,
-      location: 'redPick5',
-      name: '',
-      info: InfoData,
-      use: false,
-      random: false,
-      status: 'pick',
-    },
-  ],
-
+  banPickObject: InitializeBanPickObject,
   setBanPickObject: (index, name, info, ban) =>
     set((state) => {
       const updatedBanPickObject = state.banPickObject.map((obj) =>
@@ -369,37 +422,46 @@ export const useBanStore = create<BanI>()((set, get) => ({
       return { banPickObject: updatedBanPickObject };
     }),
 
+  setClearBanPickObject: () =>
+    set(() => {
+      return { banPickObject: InitializeBanPickObject };
+    }),
+
   selectedTeamIndex: 0,
   setSelectedTeamIndex: () =>
     set((state) => ({
       selectedTeamIndex: state.selectedTeamIndex + 1,
     })),
+  setClearSelectTeamIndex: () =>
+    set(() => {
+      return { selectedTeamIndex: 0 };
+    }),
 
   selectedTeam: [
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
+    { color: 'blue', banpick: 'ban', line: '' },
+    { color: 'red', banpick: 'ban', line: '' },
+    { color: 'blue', banpick: 'ban', line: '' },
+    { color: 'red', banpick: 'ban', line: '' },
+    { color: 'blue', banpick: 'ban', line: '' },
+    { color: 'red', banpick: 'ban', line: '' },
     // 1번 밴 끝
-    { color: 'blue', banpick: 'pick' },
-    { color: 'red', banpick: 'pick' },
-    { color: 'red', banpick: 'pick' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'red', banpick: 'pick' },
+    { color: 'blue', banpick: 'pick', line: 'top' },
+    { color: 'red', banpick: 'pick', line: 'top' },
+    { color: 'red', banpick: 'pick', line: 'jungle' },
+    { color: 'blue', banpick: 'pick', line: 'jungle' },
+    { color: 'blue', banpick: 'pick', line: 'mid' },
+    { color: 'red', banpick: 'pick', line: 'mid' },
     // 1번 픽 끝
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'ban' },
-    { color: 'red', banpick: 'ban' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'blue', banpick: 'pick' },
-    { color: 'red', banpick: 'ban' },
+    { color: 'red', banpick: 'ban', line: '' },
+    { color: 'blue', banpick: 'ban', line: '' },
+    { color: 'red', banpick: 'ban', line: '' },
+    { color: 'blue', banpick: 'ban', line: '' },
+    { color: 'red', banpick: 'pick', line: 'ad' },
+    { color: 'blue', banpick: 'pick', line: 'ad' },
+    { color: 'blue', banpick: 'pick', line: 'sup' },
+    { color: 'red', banpick: 'pick', line: 'sup' },
     // 2번 픽 끝
-    { color: '', banpick: '' },
+    { color: '', banpick: '', line: '' },
   ],
 
   RandomPick: () => {
@@ -442,3 +504,41 @@ export const useBanStore = create<BanI>()((set, get) => ({
       headerSecond: second,
     })),
 }));
+
+export const usePeerlessStore = create<PeerlessStore>()(
+  persist(
+    (set) => ({
+      myBan: [],
+      yourBan: [],
+
+      setMyBan: (array) =>
+        set((state) => {
+          const updatedMyban = [...state.myBan, array];
+
+          return { myBan: updatedMyban };
+        }),
+
+      setYourBan: (array) =>
+        set((state) => {
+          const updatedYourban = [...state.yourBan, array];
+
+          return { yourBan: updatedYourban };
+        }),
+
+      setClearMyBan: () =>
+        set(() => {
+          localStorage.removeItem('peerless-store');
+          return { myBan: [] };
+        }),
+
+      setClearYourBan: () =>
+        set(() => {
+          localStorage.removeItem('peerless-store');
+          return { yourBan: [] };
+        }),
+    }),
+    {
+      name: 'peerless-store',
+    },
+  ),
+);

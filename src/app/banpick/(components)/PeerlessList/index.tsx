@@ -1,71 +1,52 @@
 'use client';
-import { useRulesStore } from '@/store';
+import PeerlessImage from './PeerlessImage';
+import { usePeerlessStore, useRulesStore } from '@/store';
 
-export default function PeerlessList() {
+type PropsType = {
+  side: string;
+};
+
+export default function PeerlessList({ side }: PropsType) {
   const { banpickMode } = useRulesStore();
+  const { myBan, yourBan } = usePeerlessStore();
+  const { myTeamSide } = useRulesStore();
+
+  const Mode = [
+    {
+      Mode: 'tournament',
+      TeamSide: 'blue',
+      Side: 'left',
+      Ban: myBan,
+    },
+    {
+      Mode: 'tournament',
+      TeamSide: 'red',
+      Side: 'left',
+      Ban: yourBan,
+    },
+    {
+      Mode: 'tournament',
+      TeamSide: 'blue',
+      Side: 'right',
+      Ban: yourBan,
+    },
+    {
+      Mode: 'tournament',
+      TeamSide: 'red',
+      Side: 'right',
+      Ban: myBan,
+    },
+  ];
 
   return (
     <div className="flex flex-col flex-[2]">
-      <div className="flex flex-col gap-2 pt-5">
-        <div className="flex justify-center w-full">
-          {banpickMode === 'tournament' ? (
-            ''
-          ) : (
-            <>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 pt-5">
-        <div className="flex justify-center w-full">
-          {banpickMode === 'tournament' ? (
-            ''
-          ) : (
-            <>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 pt-5">
-        <div className="flex justify-center w-full">
-          {banpickMode === 'tournament' ? (
-            ''
-          ) : (
-            <>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 pt-5">
-        <div className="flex justify-center w-full">
-          {banpickMode === 'tournament' ? (
-            ''
-          ) : (
-            <>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-              <div className="border border-mainGold w-[40px] h-[40px]"></div>
-            </>
-          )}
-        </div>
-      </div>
+      {Mode.map(
+        (mode) =>
+          banpickMode !== mode.Mode &&
+          myTeamSide === mode.TeamSide &&
+          side === mode.Side &&
+          mode.Ban.map((ban, index) => <PeerlessImage key={index} ban={ban} />),
+      )}
     </div>
   );
 }

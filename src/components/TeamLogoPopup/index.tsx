@@ -39,6 +39,7 @@ export default function TeamLogoPopup({
                   src={imageUrl}
                   alt={`${ImageList[index]}`}
                   fill
+                  sizes="w-[80px] h-[80px]"
                   priority
                   className={`object-contain cursor-pointer border-2 
                     ${
