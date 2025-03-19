@@ -7,7 +7,20 @@ interface Client {
   ws: WebSocket;
   side: string;
   host: boolean;
-  myTeamSide: 'blue' | 'red' | 'audience' | undefined; //undefined일때 host
+  rules: {
+    myTeamSide: 'blue' | 'red' | 'audience' | undefined; //undefined일때 host
+
+    myTeam?: string;
+    yourTeam?: string;
+    banpickMode?: 'tournament' | 'peerless3' | 'peerless5';
+    peopleMode?: 'solo' | 'team';
+    timeUnlimited?: 'true' | 'false';
+    myImg?: string;
+    yourImg?: string;
+
+    // 피어리스 세트를 담아야한다
+    nowSet?: number;
+  };
 }
 
 const wss: WebSocketServer | null = null;
@@ -31,18 +44,37 @@ export async function GET(req: NextRequest) {
         const host = urlParams.get('host') === 'true';
         //room id와 user id 가 있고
         //room id와 user id가 둘다 없는 소켓상태
+        console.log('roomId', roomId, 'userId', userId, 'roomId && userId', clients);
         if (roomId && userId && !clients.find((w) => w.roomId == roomId && w.userId == userId)) {
           //host 정보를 세팅하고 side만 반대로
           //TODO: 기타 정보도 사용자에 맞게 변경해야함
           //공유를 시작 host 여부
           //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
           const hostRules = clients.find((client) => client.roomId === roomId && client.host);
-          clients.push({ ...(hostRules as Client), userId, roomId, ws, myTeamSide: side, host });
+          clients.push({ ...(hostRules as Client), userId, roomId, ws, host });
         }
 
         ws.on('message', (message: string) => {
           const data = JSON.parse(message);
           console.log('📩 받은 메시지:', data);
+          if (data.type === 'init') {
+            const hostRules = clients.find((client) => client.roomId === roomId && client.host);
+            console.log(hostRules, 'hostRules');
+            if (data.host) {
+              clients
+                .filter((client) => client.roomId === data.roomId)
+                .forEach((client) => {
+                  client.rules = { ...data.rules };
+                });
+            } else if (hostRules) {
+              clients
+                .filter((client) => client.roomId === data.roomId && client.userId === data.userId)
+                .forEach((client) => {
+                  client.rules = { ...hostRules.rules };
+                  client.ws.send(JSON.stringify({ ...data, rules: client.rules }));
+                });
+            }
+          }
           //이벤트는 추후 변경 예정
           if (data.type === 'ready') {
             const recipients = clients.filter((client) => client.roomId === data.roomId);
@@ -72,7 +104,7 @@ export async function GET(req: NextRequest) {
 
         ws.on('close', () => {
           //host가 종료하면 room 삭제
-          if(host){
+          if (host) {
             clients = clients.filter((client) => client.roomId !== roomId);
           }
           console.log(clients, 'clients');

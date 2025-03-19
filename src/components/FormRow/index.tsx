@@ -10,6 +10,7 @@ import { useRulesStore, usePeerlessStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 import SharePopup from '@/app/share/sharePopup';
+import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 
 export default function Form() {
   useImageLoaded();
@@ -190,7 +191,7 @@ export default function Form() {
 
       {/* 공유하기 팝업 */}
       {isShareOpen && (
-        <SharePopup
+        <SharePopupWrapper
         closePopup={closeSharePopup}
         />)
       }

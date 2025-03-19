@@ -6,12 +6,15 @@ import React, { SyntheticEvent, useEffect } from 'react';
 import { useSocketStore, useRulesStore } from '@/store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import useBanpickSocket from '@/hooks/useBanpickSocket';
 interface PropType {
   closePopup: () => void;
+  userId: string;
 }
-function SharePopup({ closePopup }: PropType) {
+function SharePopup({ closePopup, userId }: PropType) {
   //랜덤
   const randomId = Math.random().toString(36).substr(2, 20);
+  useBanpickSocket({ userId, roomId: randomId, isHost:true });
   const router = useRouter();
   const { ws, closeWs } = useSocketStore();
   const { roomId, setRoomId, setHost } = useSocketStore();
