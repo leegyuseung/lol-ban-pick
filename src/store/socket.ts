@@ -5,8 +5,6 @@ import { RulesState } from '@/types/types';
 type SocketState = {
   roomId: string;
   setRoomId: (roomId: string) => void;
-  host: boolean;
-  setHost: (host: boolean) => void;
   ws: WebSocket | null;
   setWs: (ws: any) => void;
   closeWs: (ws: any) => void;
@@ -22,11 +20,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       roomId: roomId,
     }),
 
-  host: false,
-  setHost: (host: boolean) =>
-    set({
-      host,
-    }),
   ws: null,
   setWs: (ws?: WebSocket | null) =>
     set({
@@ -55,6 +48,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       rules,
     }),
   executeFun: <T extends (...args: unknown[]) => unknown>(func: T, side?: string): void => {
+    console.log(side,get().rules.myTeamSide)
     if (get().rules.myTeamSide === side) {
       func(); // 함수 실행
     }

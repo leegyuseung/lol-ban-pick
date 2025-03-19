@@ -11,11 +11,11 @@ type RulesState = {
   myTeamSide: 'red' | 'blue'; // teamSide가 나의 team을 담고 있어야한다
   myImg: string;
   yourImg: string;
-
+  position?:string;
   // 피어리스 세트를 담아야한다
   nowSet: number;
 
-  setRules: (data: FormsData) => void;
+  setRules: (data: FormsData & { position?: string }) => void;
   setPeerlessSet: () => void;
   setClearPeerlessSet: () => void;
 };
@@ -32,8 +32,8 @@ export const useRulesStore = create<RulesState>()(
       myImg: '',
       yourImg: '',
       nowSet: 1,
-
-      setRules: (data: FormsData) =>
+      position:'blue',
+      setRules: (data: FormsData & { position?: string }) =>
         set({
           myTeam:
             data.peopleMode === 'solo'
@@ -57,6 +57,7 @@ export const useRulesStore = create<RulesState>()(
           myTeamSide: data.peopleMode === 'solo' ? 'blue' : data.myTeamSide,
           myImg: data.peopleMode === 'solo' ? data.myImg : data.myTeamSide === 'blue' ? data.myImg : data.yourImg,
           yourImg: data.peopleMode === 'solo' ? data.yourImg : data.myTeamSide === 'blue' ? data.yourImg : data.myImg,
+          position:data.position
         }),
 
       setPeerlessSet: () =>

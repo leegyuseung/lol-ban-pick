@@ -40,7 +40,7 @@ export interface RulesState {
 
   // 피어리스 세트를 담아야한다
   nowSet: number;
-
+  position?:string;
   setRules: (data: FormsData) => void;
   setPeerlessSet: () => void;
   setClearPeerlessSet: () => void;
