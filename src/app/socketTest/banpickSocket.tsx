@@ -5,15 +5,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
+import { useRouter } from 'next/navigation';
 function BanpickSocket({ userId: _userId }: { userId: string }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   //room id
   const { roomId, setRoomId } = useSocketStore();
   //user id
   const { userId, setUserId } = useUserStore();
-  const { ws, setWs, executeFun, rules, host } = useSocketStore();
+  const { ws, setWs, executeFun, rules } = useSocketStore();
   const { myTeamSide } = useRulesStore();
-  useBanpickSocket({ userId: _userId, roomId, isHost:false });
+  useBanpickSocket({ userId: _userId, roomId, isHost: false });
   // useEffect(() => {
   //   console.log(ws);
   //   if (ws && ws.readyState === WebSocket.CONNECTING) {
@@ -22,13 +24,20 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   // }, [ws, ws?.readyState]);
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
-    executeFun(() => ws?.send(JSON.stringify({ type: 'ready', userId: userId, roomId: roomId, ...rules })), 'blue');
+    executeFun(() => ws?.send(JSON.stringify({ type: 'ready', userId: userId, roomId: roomId, ...rules })), 'red');
   };
   const goEnter = () => {
+    router.push("/banpick")
     executeFun(
       () =>
         ws?.send(
-          JSON.stringify({ type: 'start', userId: userId, roomId: roomId, ...rules, host, message: 'test' }), // ✅ `to` 필드 추가
+          JSON.stringify({
+            type: 'start',
+            userId: userId,
+            roomId: roomId,
+            ...rules,
+            host: !!searchParams!.get('roomId'),
+          }), 
         ),
       'blue',
     );

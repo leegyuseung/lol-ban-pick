@@ -7,8 +7,8 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
   //room id
   const { setRoomId } = useSocketStore();
   //user id
-  const { userId, setUserId } = useUserStore();
-  const { ws, setWs, executeFun, rules, host } = useSocketStore();
+  const { setUserId } = useUserStore();
+  const { ws, setWs, executeFun, rules } = useSocketStore();
   const { myTeamSide, setRules } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
@@ -24,11 +24,11 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
 
         const response = await fetch(
-          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}&host=${searchParams!.get('side') ? false : true}`,
+          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&position=${searchParams!.get('position') ? searchParams!.get('position') : myTeamSide}&host=${searchParams!.get('position') ? false : true}`,
         ); // WebSocket 서버 확인 요청
         if (!response.ok) throw new Error('WebSocket server not ready');
         const _ws = new WebSocket(
-          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&side=${searchParams!.get('side') ? searchParams!.get('side') : myTeamSide}&host=${searchParams!.get('side') ? false : true}`,
+          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&position=${searchParams!.get('position') ? searchParams!.get('position') : myTeamSide}&host=${searchParams!.get('position') ? false : true}`,
         );
         setWs(_ws); // WebSocket 서버 주소로 변경
 
@@ -47,6 +47,7 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
                 roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                 rules,
                 host: true,
+                position:`${searchParams!.get('position') ? searchParams!.get('position') : myTeamSide}`
               }),
             );
           } else {
@@ -57,6 +58,7 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
                 userId: userId,
                 roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                 host: false,
+                position:`${searchParams!.get('position') ? searchParams!.get('position') : myTeamSide}`
               }),
             );
           }
@@ -69,7 +71,7 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
 
           if (data.type === 'init') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
-            setRules(data.rules)
+            setRules(data.rules);
           }
           if (data.type === 'ready') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);

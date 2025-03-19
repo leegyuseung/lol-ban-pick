@@ -4,10 +4,10 @@ function Banpick() {
   const userId = `${Math.floor(Math.random() * 100000000)}`;
   return (
     <>
-      <BanpickSocket userId={userId}></BanpickSocket>
+      {/* <BanpickSocket userId={userId}></BanpickSocket> */}
+      <BanPickMain />;
     </>
   );
-  // <BanPickMain />;
 }
 
 export default Banpick;

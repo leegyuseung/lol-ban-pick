@@ -17,7 +17,7 @@ function SharePopup({ closePopup, userId }: PropType) {
   useBanpickSocket({ userId, roomId: randomId, isHost:true });
   const router = useRouter();
   const { ws, closeWs } = useSocketStore();
-  const { roomId, setRoomId, setHost } = useSocketStore();
+  const { roomId, setRoomId } = useSocketStore();
   const { myTeamSide } = useRulesStore();
   //room id 설정
   useEffect(() => {
@@ -27,7 +27,6 @@ function SharePopup({ closePopup, userId }: PropType) {
     navigator.clipboard.writeText((e.target as HTMLElement).innerText);
   };
   const goBanpick = () => {
-    setHost(false);
     router.push('/socketTest');
   };
   return (
@@ -41,11 +40,11 @@ function SharePopup({ closePopup, userId }: PropType) {
             </div>
             <div
               onClick={copyText}
-            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/banpick?roomId=${roomId}&side=${myTeamSide === 'red' ? 'blue' : 'red'}`}</div>
+            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketTest?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`}</div>
             <div>관전자 공유</div>
             <div
               onClick={copyText}
-            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/banpick?roomId=${roomId}&side=audience`}</div>
+            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketTest?roomId=${roomId}&position=audience`}</div>
             <div className="flex flex-row justify-center items-center">
               <button
                 className="text-center font-semibold w-[200px] p-3 border border-mainText text-mainText rounded-md hover:bg-gray-500 transition"

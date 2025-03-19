@@ -5,10 +5,10 @@ interface Client {
   userId: string;
   roomId: string;
   ws: WebSocket;
-  side: string;
   host: boolean;
+  position?: 'blue' | 'red' | 'audience';
   rules: {
-    myTeamSide: 'blue' | 'red' | 'audience' | undefined; //undefined일때 host
+    myTeamSide: 'blue' | 'red' | undefined; //undefined일때 host
 
     myTeam?: string;
     yourTeam?: string;
@@ -40,16 +40,16 @@ export async function GET(req: NextRequest) {
         //user id
         const userId = urlParams.get('userId') as string;
         //
-        const side = urlParams.get('side') as 'blue' | 'red' | 'audience' | undefined;
+        const position = urlParams.get('position') as 'blue' | 'red' | 'audience' | undefined;
         const host = urlParams.get('host') === 'true';
+        console.log('roomId', roomId, 'userId', userId, 'roomId && userId', clients);
         //room id와 user id 가 있고
         //room id와 user id가 둘다 없는 소켓상태
-        console.log('roomId', roomId, 'userId', userId, 'roomId && userId', clients);
         if (roomId && userId && !clients.find((w) => w.roomId == roomId && w.userId == userId)) {
-          //host 정보를 세팅하고 side만 반대로
-          //TODO: 기타 정보도 사용자에 맞게 변경해야함
-          //공유를 시작 host 여부
+          //host 정보를 세팅하고
+          //공유를 시작
           //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
+          //TODO: 기타 정보도 사용자에 맞게 변경해야함
           const hostRules = clients.find((client) => client.roomId === roomId && client.host);
           clients.push({ ...(hostRules as Client), userId, roomId, ws, host });
         }
@@ -60,18 +60,43 @@ export async function GET(req: NextRequest) {
           if (data.type === 'init') {
             const hostRules = clients.find((client) => client.roomId === roomId && client.host);
             console.log(hostRules, 'hostRules');
+            //host일 때 가져온 rules 정보 세팅
             if (data.host) {
               clients
                 .filter((client) => client.roomId === data.roomId)
                 .forEach((client) => {
-                  client.rules = { ...data.rules };
+                  client.rules = { ...data.rules,position: data.rules.myTeamSide,  };
+                  client.ws.send(
+                    JSON.stringify({
+                      ...data,
+                      rules: {
+                        ...client.rules,
+                        position: position,
+                      },
+                    }),
+                  );
                 });
             } else if (hostRules) {
+              //host 가 아닌 참가자 일때 가져온 rules 정보 세팅
               clients
-                .filter((client) => client.roomId === data.roomId && client.userId === data.userId)
+                .filter((client) => !client.host && client.roomId === data.roomId && client.userId === data.userId)
                 .forEach((client) => {
                   client.rules = { ...hostRules.rules };
-                  client.ws.send(JSON.stringify({ ...data, rules: client.rules }));
+                  client.ws.send(
+                    JSON.stringify({
+                      ...data,
+                      rules: {
+                        ...client.rules,
+                        myTeam: hostRules.rules.yourTeam,
+                        yourTeam: hostRules.rules.myTeam,
+                        myTeamSide: hostRules.rules.myTeamSide === 'blue' ? 'red' : 'blue',
+                        myImg: hostRules.rules.yourImg,
+                        yourImg: hostRules.rules.myImg,
+                        host: false,
+                        position: position,
+                      },
+                    }),
+                  );
                 });
             }
           }
@@ -88,7 +113,7 @@ export async function GET(req: NextRequest) {
                     ...data,
                     roomId,
                     userId,
-                    side,
+                    position,
                   }),
                 ),
               );
