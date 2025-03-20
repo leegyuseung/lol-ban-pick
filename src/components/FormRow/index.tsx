@@ -68,7 +68,8 @@ export default function Form() {
   const closeSharePopup = () => {
     setIsShareOpen(false);
   };
-  const openPopup = () => {
+  const openPopup = (teamColor: string) => {
+    setSelectedTeamColor(teamColor);
     setIsOpen(true);
   };
 
