@@ -4,18 +4,6 @@ export interface ApiResponse<T> {
   message: string;
 }
 
-export type FormsData = {
-  myTeam: string;
-  yourTeam: string;
-  banpickMode: 'tournament' | 'peerless3' | 'peerless5';
-  peopleMode: 'solo' | 'team';
-  timeUnlimited: 'true' | 'false';
-  myTeamSide: 'red' | 'blue';
-  myImg: string;
-  yourImg: string;
-  nowSet: number;
-};
-
 export interface ChampionInfoI {
   blurb: string;
   id: string;
@@ -28,20 +16,44 @@ export interface ChampionInfoI {
   status: string;
   line: string[];
 }
-export interface RulesState {
-  myTeam: string;
-  yourTeam: string;
+
+export type FormsData = {
+  blueTeamName: string;
+  redTeamName: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
   timeUnlimited: 'true' | 'false';
-  myTeamSide: 'red' | 'blue'; // teamSide가 나의 team을 담고 있어야한다
+  myTeamSide: 'red' | 'blue';
+  yourTeamSide: 'red' | 'blue';
+  blueImg: string;
+  redImg: string;
+  nowSet: number;
+};
+
+type RulesType = {
+  banpickMode: 'tournament' | 'peerless3' | 'peerless5';
+  peopleMode: 'solo' | 'team';
+  timeUnlimited: 'true' | 'false';
+  nowSet: number;
+  position: 'blue' | 'red';
+  role: 'Host' | 'Guest';
+};
+
+type InfoType = {
+  myTeam: string;
+  yourTeam: string;
+  myTeamSide: 'blue' | 'red';
+  yourTeamSide: 'blue' | 'red';
   myImg: string;
   yourImg: string;
+};
 
-  // 피어리스 세트를 담아야한다
-  nowSet: number;
-  position?:string;
+export interface RulesState extends RulesType {
+  HostInfo: InfoType;
+  GuestInfo: InfoType;
   setRules: (data: FormsData) => void;
+  setHostRules: (data: FormsData) => void;
+  setGuestRules: (data: FormsData) => void;
   setPeerlessSet: () => void;
   setClearPeerlessSet: () => void;
-};
+}

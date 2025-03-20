@@ -14,18 +14,19 @@ import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 
 export default function Form() {
   useImageLoaded();
-  const { setRules, setClearPeerlessSet } = useRulesStore();
+  const { setRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearMyBan, setClearYourBan } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
-      myTeam: '',
-      yourTeam: '',
+      blueTeamName: '',
+      redTeamName: '',
       banpickMode: 'tournament',
       peopleMode: 'solo',
       timeUnlimited: 'true',
       myTeamSide: 'blue',
-      myImg: '',
-      yourImg: '',
+      yourTeamSide: 'red',
+      blueImg: '',
+      redImg: '',
       nowSet: 1,
     },
   });
@@ -36,8 +37,8 @@ export default function Form() {
     setClearYourBan();
   }, []);
 
-  const blueTeam = watch('myTeam') || '블루팀';
-  const redTeam = watch('yourTeam') || '레드팀';
+  const blueTeam = watch('blueTeamName') || '블루팀';
+  const redTeam = watch('redTeamName') || '레드팀';
   const router = useRouter();
   const selectedMode = watch('peopleMode');
   const [blueImage, setBlueImage] = useState('/images/t1.webp');
@@ -51,12 +52,13 @@ export default function Form() {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const onSubmit = async (data: FormsData) => {
     // 이미지 넣어주기
-    data.myImg = blueImage;
-    data.yourImg = redImage;
+    data.blueImg = blueImage;
+    data.redImg = redImage;
     setRules(data);
-    if(data.peopleMode === "team"){
-      openSharePopup()
-    } else{
+    setHostRules(data);
+    if (data.peopleMode === 'team') {
+      openSharePopup();
+    } else {
       router.push('/banpick');
     }
   };
@@ -94,7 +96,7 @@ export default function Form() {
           <label className="text-lg font-semibold mb-2">{blueTeam}</label>
           <input
             className="p-3 bg-blue-700 rounded-md border-mainText placeholder-mainText w-full"
-            {...register('myTeam')}
+            {...register('blueTeamName')}
             placeholder="블루팀 이름을 입력해주세요."
           />
         </div>
@@ -184,18 +186,14 @@ export default function Form() {
           <label className="text-lg font-semibold mb-2">{redTeam}</label>
           <input
             className="p-3 bg-red-700 rounded-md border-mainText placeholder-mainText w-full"
-            {...register('yourTeam')}
+            {...register('redTeamName')}
             placeholder="레드팀 이름을 입력해주세요."
           />
         </div>
       </form>
 
       {/* 공유하기 팝업 */}
-      {isShareOpen && (
-        <SharePopupWrapper
-        closePopup={closeSharePopup}
-        />)
-      }
+      {isShareOpen && <SharePopupWrapper closePopup={closeSharePopup} />}
       {/* 이미지 선택 팝업 */}
       {isOpen && (
         <TeamLogoPopup
