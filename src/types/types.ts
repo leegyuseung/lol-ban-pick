@@ -28,6 +28,8 @@ export type FormsData = {
   blueImg: string;
   redImg: string;
   nowSet: number;
+  myTeam: string;
+  yourTeam: string;
 };
 
 export type RulesType = {
@@ -35,11 +37,11 @@ export type RulesType = {
   peopleMode: 'solo' | 'team';
   timeUnlimited: 'true' | 'false';
   nowSet: number;
-  position: 'blue' | 'red' | 'audience';
-  role: 'host' | 'guest';
+  position?: 'blue' | 'red' | 'audience' | undefined;
+  role: 'host' | 'guest' | 'audience';
 };
 
-type InfoType = {
+export type InfoType = {
   myTeam: string;
   yourTeam: string;
   myTeamSide: 'blue' | 'red';

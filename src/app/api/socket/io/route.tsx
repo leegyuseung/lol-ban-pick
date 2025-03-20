@@ -1,22 +1,15 @@
+import { InfoType, RulesType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { WebSocketServer, WebSocket } from 'ws';
 
-interface Client {
+interface Client extends RulesType {
   userId: string;
   roomId: string;
   ws: WebSocket;
   host: boolean;
-  position?: 'blue' | 'red' | 'audience';
-  hostInfo: {
-    myTeamSide: 'blue' | 'red' | undefined; //undefined일때 host
-    myTeam?: string;
-    yourTeam?: string;
-    myImg?: string;
-    yourImg?: string;
-
-    // 피어리스 세트를 담아야한다
-    nowSet?: number;
-  };
+  position?: 'blue' | 'red' | 'audience' | undefined;
+  role: 'host' | 'guest' | 'audience';
+  hostInfo: InfoType;
   guestInfo: {
     myTeamSide: 'blue' | 'red' | undefined; //undefined일때 host
 
@@ -58,7 +51,15 @@ export async function GET(req: NextRequest) {
           //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
           //TODO: 기타 정보도 사용자에 맞게 변경해야함
           const hostRules = clients.find((client) => client.roomId === roomId && client.host);
-          clients.push({ ...(hostRules as Client), userId, roomId, ws, host });
+          clients.push({
+            ...(hostRules as Client),
+            userId,
+            roomId,
+            ws,
+            host,
+            position,
+            role: host ? 'host' : position ? 'guest' : 'audience',
+          });
         }
 
         ws.on('message', (message: string) => {
@@ -73,22 +74,37 @@ export async function GET(req: NextRequest) {
                 .filter((client) => client.roomId === data.roomId)
                 .forEach((client) => {
                   console.log(data, 'data');
-                  client.ws.send(
-                    JSON.stringify({
-                      ...data,
-                    }),
-                  );
+                  if (client.host) {
+                    console.log(client, 'data111');
+                    Object.assign(client, data);
+                    console.log(client, 'data222');
+                  }
+                  // client.ws.send(
+                  //   JSON.stringify({
+                  //     ...data,
+                  //   }),
+                  // );
                 });
             } else if (hostRules) {
               //host 가 아닌 참가자 일때 가져온 rules 정보 세팅
               clients
                 .filter((client) => !client.host && client.roomId === data.roomId && client.userId === data.userId)
                 .forEach((client) => {
-                  console.log(client,"client")
-                  client.hostInfo = { ...hostRules.hostInfo };
+                  const { banpickMode, peopleMode, timeUnlimited, nowSet, hostInfo } = hostRules;
+                  client.hostInfo = { ...hostInfo };
+
+                  if (data.role === 'guest') {
+                    client.guestInfo = { ...data.guestInfo };
+                    client.role = 'guest';
+                  }
                   client.ws.send(
                     JSON.stringify({
                       ...data,
+                      banpickMode,
+                      peopleMode,
+                      timeUnlimited,
+                      nowSet,
+                      hostInfo,
                       guestInfo: {
                         myTeam: hostRules.hostInfo.yourTeam,
                         yourTeam: hostRules.hostInfo.myTeam,
@@ -97,6 +113,7 @@ export async function GET(req: NextRequest) {
                         yourImg: hostRules.hostInfo.myImg,
                         host: false,
                         position: position,
+                        role: data.role,
                       },
                     }),
                   );

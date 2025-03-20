@@ -14,20 +14,14 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   //user id
   const { userId, setUserId } = useUserStore();
   const { ws, setWs, executeFun } = useSocketStore();
-  const { hostInfo, guestInfo } = useRulesStore();
+  const { banpickMode, peopleMode, timeUnlimited, nowSet, position, role, hostInfo, guestInfo } = useRulesStore();
   useBanpickSocket({ userId: _userId, roomId, isHost: false });
-  // useEffect(() => {
-  //   console.log(ws);
-  //   if (ws && ws.readyState === WebSocket.CONNECTING) {
-  //     ws?.send(JSON.stringify({ type: 'init', userId: userId, roomId: roomId, ...rules }));
-  //   }
-  // }, [ws, ws?.readyState]);
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
-    executeFun(() => ws?.send(JSON.stringify({ type: 'ready', userId: userId, roomId: roomId, ...rules })), 'red');
+    executeFun(() => ws?.send(JSON.stringify({ type: 'ready', userId: userId, roomId: roomId })));
   };
   const goEnter = () => {
-    router.push("/banpick")
+    router.push('/banpick');
     executeFun(
       () =>
         ws?.send(
@@ -36,7 +30,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             userId: userId,
             roomId: roomId,
             host: !!searchParams!.get('roomId'),
-          }), 
+          }),
         ),
       'blue',
     );
@@ -52,6 +46,11 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
       <br />
       <br />
       <br />
+      <div>banpickMode{banpickMode}</div>
+      <div>peopleMode{peopleMode}</div> <div>timeUnlimited {timeUnlimited}</div>
+      <div>nowSet {nowSet}</div>
+      <div>position {position}</div>
+      <div>role {role}</div>
       <div>hostInfo : {JSON.stringify(hostInfo)}</div>
       <div>guestInfo : {JSON.stringify(guestInfo)}</div>
       userId
