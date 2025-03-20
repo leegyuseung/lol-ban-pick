@@ -36,7 +36,7 @@ type RulesType = {
   timeUnlimited: 'true' | 'false';
   nowSet: number;
   position: 'blue' | 'red';
-  role: 'Host' | 'Guest';
+  role: 'host' | 'guest';
 };
 
 type InfoType = {

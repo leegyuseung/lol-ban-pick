@@ -9,7 +9,7 @@ export const useRulesStore = create<RulesState>()(
       peopleMode: 'solo',
       timeUnlimited: 'true',
       nowSet: 1,
-      role: 'Host',
+      role: 'host',
       position: 'blue',
 
       HostInfo: {
