@@ -11,7 +11,8 @@ export const useRulesStore = create<RulesState>()(
       nowSet: 1,
       role: 'host',
       position: 'blue',
-
+      blueTeamName: '블루팀',
+      redTeamName: '레드팀',
       hostInfo: {
         myTeam: '',
         yourTeam: '',
@@ -35,7 +36,7 @@ export const useRulesStore = create<RulesState>()(
           banpickMode: data.banpickMode,
           peopleMode: data.peopleMode,
           timeUnlimited: data.peopleMode === 'solo' ? data.timeUnlimited : 'true',
-          role: 'host',
+          role: data.role,
         }),
 
       setFormRules: (data: FormsData) =>
@@ -52,22 +53,12 @@ export const useRulesStore = create<RulesState>()(
           ...state,
           hostInfo: {
             myTeam:
-              data.myTeamSide === 'blue'
-                ? data.blueTeamName === ''
-                  ? '블루팀'
-                  : data.blueTeamName
-                : data.redTeamName === ''
-                  ? '레드팀'
-                  : data.redTeamName,
+              data.myTeam ||
+              (data.myTeamSide === 'blue' ? data.blueTeamName || '블루팀' : data.redTeamName || '레드팀'),
 
             yourTeam:
-              data.myTeamSide === 'blue'
-                ? data.redTeamName === ''
-                  ? '레드팀'
-                  : data.redTeamName
-                : data.blueTeamName === ''
-                  ? '블루팀'
-                  : data.blueTeamName,
+              data.yourTeam ||
+              (data.myTeamSide === 'blue' ? data.redTeamName || '레드팀' : data.blueTeamName || '블루팀'),
             myTeamSide: data.myTeamSide === 'blue' ? 'blue' : 'red',
             yourTeamSide: data.myTeamSide === 'blue' ? 'red' : 'blue',
             myImg: data.myTeamSide === 'blue' ? data.blueImg : data.redImg,
@@ -78,23 +69,14 @@ export const useRulesStore = create<RulesState>()(
       setGuestRules: (data: FormsData) =>
         set((state) => ({
           ...state,
-          hostInfo: {
+          guestInfo: {
             myTeam:
-              data.myTeamSide === 'blue'
-                ? data.blueTeamName === ''
-                  ? '블루팀'
-                  : data.blueTeamName
-                : data.redTeamName === ''
-                  ? '레드팀'
-                  : data.redTeamName,
+              data.myTeam ||
+              (data.myTeamSide === 'blue' ? data.blueTeamName || '블루팀' : data.redTeamName || '레드팀'),
+
             yourTeam:
-              data.myTeamSide === 'blue'
-                ? data.redTeamName === ''
-                  ? '레드팀'
-                  : data.redTeamName
-                : data.blueTeamName === ''
-                  ? '블루팀'
-                  : data.blueTeamName,
+              data.yourTeam ||
+              (data.myTeamSide === 'blue' ? data.redTeamName || '레드팀' : data.blueTeamName || '블루팀'),
             myTeamSide: data.myTeamSide === 'blue' ? 'blue' : 'red',
             yourTeamSide: data.myTeamSide === 'blue' ? 'red' : 'blue',
             myImg: data.myTeamSide === 'blue' ? data.blueImg : data.redImg,
