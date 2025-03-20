@@ -4,7 +4,7 @@ import { useBanStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 
 export default function BanPickHeader() {
-  const { myTeam, yourTeam, myImg, yourImg, myTeamSide, banpickMode, timeUnlimited, nowSet } = useRulesStore();
+  const { hostInfo, banpickMode, timeUnlimited, nowSet } = useRulesStore();
   const { selectedTeam, selectedTeamIndex, RandomPick, headerSecond, setHeaderSecond } = useBanStore();
   const [currentColor, setCurrentColor] = useState('');
 
@@ -60,18 +60,32 @@ export default function BanPickHeader() {
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
           <div className="relative w-[80px] h-[65px] ml-10">
-            {myTeamSide === 'blue'
-              ? myImg && (
-                  <Image sizes="w-[80px] h-[65px]" className="object-contain" src={myImg} alt="logo" fill priority />
+            {hostInfo.myTeamSide === 'blue'
+              ? hostInfo.myImg && (
+                  <Image
+                    sizes="w-[80px] h-[65px]"
+                    className="object-contain"
+                    src={hostInfo.myImg}
+                    alt="logo"
+                    fill
+                    priority
+                  />
                 )
-              : yourImg && (
-                  <Image sizes="w-[80px] h-[65px]" className="object-contain" src={yourImg} alt="logo" fill priority />
+              : hostInfo.yourImg && (
+                  <Image
+                    sizes="w-[80px] h-[65px]"
+                    className="object-contain"
+                    src={hostInfo.yourImg}
+                    alt="logo"
+                    fill
+                    priority
+                  />
                 )}
           </div>
-          {myTeamSide === 'blue' ? (
-            <span className="text-2xl mr-10">{myTeam}</span>
+          {hostInfo.myTeamSide === 'blue' ? (
+            <span className="text-2xl mr-10">{hostInfo.myTeam}</span>
           ) : (
-            <span className="text-2xl mr-10">{yourTeam}</span>
+            <span className="text-2xl mr-10">{hostInfo.yourTeam}</span>
           )}
         </div>
         <div className="flex-[1] w-full relative overflow-hidden h-4">
@@ -86,18 +100,32 @@ export default function BanPickHeader() {
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
-          {myTeamSide === 'blue' ? (
-            <span className="text-2xl ml-10">{yourTeam}</span>
+          {hostInfo.myTeamSide === 'blue' ? (
+            <span className="text-2xl ml-10">{hostInfo.yourTeam}</span>
           ) : (
-            <span className="text-2xl ml-10">{myTeam}</span>
+            <span className="text-2xl ml-10">{hostInfo.myTeam}</span>
           )}
           <div className="relative w-[80px] h-[65px] mr-10">
-            {myTeamSide === 'blue'
-              ? yourImg && (
-                  <Image className="object-contain" sizes="w-[80px] h-[65px]" src={yourImg} alt="logo" fill priority />
+            {hostInfo.myTeamSide === 'blue'
+              ? hostInfo.yourImg && (
+                  <Image
+                    className="object-contain"
+                    sizes="w-[80px] h-[65px]"
+                    src={hostInfo.yourImg}
+                    alt="logo"
+                    fill
+                    priority
+                  />
                 )
-              : myImg && (
-                  <Image className="object-contain" sizes="w-[80px] h-[65px]" src={myImg} alt="logo" fill priority />
+              : hostInfo.myImg && (
+                  <Image
+                    className="object-contain"
+                    sizes="w-[80px] h-[65px]"
+                    src={hostInfo.myImg}
+                    alt="logo"
+                    fill
+                    priority
+                  />
                 )}
           </div>
         </div>
