@@ -89,7 +89,7 @@ export default function Form() {
       <span className="text-4xl font-bold pb-6">밴픽 시뮬레이터</span>
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
-        <div className="flex flex-col justify-center items-center gap-6">
+        <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('blue')}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
           </div>
@@ -101,7 +101,7 @@ export default function Form() {
           />
         </div>
 
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-10 w-[400px]">
           <div>
             {/* 밴픽 모드 */}
             <label className="text-lg font-semibold mb-2 block">밴픽 모드</label>
@@ -179,7 +179,7 @@ export default function Form() {
         </div>
 
         {/* 레드팀 */}
-        <div className="flex flex-col justify-center items-center gap-6">
+        <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('red')}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>

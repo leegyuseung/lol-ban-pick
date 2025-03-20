@@ -5,7 +5,7 @@ function Banpick() {
   return (
     <>
       {/* <BanpickSocket userId={userId}></BanpickSocket> */}
-      <BanPickMain />;
+      <BanPickMain />
     </>
   );
 }

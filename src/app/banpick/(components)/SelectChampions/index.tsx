@@ -172,7 +172,7 @@ export default function SelectChampions() {
   ]);
 
   return (
-    <div className="flex flex-col gap-3 min-w-[508px]">
+    <div className="flex flex-col gap-3 w-[508px]">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
           {filterOptions.map((type) => (
@@ -197,7 +197,7 @@ export default function SelectChampions() {
         </div>
       </div>
       <div
-        className="grid grid-cols-7 overflow-auto h-[365px] gap-2"
+        className="grid grid-cols-7 overflow-auto h-[500px] gap-2"
         style={{ gridTemplateRows: 'repeat(auto-fill, 70px)' }}
       >
         {Object.entries(filteredChampions).map(([name, info], idx) => (
@@ -213,7 +213,7 @@ export default function SelectChampions() {
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
               onClick={headerSecond !== '' ? () => onClick(name, info) : undefined}
             />
-            <p className="text-[9px] text-center text-mainText">{info.name}</p>
+            <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
             {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}
             {name === currentSelectedPick[0].name && <FaCheck className="absolute text-6xl text-blue-500" />}
           </div>
