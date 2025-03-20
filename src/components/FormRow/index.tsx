@@ -14,7 +14,7 @@ import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 
 export default function Form() {
   useImageLoaded();
-  const { setRules, setHostRules, setClearPeerlessSet } = useRulesStore();
+  const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearMyBan, setClearYourBan } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
@@ -54,7 +54,7 @@ export default function Form() {
     // 이미지 넣어주기
     data.blueImg = blueImage;
     data.redImg = redImage;
-    setRules(data);
+    setFormRules(data);
     setHostRules(data);
     if (data.peopleMode === 'team') {
       openSharePopup();

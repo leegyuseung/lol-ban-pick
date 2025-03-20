@@ -30,7 +30,7 @@ export type FormsData = {
   nowSet: number;
 };
 
-type RulesType = {
+export type RulesType = {
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
   timeUnlimited: 'true' | 'false';
@@ -51,7 +51,8 @@ type InfoType = {
 export interface RulesState extends RulesType {
   hostInfo: InfoType;
   guestInfo: InfoType;
-  setRules: (data: FormsData) => void;
+  setRules: (data: RulesType) => void;
+  setFormRules: (data: FormsData) => void;
   setHostRules: (data: FormsData) => void;
   setGuestRules: (data: FormsData) => void;
   setPeerlessSet: () => void;

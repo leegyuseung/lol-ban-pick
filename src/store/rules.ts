@@ -1,4 +1,4 @@
-import { FormsData, RulesState } from '@/types/types';
+import { FormsData, RulesState, RulesType } from '@/types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -30,7 +30,15 @@ export const useRulesStore = create<RulesState>()(
         yourImg: '',
       },
 
-      setRules: (data: FormsData) =>
+      setRules: (data: RulesType) =>
+        set({
+          banpickMode: data.banpickMode,
+          peopleMode: data.peopleMode,
+          timeUnlimited: data.peopleMode === 'solo' ? data.timeUnlimited : 'true',
+          role: 'host',
+        }),
+
+      setFormRules: (data: FormsData) =>
         set({
           banpickMode: data.banpickMode,
           peopleMode: data.peopleMode,
