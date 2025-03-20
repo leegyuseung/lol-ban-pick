@@ -13,16 +13,16 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const { roomId, setRoomId } = useSocketStore();
   //user id
   const { userId, setUserId } = useUserStore();
-  const { ws, setWs, executeFun } = useSocketStore();
+  const { ws, setWs, emitFunc } = useSocketStore();
   const { banpickMode, peopleMode, timeUnlimited, nowSet, position, role, hostInfo, guestInfo } = useRulesStore();
   useBanpickSocket({ userId: _userId, roomId, isHost: false });
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
-    executeFun(() => ws?.send(JSON.stringify({ type: 'ready', userId: userId, roomId: roomId })));
+    emitFunc(() => {console.log("테스트")},"PARM");
   };
   const goEnter = () => {
     router.push('/banpick');
-    executeFun(
+    emitFunc(
       () =>
         ws?.send(
           JSON.stringify({

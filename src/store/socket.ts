@@ -8,7 +8,7 @@ type SocketState = {
   ws: WebSocket | null;
   setWs: (ws: any) => void;
   closeWs: (ws: any) => void;
-  executeFun: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
+  emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
 };
 
 export const useSocketStore = create<SocketState>((set, get) => ({
@@ -24,16 +24,20 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       ws,
     }),
   closeWs: (ws?: WebSocket | null) => {
-    if(ws)ws?.close();
+    if (ws) ws?.close();
     set({
       ws: null,
     });
     return {};
   },
-  executeFun: <T extends (...args: unknown[]) => unknown>(func: T, side?: string): void => {
-    // console.log(side,get().rules.myTeamSide)
-    // if (get().rules.myTeamSide === side) {
-      func(); // 함수 실행
+  emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, params: any): void => {
+    const rulesState = useRulesStore.getState(); // rules 상태 가져오기
+    console.log(rulesState);
+    if (!rulesState) return;
+    func(); // 함수 실행
+    const state = get();
+    console.log(state);
+    state.ws?.send(JSON.stringify({ type: 'emit', rule: rulesState, params, roomId: state.roomId }));
     // }
   },
 }));

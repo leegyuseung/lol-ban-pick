@@ -68,23 +68,20 @@ export async function GET(req: NextRequest) {
           if (data.type === 'init') {
             const hostRules = clients.find((client) => client.roomId === roomId && client.host);
             console.log(hostRules, 'hostRules');
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
             //host일 때 가져온 rules 정보 세팅
             if (data.host) {
-              clients
-                .filter((client) => client.roomId === data.roomId)
-                .forEach((client) => {
-                  console.log(data, 'data');
-                  if (client.host) {
-                    console.log(client, 'data111');
-                    Object.assign(client, data);
-                    console.log(client, 'data222');
-                  }
-                  // client.ws.send(
-                  //   JSON.stringify({
-                  //     ...data,
-                  //   }),
-                  // );
-                });
+              roomsClient.forEach((client) => {
+                console.log(data, 'data');
+                if (client.host) {
+                  Object.assign(client, data);
+                }
+                // client.ws.send(
+                //   JSON.stringify({
+                //     ...data,
+                //   }),
+                // );
+              });
             } else if (hostRules) {
               //host 가 아닌 참가자 일때 가져온 rules 정보 세팅
               clients
@@ -145,8 +142,14 @@ export async function GET(req: NextRequest) {
               });
             }
           }
-        });
+          if (data.type === 'emit') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
 
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'on', params: data.params }));
+            });
+          }
+        });
         ws.on('close', () => {
           //host가 종료하면 room 삭제
           if (host) {
