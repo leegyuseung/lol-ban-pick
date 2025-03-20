@@ -39,7 +39,7 @@ export default function SelectChampions() {
     setClearBanPickObject,
     headerSecond,
   } = useBanStore();
-  const { banpickMode, nowSet, HostInfo, setPeerlessSet } = useRulesStore();
+  const { banpickMode, nowSet, hostInfo, setPeerlessSet } = useRulesStore();
   const { setMyBan, setYourBan, myBan, yourBan, setClearMyBan, setClearYourBan } = usePeerlessStore();
   const [filteredChampions, setFilteredChampions] = useState(championInfo);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
@@ -133,7 +133,7 @@ export default function SelectChampions() {
 
   const onNextSet = () => {
     // 피어리스 밴픽 추가
-    if (HostInfo.myTeamSide === 'blue') {
+    if (hostInfo.myTeamSide === 'blue') {
       setMyBan(bluePeerlessArray);
       setYourBan(redPeerlessArray);
     } else {

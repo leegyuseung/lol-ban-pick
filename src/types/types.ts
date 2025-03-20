@@ -49,8 +49,8 @@ type InfoType = {
 };
 
 export interface RulesState extends RulesType {
-  HostInfo: InfoType;
-  GuestInfo: InfoType;
+  hostInfo: InfoType;
+  guestInfo: InfoType;
   setRules: (data: FormsData) => void;
   setHostRules: (data: FormsData) => void;
   setGuestRules: (data: FormsData) => void;

@@ -12,7 +12,7 @@ export const useRulesStore = create<RulesState>()(
       role: 'host',
       position: 'blue',
 
-      HostInfo: {
+      hostInfo: {
         myTeam: '',
         yourTeam: '',
         myTeamSide: 'blue',
@@ -21,7 +21,7 @@ export const useRulesStore = create<RulesState>()(
         yourImg: '',
       },
 
-      GuestInfo: {
+      guestInfo: {
         myTeam: '',
         yourTeam: '',
         myTeamSide: 'red',
@@ -42,7 +42,7 @@ export const useRulesStore = create<RulesState>()(
       setHostRules: (data: FormsData) =>
         set((state) => ({
           ...state,
-          HostInfo: {
+          hostInfo: {
             myTeam: data.myTeamSide === 'blue' ? data.blueTeamName : data.redTeamName,
             yourTeam: data.myTeamSide === 'blue' ? data.redTeamName : data.blueTeamName,
             myTeamSide: data.myTeamSide === 'blue' ? 'blue' : 'red',
@@ -55,7 +55,7 @@ export const useRulesStore = create<RulesState>()(
       setGuestRules: (data: FormsData) =>
         set((state) => ({
           ...state,
-          HostInfo: {
+          hostInfo: {
             myTeam: data.myTeamSide === 'blue' ? data.blueTeamName : data.redTeamName,
             yourTeam: data.myTeamSide === 'blue' ? data.redTeamName : data.blueTeamName,
             myTeamSide: data.myTeamSide === 'blue' ? 'blue' : 'red',
