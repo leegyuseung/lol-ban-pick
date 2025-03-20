@@ -8,8 +8,6 @@ type SocketState = {
   ws: WebSocket | null;
   setWs: (ws: any) => void;
   closeWs: (ws: any) => void;
-  rules: Omit<RulesState, 'setRules' | 'setPeerlessSet' | 'setClearPeerlessSet'>;
-  setRules: (rule: Omit<RulesState, 'setRules' | 'setPeerlessSet' | 'setClearPeerlessSet'>) => void;
   executeFun: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
 };
 
@@ -32,25 +30,10 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
     return {};
   },
-  rules: {
-    myTeam: '',
-    yourTeam: '',
-    banpickMode: 'tournament',
-    peopleMode: 'solo',
-    timeUnlimited: 'true',
-    myTeamSide: 'blue',
-    myImg: '',
-    yourImg: '',
-    nowSet: 1,
-  },
-  setRules: (rules: Omit<RulesState, 'setRules' | 'setPeerlessSet' | 'setClearPeerlessSet'>) =>
-    set({
-      rules,
-    }),
   executeFun: <T extends (...args: unknown[]) => unknown>(func: T, side?: string): void => {
-    console.log(side,get().rules.myTeamSide)
-    if (get().rules.myTeamSide === side) {
+    // console.log(side,get().rules.myTeamSide)
+    // if (get().rules.myTeamSide === side) {
       func(); // 함수 실행
-    }
+    // }
   },
 }));

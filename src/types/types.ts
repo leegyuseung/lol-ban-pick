@@ -35,7 +35,7 @@ export type RulesType = {
   peopleMode: 'solo' | 'team';
   timeUnlimited: 'true' | 'false';
   nowSet: number;
-  position: 'blue' | 'red';
+  position: 'blue' | 'red' | 'audience';
   role: 'host' | 'guest';
 };
 

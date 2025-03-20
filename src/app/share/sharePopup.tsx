@@ -18,7 +18,7 @@ function SharePopup({ closePopup, userId }: PropType) {
   const router = useRouter();
   const { ws, closeWs } = useSocketStore();
   const { roomId, setRoomId } = useSocketStore();
-  const { myTeamSide } = useRulesStore();
+  const { hostInfo, position } = useRulesStore();
   //room id 설정
   useEffect(() => {
     setRoomId(randomId);
@@ -35,12 +35,12 @@ function SharePopup({ closePopup, userId }: PropType) {
         <div className="flex flex-col justify-center items-center bg-mainBlack rounded-lg w-[1100px] h-[200px] gap-5">
           <div className="flex flex-col gap-10">
             <div>
-              공유하기 roomId{myTeamSide === 'red' ? '블루팀 공유' : '레드팀 공유'}
-              {myTeamSide + 'myTeamSide'}
+              공유하기 roomId{position === 'red' ? '블루팀 공유' : '레드팀 공유'}
+              {position + 'myTeamSide'}
             </div>
             <div
               onClick={copyText}
-            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketTest?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`}</div>
+            >{`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketTest?roomId=${roomId}&position=${hostInfo.myTeamSide === 'red' ? 'blue' : 'red'}`}</div>
             <div>관전자 공유</div>
             <div
               onClick={copyText}

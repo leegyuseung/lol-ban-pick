@@ -7,14 +7,21 @@ interface Client {
   ws: WebSocket;
   host: boolean;
   position?: 'blue' | 'red' | 'audience';
-  rules: {
+  hostInfo: {
+    myTeamSide: 'blue' | 'red' | undefined; //undefined일때 host
+    myTeam?: string;
+    yourTeam?: string;
+    myImg?: string;
+    yourImg?: string;
+
+    // 피어리스 세트를 담아야한다
+    nowSet?: number;
+  };
+  guestInfo: {
     myTeamSide: 'blue' | 'red' | undefined; //undefined일때 host
 
     myTeam?: string;
     yourTeam?: string;
-    banpickMode?: 'tournament' | 'peerless3' | 'peerless5';
-    peopleMode?: 'solo' | 'team';
-    timeUnlimited?: 'true' | 'false';
     myImg?: string;
     yourImg?: string;
 
@@ -65,14 +72,10 @@ export async function GET(req: NextRequest) {
               clients
                 .filter((client) => client.roomId === data.roomId)
                 .forEach((client) => {
-                  client.rules = { ...data.rules,position: data.rules.myTeamSide,  };
+                  console.log(data, 'data');
                   client.ws.send(
                     JSON.stringify({
                       ...data,
-                      rules: {
-                        ...client.rules,
-                        position: position,
-                      },
                     }),
                   );
                 });
@@ -81,17 +84,17 @@ export async function GET(req: NextRequest) {
               clients
                 .filter((client) => !client.host && client.roomId === data.roomId && client.userId === data.userId)
                 .forEach((client) => {
-                  client.rules = { ...hostRules.rules };
+                  console.log(client,"client")
+                  client.hostInfo = { ...hostRules.hostInfo };
                   client.ws.send(
                     JSON.stringify({
                       ...data,
-                      rules: {
-                        ...client.rules,
-                        myTeam: hostRules.rules.yourTeam,
-                        yourTeam: hostRules.rules.myTeam,
-                        myTeamSide: hostRules.rules.myTeamSide === 'blue' ? 'red' : 'blue',
-                        myImg: hostRules.rules.yourImg,
-                        yourImg: hostRules.rules.myImg,
+                      guestInfo: {
+                        myTeam: hostRules.hostInfo.yourTeam,
+                        yourTeam: hostRules.hostInfo.myTeam,
+                        myTeamSide: hostRules.hostInfo.myTeamSide === 'blue' ? 'red' : 'blue',
+                        myImg: hostRules.hostInfo.yourImg,
+                        yourImg: hostRules.hostInfo.myImg,
                         host: false,
                         position: position,
                       },

@@ -13,8 +13,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const { roomId, setRoomId } = useSocketStore();
   //user id
   const { userId, setUserId } = useUserStore();
-  const { ws, setWs, executeFun, rules } = useSocketStore();
-  const { myTeamSide } = useRulesStore();
+  const { ws, setWs, executeFun } = useSocketStore();
+  const { hostInfo, guestInfo } = useRulesStore();
   useBanpickSocket({ userId: _userId, roomId, isHost: false });
   // useEffect(() => {
   //   console.log(ws);
@@ -35,7 +35,6 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             type: 'start',
             userId: userId,
             roomId: roomId,
-            ...rules,
             host: !!searchParams!.get('roomId'),
           }), 
         ),
@@ -53,7 +52,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
       <br />
       <br />
       <br />
-      <div>{JSON.stringify(rules)}</div>
+      <div>hostInfo : {JSON.stringify(hostInfo)}</div>
+      <div>guestInfo : {JSON.stringify(guestInfo)}</div>
       userId
       {userId ? <div>{userId}</div> : <></>}
       roomId
