@@ -23,8 +23,8 @@ export type FormsData = {
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
   timeUnlimited: 'true' | 'false';
-  myTeamSide: 'red' | 'blue';
-  yourTeamSide: 'red' | 'blue';
+  myTeamSide: 'red' | 'blue' | 'audience';
+  yourTeamSide: 'red' | 'blue' | 'audience';
   blueImg: string;
   redImg: string;
   nowSet: number;
@@ -44,8 +44,8 @@ export type RulesType = {
 export type InfoType = {
   myTeam: string;
   yourTeam: string;
-  myTeamSide: 'blue' | 'red';
-  yourTeamSide: 'blue' | 'red';
+  myTeamSide: 'blue' | 'red' | 'audience';
+  yourTeamSide: 'blue' | 'red' | 'audience';
   myImg: string;
   yourImg: string;
 };

@@ -13,6 +13,7 @@ export const useRulesStore = create<RulesState>()(
       position: 'blue',
       blueTeamName: '블루팀',
       redTeamName: '레드팀',
+
       hostInfo: {
         myTeam: '',
         yourTeam: '',
