@@ -3,9 +3,9 @@ import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
 import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
-import { ChampionInfoI } from '@/types/types';
+import { ChampionInfoI, InfoType } from '@/types/types';
 import { BanArray, InfoData } from '@/store/banpick';
 import { useRouter } from 'next/navigation';
 
@@ -17,6 +17,7 @@ const lineMapping: Record<string, number> = {
   sup: 4,
 };
 
+// search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
 
 export default function SelectChampions() {
@@ -41,10 +42,10 @@ export default function SelectChampions() {
   } = useBanStore();
   const { banpickMode, nowSet, hostInfo, setPeerlessSet } = useRulesStore();
   const { setMyBan, setYourBan, myBan, yourBan, setClearMyBan, setClearYourBan } = usePeerlessStore();
-  const [filteredChampions, setFilteredChampions] = useState(championInfo);
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-  const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]);
-  const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]);
+  const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
+  const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 블루팀 배열
+  const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 레드팀 배열
   const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
 
   const router = useRouter();
@@ -75,7 +76,7 @@ export default function SelectChampions() {
         setFilteredChampions(filtered);
       }
     },
-    [championInfo],
+    [championInfo, selectedFilter],
   );
 
   // 검색기능
