@@ -37,6 +37,7 @@ export const useRulesStore = create<RulesState>()(
           peopleMode: data.peopleMode,
           timeUnlimited: data.peopleMode === 'solo' ? data.timeUnlimited : 'true',
           role: data.role,
+          position: data.position,
         }),
 
       setFormRules: (data: FormsData) =>
