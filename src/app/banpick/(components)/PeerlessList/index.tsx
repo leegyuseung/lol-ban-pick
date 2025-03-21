@@ -9,7 +9,7 @@ type PropsType = {
 export default function PeerlessList({ side }: PropsType) {
   const { banpickMode } = useRulesStore();
   const { myBan, yourBan } = usePeerlessStore();
-  const { myTeamSide } = useRulesStore();
+  const { hostInfo } = useRulesStore();
 
   const Mode = [
     {
@@ -43,7 +43,7 @@ export default function PeerlessList({ side }: PropsType) {
       {Mode.map(
         (mode) =>
           banpickMode !== mode.Mode &&
-          myTeamSide === mode.TeamSide &&
+          hostInfo.myTeamSide === mode.TeamSide &&
           side === mode.Side &&
           mode.Ban.map((ban, index) => <PeerlessImage key={index} ban={ban} />),
       )}

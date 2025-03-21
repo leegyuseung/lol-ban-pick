@@ -3,9 +3,9 @@ import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
 import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
-import { ChampionInfoI, InfoType } from '@/types/types';
+import { ChampionInfoI } from '@/types/types';
 import { BanArray, InfoData } from '@/store/banpick';
 import { useRouter } from 'next/navigation';
 

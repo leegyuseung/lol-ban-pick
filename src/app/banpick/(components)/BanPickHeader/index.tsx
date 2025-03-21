@@ -12,7 +12,7 @@ export default function BanPickHeader() {
   const secondRef = useRef(headerSecond);
 
   useEffect(() => {
-    setHeaderSecond(timeUnlimited === 'true' ? '∞' : '5');
+    setHeaderSecond(timeUnlimited === 'true' ? '∞' : '30');
   }, [timeUnlimited]);
 
   // 시간
@@ -23,8 +23,8 @@ export default function BanPickHeader() {
       if (secondRef.current === '0') {
         // 30초가 그냥 지나갈 경우 랜덤픽으로 넣어야한다
         RandomPick();
-        secondRef.current = '5';
-        setHeaderSecond('5');
+        secondRef.current = '30';
+        setHeaderSecond('30');
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
         setHeaderSecond(secondRef.current);
@@ -45,8 +45,8 @@ export default function BanPickHeader() {
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
     } else if (selectedTeam[selectedTeamIndex].color === 'blue' || selectedTeam[selectedTeamIndex].color === 'red') {
       if (timeUnlimited !== 'true') {
-        secondRef.current = '5';
-        setHeaderSecond('5');
+        secondRef.current = '30';
+        setHeaderSecond('30');
       } else {
         secondRef.current = '∞';
         setHeaderSecond('∞');
