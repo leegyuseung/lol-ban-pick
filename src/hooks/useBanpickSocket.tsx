@@ -1,26 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useRulesStore, useSocketStore, useUserStore } from '@/store';
+import { usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import { FormsData } from '@/types/types';
+import { useRouter } from 'next/navigation';
 function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string; roomId: string; isHost: boolean }) {
+  const { setIsOpen, setBtnList } = usePopupStore();
   const searchParams = useSearchParams();
   //room id
   const { setRoomId } = useSocketStore();
   //user id
   const { setUserId } = useUserStore();
   const { ws, setWs } = useSocketStore();
-  const {
-    setRules,
-    setHostRules,
-    setGuestRules,
-    hostInfo,
-    banpickMode,
-    peopleMode,
-    timeUnlimited,
-    nowSet,
-    position,
-  } = useRulesStore();
+  const router = useRouter();
+
+  const { setRules, setHostRules, setGuestRules, hostInfo, banpickMode, peopleMode, timeUnlimited, nowSet, position } =
+    useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
     // WebSocket이 연결되지 않으면 새로 연결 시도
@@ -117,6 +112,19 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
           }
           if (data.type === 'on') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+          }
+          if (data.type === 'closeByHost') {
+            console.log(`📩 새 메시지: 종료`);
+            setIsOpen(true);
+            setBtnList([
+              {
+                text: '돌아가기',
+                func: () => {
+                  setIsOpen(false);
+                  router.push('/');
+                },
+              },
+            ]);
           }
         };
 

@@ -153,6 +153,11 @@ export async function GET(req: NextRequest) {
         ws.on('close', () => {
           //host가 종료하면 room 삭제
           if (host) {
+            clients.forEach((client) => {
+              if (client.roomId === roomId) {
+                client.ws.send(JSON.stringify({ type: 'closeByHost' }));
+              }
+            });
             clients = clients.filter((client) => client.roomId !== roomId);
           }
           console.log(clients, 'clients');
