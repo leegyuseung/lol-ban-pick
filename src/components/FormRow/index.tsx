@@ -68,7 +68,6 @@ export default function Form() {
   };
 
   const closeSharePopup = () => {
-    debugger
     setIsShareOpen(false);
   };
   const openPopup = (teamColor: string) => {

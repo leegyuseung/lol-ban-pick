@@ -3,13 +3,11 @@ import Image from 'next/image';
 import React, { ReactEventHandler, useEffect, useState } from 'react';
 import { usePopupStore } from '@/store';
 import { useRouter } from 'next/router';
-import useRouterHook from '@/hooks/useRouterHook';
 
 interface PropType {
   func: () => void;
 }
 function PopupComp() {
-  useRouterHook()
   const { btnList, isOpen, setIsOpen, title, content } = usePopupStore();
   return (
     <>
