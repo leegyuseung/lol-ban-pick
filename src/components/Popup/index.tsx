@@ -2,34 +2,38 @@
 import Image from 'next/image';
 import React, { ReactEventHandler, useEffect, useState } from 'react';
 import { usePopupStore } from '@/store';
+import { useRouter } from 'next/router';
+import useRouterHook from '@/hooks/useRouterHook';
+
 interface PropType {
   func: () => void;
 }
 function PopupComp() {
-  const { btnList, isOpen, setIsOpen, } = usePopupStore();
+  useRouterHook()
+  const { btnList, isOpen, setIsOpen, title, content } = usePopupStore();
   return (
     <>
-      {!isOpen ? (
+      {isOpen ? (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative flex flex-col items-center bg-mainBlack rounded-lg w-[500px] p-6 shadow-lg border-2 border-mainGold">
+          <div className="relative flex flex-col items-center bg-mainBlack rounded-lg min-w-[500px] p-6 shadow-lg border-2 border-mainGold">
             {/* 닫기 버튼 (X) */}
-            <button
+            {/* <button
               onClick={() => setIsOpen(false)} // 닫기 함수
               className="absolute top-3 right-3 text-mainGold hover:text-white transition"
             >
               ✖
-            </button>
+            </button> */}
 
             {/* 타이틀 */}
-            <h2 className="text-white text-xl font-semibold">모달 제목</h2>
+            {title ? <h2 className="text-white text-xl font-semibold">{title}</h2> : <></>}
 
             {/* 모달 내용 */}
             <div className="flex flex-col items-center w-full gap-5 mt-4">
-              <p className="text-gray-300 text-center">여기에 원하는 내용을 추가하세요.</p>
+              <div className="text-gray-300 text-center">{content}</div>
 
               {/* 버튼 리스트 */}
-              <div className="flex gap-4 justify-center">
-                {[{ text: 'text', func: () => {} }].map((btn) => (
+              <div className="w-full flex gap-4 justify-center">
+                {btnList.map((btn) => (
                   <button
                     key={btn.text}
                     onClick={btn.func}
