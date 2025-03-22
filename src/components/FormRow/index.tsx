@@ -57,7 +57,6 @@ export default function Form() {
     setFormRules(data);
     setHostRules(data);
     if (data.peopleMode === 'team') {
-      debugger
       openSharePopup();
     } else {
       router.push('/banpick');
