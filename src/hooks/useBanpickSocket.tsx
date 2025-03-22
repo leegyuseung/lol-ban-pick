@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string; roomId: string; isHost: boolean }) {
-  const { setIsOpen, setBtnList } = usePopupStore();
+  const { setIsOpen, setBtnList, setContent } = usePopupStore();
   const searchParams = useSearchParams();
   //room id
   const { setRoomId } = useSocketStore();
@@ -116,6 +116,7 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
           if (data.type === 'closeByHost') {
             console.log(`📩 새 메시지: 종료`);
             setIsOpen(true);
+            setContent('게임 주최자가 게임을 종료했습니다.');
             setBtnList([
               {
                 text: '돌아가기',

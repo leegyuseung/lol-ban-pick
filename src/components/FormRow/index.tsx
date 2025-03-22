@@ -57,6 +57,7 @@ export default function Form() {
     setFormRules(data);
     setHostRules(data);
     if (data.peopleMode === 'team') {
+      debugger
       openSharePopup();
     } else {
       router.push('/banpick');
@@ -68,6 +69,7 @@ export default function Form() {
   };
 
   const closeSharePopup = () => {
+    debugger
     setIsShareOpen(false);
   };
   const openPopup = (teamColor: string) => {
@@ -193,7 +195,7 @@ export default function Form() {
       </form>
 
       {/* 공유하기 팝업 */}
-      {isShareOpen && <SharePopupWrapper closePopup={closeSharePopup} />}
+      {<SharePopupWrapper closePopup={closeSharePopup} isOpen={isShareOpen} />}
       {/* 이미지 선택 팝업 */}
       {isOpen && (
         <TeamLogoPopup
