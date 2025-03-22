@@ -76,11 +76,6 @@ export async function GET(req: NextRequest) {
                 if (client.host) {
                   Object.assign(client, data);
                 }
-                // client.ws.send(
-                //   JSON.stringify({
-                //     ...data,
-                //   }),
-                // );
               });
             } else if (hostRules) {
               //host 가 아닌 참가자 일때 가져온 rules 정보 세팅
@@ -115,6 +110,10 @@ export async function GET(req: NextRequest) {
                     }),
                   );
                 });
+            } else {
+              roomsClient.forEach((client) => {
+                client.ws.send(JSON.stringify({ type: 'noRoom' }));
+              });
             }
           }
           //이벤트는 추후 변경 예정
