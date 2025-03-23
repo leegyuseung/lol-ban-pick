@@ -1,27 +1,39 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useRulesStore, useSocketStore, useUserStore } from '@/store';
-import { useSearchParams } from 'next/navigation';
+import { usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { FormsData } from '@/types/types';
+import { useRouter } from 'next/navigation';
 function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string; roomId: string; isHost: boolean }) {
+  const { setIsOpen, setBtnList, setContent } = usePopupStore();
   const searchParams = useSearchParams();
   //room id
   const { setRoomId } = useSocketStore();
   //user id
   const { setUserId } = useUserStore();
   const { ws, setWs } = useSocketStore();
-  const {
-    setRules,
-    setHostRules,
-    setGuestRules,
-    hostInfo,
-    banpickMode,
-    peopleMode,
-    timeUnlimited,
-    nowSet,
-    position,
-  } = useRulesStore();
+  const router = useRouter();
+  const pathName = usePathname();
+
+  const { setRules, setHostRules, setGuestRules, hostInfo, banpickMode, peopleMode, timeUnlimited, nowSet, position } =
+    useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
+  useEffect(() => {
+    if (!roomId && !searchParams?.get('roomId')) {
+      console.log(`📩 새 메시지: noRoom`);
+      setIsOpen(true);
+      setContent('공유된 게임이 없습니다.');
+      setBtnList([
+        {
+          text: '돌아가기',
+          func: () => {
+            setIsOpen(false);
+            router.push('/');
+          },
+        },
+      ]);
+    }
+  }, [pathName]);
   useEffect(() => {
     // WebSocket이 연결되지 않으면 새로 연결 시도
     if (ws) return;
@@ -117,6 +129,34 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
           }
           if (data.type === 'on') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+          }
+          if (data.type === 'closeByHost') {
+            console.log(`📩 새 메시지: 종료`);
+            setIsOpen(true);
+            setContent('게임 주최자가 게임을 종료했습니다.');
+            setBtnList([
+              {
+                text: '돌아가기',
+                func: () => {
+                  setIsOpen(false);
+                  router.push('/');
+                },
+              },
+            ]);
+          }
+          if (data.type === 'noRoom') {
+            console.log(`📩 새 메시지: noRoom`);
+            setIsOpen(true);
+            setContent('공유된 게임이 없습니다.');
+            setBtnList([
+              {
+                text: '돌아가기',
+                func: () => {
+                  setIsOpen(false);
+                  router.push('/');
+                },
+              },
+            ]);
           }
         };
 

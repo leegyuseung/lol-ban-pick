@@ -193,7 +193,7 @@ export default function Form() {
       </form>
 
       {/* 공유하기 팝업 */}
-      {isShareOpen && <SharePopupWrapper closePopup={closeSharePopup} />}
+      {<SharePopupWrapper closePopup={closeSharePopup} isOpen={isShareOpen} />}
       {/* 이미지 선택 팝업 */}
       {isOpen && (
         <TeamLogoPopup
