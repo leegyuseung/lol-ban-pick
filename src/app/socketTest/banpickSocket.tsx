@@ -1,12 +1,12 @@
 //소켓 연결 페이지
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-
+import React from 'react';
+import useBanpickSocket from '@/hooks/useBanpickSocket';
 import { useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
-import useBanpickSocket from '@/hooks/useBanpickSocket';
 import { useRouter } from 'next/navigation';
 import { withNavigationGuard } from '@/hoc/routerGuard';
+
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -16,15 +16,18 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const { userId, setUserId } = useUserStore();
   const { ws, setWs, emitFunc } = useSocketStore();
   const { banpickMode, peopleMode, timeUnlimited, nowSet, position, role, hostInfo, guestInfo } = useRulesStore();
+
   useBanpickSocket({ userId: _userId, roomId, isHost: false });
+
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
     emitFunc(() => {
       console.log('테스트');
     }, 'PARM');
   };
+
   const goEnter = () => {
-    router.push('/banpick');
+    router.push('/banpickTeam');
     emitFunc(
       () =>
         ws?.send(
@@ -38,6 +41,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
       'blue',
     );
   };
+
   return (
     <>
       {true ? (

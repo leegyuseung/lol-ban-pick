@@ -1,23 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
-
-import { usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
+import { useEffect, useRef } from 'react';
+import { useBanStore, usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
+import { InfoData } from '@/store/banpick';
+
 function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string; roomId: string; isHost: boolean }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
-  const searchParams = useSearchParams();
-  //room id
-  const { setRoomId } = useSocketStore();
-  //user id
-  const { setUserId } = useUserStore();
-  const { ws, setWs } = useSocketStore();
-  const router = useRouter();
-  const pathName = usePathname();
-
   const { setRules, setHostRules, setGuestRules, hostInfo, banpickMode, peopleMode, timeUnlimited, nowSet, position } =
     useRulesStore();
+  const { setCurrentSelectedPick, setBanPickObject, setChangeChampionInfo, setCurrentLocation, setSelectedTeamIndex } =
+    useBanStore();
+  //room id
+  const { setRoomId, ws, setWs } = useSocketStore();
+  //user id
+  const { setUserId } = useUserStore();
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathName = usePathname();
   const socketRef = useRef<WebSocket | null>(null);
+
   useEffect(() => {
     if (!roomId && !searchParams?.get('roomId')) {
       console.log(`📩 새 메시지: noRoom`);
@@ -34,6 +36,7 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
       ]);
     }
   }, [pathName]);
+
   useEffect(() => {
     // WebSocket이 연결되지 않으면 새로 연결 시도
     if (ws) return;
@@ -157,6 +160,41 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
                 },
               },
             ]);
+          }
+          if (data.type === 'image') {
+            setCurrentSelectedPick(data.params.name, data.params.info);
+          }
+          if (data.type === 'champion') {
+            const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam, currentSelectedPick } =
+              useBanStore.getState();
+            let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
+            // 현재 밴픽 정보를 바꿔준다.
+            setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
+            // 챔피언 정보를 바꿔준다.
+            setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick);
+
+            index += 1;
+
+            // 밴픽 위치를 다음으로 변경해준다. 그리고 현재선택이미지 초기화
+            setCurrentLocation(index);
+            setCurrentSelectedPick('', InfoData);
+            setSelectedTeamIndex();
+          }
+          if (data.type === 'random') {
+            const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam } = useBanStore.getState();
+            let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
+
+            if (selectedTeam[selectedTeamIndex].banpick === 'ban') {
+              setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
+            } else {
+              setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
+              setChangeChampionInfo(data.data.randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
+            }
+
+            index += 1;
+            setCurrentLocation(index); // 다음 위치를 저장한다
+            setCurrentSelectedPick('', InfoData); // 초기화
+            setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
           }
         };
 

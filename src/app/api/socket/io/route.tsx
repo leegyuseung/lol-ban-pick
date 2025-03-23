@@ -141,11 +141,33 @@ export async function GET(req: NextRequest) {
               });
             }
           }
+
           if (data.type === 'emit') {
             const roomsClient = clients.filter((client) => client.roomId === data.roomId);
 
             roomsClient.forEach((client) => {
               client.ws.send(JSON.stringify({ type: 'on', params: data.params }));
+            });
+          }
+
+          if (data.type === 'image') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'image', params: data.data }));
+            });
+          }
+
+          if (data.type === 'champion') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'champion' }));
+            });
+          }
+
+          if (data.type === 'random') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'random', data: data.data }));
             });
           }
         });

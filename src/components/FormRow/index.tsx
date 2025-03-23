@@ -5,12 +5,11 @@ import React, { useEffect, useState } from 'react';
 import Button from '../Button';
 import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
+import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
-import SharePopup from '@/app/share/sharePopup';
-import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 
 export default function Form() {
   useImageLoaded();
@@ -82,6 +81,7 @@ export default function Form() {
   // 경로의 페이지를 미리 로드
   useEffect(() => {
     router.prefetch('/banpick');
+    router.prefetch('/banpickTeam');
   }, [router]);
 
   return (
