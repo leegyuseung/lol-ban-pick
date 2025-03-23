@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { usePopupStore } from '@/store';
 import { usePathname } from 'next/navigation';
 
@@ -8,7 +8,7 @@ function PopupComp() {
   const pathName = usePathname();
 
   // pathName이 변경될 때 initPopupState를 호출하도록 useEffect를 사용
-  useEffect(() => {
+  useLayoutEffect(() => {
     initPopupState();
   }, [pathName, initPopupState]); // pathName이 변경될 때마다 실행
 
