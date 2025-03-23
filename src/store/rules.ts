@@ -36,7 +36,7 @@ export const useRulesStore = create<RulesState>()(
         set({
           banpickMode: data.banpickMode,
           peopleMode: data.peopleMode,
-          timeUnlimited: data.peopleMode === 'solo' ? 'true' : data.timeUnlimited,
+          timeUnlimited: data.peopleMode === 'solo' ? data.timeUnlimited : 'false',
           role: data.role,
           position: data.position,
         }),
@@ -45,7 +45,7 @@ export const useRulesStore = create<RulesState>()(
         set({
           banpickMode: data.banpickMode,
           peopleMode: data.peopleMode,
-          timeUnlimited: data.peopleMode === 'solo' ? 'true' : data.timeUnlimited,
+          timeUnlimited: data.peopleMode === 'solo' ? data.timeUnlimited : 'false',
           role: 'host',
           position: data.myTeamSide,
         }),
