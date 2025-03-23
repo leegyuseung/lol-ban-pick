@@ -38,16 +38,18 @@ function ShareItem({
 function SharePopup({ closePopup, userId, isOpen }: PropType) {
   //랜덤
   const randomId = Math.random().toString(36).substr(2, 20);
-  useBanpickSocket({ userId, roomId: randomId, isHost: true });
+  useBanpickSocket({ userId, roomId: randomId, isHost: true, isOpen });
   const router = useRouter();
   const { ws, closeWs } = useSocketStore();
   const { roomId, setRoomId } = useSocketStore();
   const { hostInfo, position } = useRulesStore();
   const { setBtnList, setIsOpen, setTitle, setContent } = usePopupStore();
   const pathName = usePathname();
+  const { setSocket } = useBanpickSocket({ userId, roomId: randomId, isHost: true, isOpen });
+  
   //room id 설정
   useEffect(() => {
-    
+    setSocket()
     setIsOpen(isOpen);
     if (isOpen) {
       setTitle(`공유하기 roomId${position === 'red' ? '블루팀 공유' : '레드팀 공유'}`);

@@ -1,14 +1,17 @@
 'use client';
-import Image from 'next/image';
-import React, { ReactEventHandler, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { usePopupStore } from '@/store';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 
-interface PropType {
-  func: () => void;
-}
 function PopupComp() {
-  const { btnList, isOpen, setIsOpen, title, content } = usePopupStore();
+  const { btnList, isOpen, initPopupState, title, content } = usePopupStore();
+  const pathName = usePathname();
+
+  // pathName이 변경될 때 initPopupState를 호출하도록 useEffect를 사용
+  useEffect(() => {
+    initPopupState();
+  }, [pathName, initPopupState]); // pathName이 변경될 때마다 실행
+
   return (
     <>
       {isOpen ? (
@@ -23,7 +26,7 @@ function PopupComp() {
             </button> */}
 
             {/* 타이틀 */}
-            {title ? <h2 className="text-white text-xl font-semibold">{title}</h2> : <></>}
+            {title ? <h2 className="text-white text-xl font-semibold">{title}</h2> : null}
 
             {/* 모달 내용 */}
             <div className="flex flex-col items-center w-full gap-5 mt-4">
@@ -44,9 +47,7 @@ function PopupComp() {
             </div>
           </div>
         </div>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 }

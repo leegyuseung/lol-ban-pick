@@ -6,7 +6,6 @@ import { useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
 import { useRouter } from 'next/navigation';
-import { withNavigationGuard } from '@/hoc/routerGuard';
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -15,14 +14,16 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   //user id
   const { userId, setUserId } = useUserStore();
   const { ws, setWs, emitFunc } = useSocketStore();
-  const { banpickMode, peopleMode, timeUnlimited, nowSet, position, role, hostInfo, guestInfo } = useRulesStore();
-  useBanpickSocket({ userId: _userId, roomId, isHost: false });
+  const { banpickMode, peopleMode, timeUnlimited, nowSet, audienceCount, position, role, hostInfo, guestInfo } =
+    useRulesStore();
+  const { setSocket } = useBanpickSocket({ userId: _userId, roomId, isHost: false });
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
     emitFunc(() => {
       console.log('테스트');
     }, 'PARM');
   };
+  useEffect(()=>setSocket(),[])
   const goEnter = () => {
     router.push('/banpick');
     emitFunc(
@@ -54,7 +55,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             {/* 관전자 */}
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg border-2 border-gray-600">
               <h2 className="text-xl font-semibold">관전자 (무제한)</h2>
-              <p className="mt-2 text-sm text-gray-300">현재 접속자: 3명</p>
+              <p className="mt-2 text-sm text-gray-300">현재 접속자: {audienceCount}명</p>
             </div>
 
             {/* 블루팀 */}
@@ -66,6 +67,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
+
+          <button onClick={onReady}>준비하기</button>
           </div>
         </div>
       ) : (
@@ -98,4 +101,4 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   );
 }
 
-export default withNavigationGuard(BanpickSocket, () => true);
+export default BanpickSocket;
