@@ -4,7 +4,7 @@ import { useBanStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 
 export default function BanPickHeader() {
-  const { hostInfo, banpickMode, timeUnlimited, nowSet } = useRulesStore();
+  const { hostInfo, banpickMode, timeUnlimited, nowSet, audienceCount } = useRulesStore();
   const { selectedTeam, selectedTeamIndex, RandomPick, headerSecond, setHeaderSecond } = useBanStore();
   const [currentColor, setCurrentColor] = useState('');
 

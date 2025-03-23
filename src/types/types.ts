@@ -39,6 +39,7 @@ export type RulesType = {
   nowSet: number;
   position?: 'blue' | 'red' | 'audience' | undefined;
   role: 'host' | 'guest' | 'audience';
+  audienceCount: number;
 };
 
 export type InfoType = {
@@ -48,6 +49,8 @@ export type InfoType = {
   yourTeamSide: 'blue' | 'red' | 'audience';
   myImg: string;
   yourImg: string;
+  host:boolean;
+  status?: 'join' | 'ready';
 };
 
 export interface RulesState extends RulesType {

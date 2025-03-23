@@ -13,7 +13,7 @@ export const useRulesStore = create<RulesState>()(
       position: 'blue',
       blueTeamName: '블루팀',
       redTeamName: '레드팀',
-
+      audienceCount: 0,
       hostInfo: {
         myTeam: '',
         yourTeam: '',
@@ -32,14 +32,16 @@ export const useRulesStore = create<RulesState>()(
         yourImg: '',
       },
 
-      setRules: (data: RulesType) =>
+      setRules: (data: RulesType) =>{
         set({
           banpickMode: data.banpickMode,
           peopleMode: data.peopleMode,
           timeUnlimited: data.peopleMode === 'solo' ? data.timeUnlimited : 'true',
           role: data.role,
           position: data.position,
-        }),
+          audienceCount: data.audienceCount,
+        })
+      },
 
       setFormRules: (data: FormsData) =>
         set({
