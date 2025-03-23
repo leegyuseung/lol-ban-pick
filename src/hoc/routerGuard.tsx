@@ -17,11 +17,6 @@ export function withNavigationGuard<T extends object>(
       initPopupState();
     }, []);
 
-    useEffect(() => {
-      if (!condition()) {
-        router.replace("/login");
-      }
-    }, [router]);
 
     return condition() ? <WrappedComponent {...props} /> : null;
   };

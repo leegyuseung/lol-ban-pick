@@ -4,7 +4,13 @@ import { usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/st
 import { usePathname, useSearchParams } from 'next/navigation';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
-function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string; roomId: string; isHost: boolean }) {
+function useBanpickSocket({
+  userId: _userId,
+  roomId,
+}: {
+  userId: string;
+  roomId: string;
+}) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
   const searchParams = useSearchParams();
   //room id
@@ -14,12 +20,21 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
   const { ws, setWs } = useSocketStore();
   const router = useRouter();
   const pathName = usePathname();
-
-  const { setRules, setHostRules, setGuestRules, hostInfo, banpickMode, peopleMode, timeUnlimited, nowSet, position } =
-    useRulesStore();
+  const {
+    setRules,
+    setHostRules,
+    setGuestRules,
+    hostInfo,
+    banpickMode,
+    peopleMode,
+    timeUnlimited,
+    nowSet,
+    position,
+    audienceCount,
+  } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
-    if (!roomId && !searchParams?.get('roomId')) {
+    if (pathName !=="/" && !roomId && !searchParams?.get('roomId')) {
       console.log(`📩 새 메시지: noRoom`);
       setIsOpen(true);
       setContent('공유된 게임이 없습니다.');
@@ -34,23 +49,27 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
       ]);
     }
   }, [pathName]);
-  useEffect(() => {
+
+  const setSocket = () => {
     // WebSocket이 연결되지 않으면 새로 연결 시도
-    if (ws) return;
-    if (!ws) {
+    if (socketRef.current) return;
+    if (!roomId && !searchParams?.get('roomId')) return;
+    if (!socketRef.current) {
       console.log(_userId, 'userid');
       const userId = _userId;
       setUserId(userId);
       //host 는 postion 을 던져주지 않음
       const positionValue = (searchParams!.get('position') as 'blue' | 'red' | 'audience') ?? position;
+
       setRules({
         banpickMode,
         peopleMode,
         timeUnlimited,
         nowSet,
+        audienceCount,
         position: positionValue,
         //role 설정
-        role: isHost
+        role: !searchParams!.get('position')
           ? 'host'
           : (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience'
             ? 'audience'
@@ -76,24 +95,35 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
               `userId${userId}roomId` +
               `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
           );
-          if (isHost) {
+          if (!searchParams!.get('position')) {
             //host일때 (sharePop.tsx에서 메인 페이지에서 가장 먼저 세팅됨)
             console.log(hostInfo, 'hostInfo');
-            _ws?.send(
-              JSON.stringify({
-                type: 'init',
-                userId: userId,
-                roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
-                banpickMode,
-                peopleMode,
-                timeUnlimited,
-                nowSet,
-                hostInfo,
-                host: true,
-                role: 'host',
-                position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
-              }),
-            );
+            if (pathName === '/') {
+              _ws?.send(
+                JSON.stringify({
+                  type: 'init',
+                  userId: userId,
+                  roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
+                  banpickMode,
+                  peopleMode,
+                  timeUnlimited,
+                  nowSet,
+                  hostInfo,
+                  host: true,
+                  role: 'host',
+                  position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
+                }),
+              );
+            } else {
+              _ws?.send(
+                JSON.stringify({
+                  type: 'join',
+                  host: true,
+                  roomId,
+                  role: 'host',
+                }),
+              );
+            }
           } else {
             //이후에 접속된 guest나 관중
             _ws?.send(
@@ -103,9 +133,18 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
                 roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                 host: false,
                 position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
-                role: isHost
-                  ? 'host'
-                  : (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience'
+                role: (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience'
+                    ? 'audience'
+                    : 'guest',
+              }),
+            );
+
+            _ws?.send(
+              JSON.stringify({
+                type: 'join',
+                roomId,
+                userId,
+                role: (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience'
                     ? 'audience'
                     : 'guest',
               }),
@@ -130,10 +169,26 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
           if (data.type === 'on') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
           }
+          if (data.type === 'join') {
+            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+          }
           if (data.type === 'closeByHost') {
             console.log(`📩 새 메시지: 종료`);
             setIsOpen(true);
             setContent('게임 주최자가 게임을 종료했습니다.');
+            setBtnList([
+              {
+                text: '돌아가기',
+                func: () => {
+                  setIsOpen(false);
+                  router.push('/');
+                },
+              },
+            ]);
+          }
+          if (data.type === 'overCount') {
+            setIsOpen(true);
+            setContent('정원이 초과 되었습니다');
             setBtnList([
               {
                 text: '돌아가기',
@@ -174,7 +229,8 @@ function useBanpickSocket({ userId: _userId, roomId, isHost }: { userId: string;
         ws!.onclose();
       }
     };
-  }, [ws]);
+  };
+  return { setSocket };
 }
 
 export default useBanpickSocket;

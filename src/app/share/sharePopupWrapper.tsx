@@ -3,7 +3,7 @@ import SharePopup from "./sharePopup";
 function SharePopupWrapper({ closePopup, isOpen }: { closePopup: () => void; isOpen: boolean }) {
   //userId 발급
   const userId = `${Math.floor(Math.random() * 100000000)}`;
-  if(!isOpen)return <>ß</>
+  if(!isOpen)return <></>
   return <SharePopup userId={userId} closePopup={closePopup} isOpen={isOpen} />;
 }
 

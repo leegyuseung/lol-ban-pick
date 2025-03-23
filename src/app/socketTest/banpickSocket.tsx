@@ -16,14 +16,19 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const { ws, setWs, emitFunc } = useSocketStore();
   const { banpickMode, peopleMode, timeUnlimited, nowSet, audienceCount, position, role, hostInfo, guestInfo } =
     useRulesStore();
-  const { setSocket } = useBanpickSocket({ userId: _userId, roomId, isHost: false });
+  const { setSocket } = useBanpickSocket({ userId: _userId, roomId});
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
     emitFunc(() => {
       console.log('테스트');
     }, 'PARM');
   };
-  useEffect(()=>setSocket(),[])
+  useEffect(() => {
+    if(!searchParams?.get("roomId") && !roomId && role==='host'){
+      ws?.send(JSON.stringify({type:"noRoom"}))
+    }
+    setSocket();
+  }, [role]);
   const goEnter = () => {
     router.push('/banpick');
     emitFunc(
@@ -44,7 +49,18 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
       {true ? (
         <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
           <h1 className="text-3xl font-bold text-center mb-8 text-yellow-400">대기방</h1>
-
+          {JSON.stringify({
+            userId,
+            banpickMode,
+            peopleMode,
+            timeUnlimited,
+            nowSet,
+            audienceCount,
+            position,
+            role,
+            hostInfo,
+            guestInfo,
+          })}
           <div className="grid grid-cols-3 gap-6 w-full max-w-4xl">
             {/* 레드팀 */}
             <div className="bg-red-700 p-6 rounded-lg shadow-lg border-2 border-red-500">
@@ -68,7 +84,9 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
 
-          <button onClick={onReady}>준비하기</button>
+            <button onClick={onReady}>준비하기</button>
+            {role+"role"}
+            {role === 'host' ? <button onClick={goEnter}>시작하기</button> : null}
           </div>
         </div>
       ) : (

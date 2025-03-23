@@ -1,7 +1,6 @@
 import { InfoType, RulesType } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { WebSocketServer, WebSocket } from 'ws';
-
 interface Client extends RulesType {
   userId: string;
   roomId: string;
@@ -10,22 +9,16 @@ interface Client extends RulesType {
   position?: 'blue' | 'red' | 'audience' | undefined;
   role: 'host' | 'guest' | 'audience';
   hostInfo: InfoType;
-  guestInfo: {
-    myTeamSide: 'blue' | 'red' | undefined; //undefined일때 host
-
-    myTeam?: string;
-    yourTeam?: string;
-    myImg?: string;
-    yourImg?: string;
-
-    // 피어리스 세트를 담아야한다
-    nowSet?: number;
-  };
+  guestInfo: InfoType;
+  audienceCount: number;
+  status: 'join' | 'ready';
 }
 
+type InitClient = Pick<Client, 'userId' | 'roomId' | 'ws' | 'host' | 'position' | 'role'>;
+
 const wss: WebSocketServer | null = null;
-let clients: Client[] = [];
-const globalForWs = global as unknown as { wss?: WebSocketServer; clients: Client[] };
+let clients: (Client | InitClient)[] = [];
+const globalForWs = global as unknown as { wss?: WebSocketServer; clients: (Client | InitClient)[] };
 
 export async function GET(req: NextRequest) {
   try {
@@ -51,15 +44,15 @@ export async function GET(req: NextRequest) {
           //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
           //TODO: 기타 정보도 사용자에 맞게 변경해야함
           const hostRules = clients.find((client) => client.roomId === roomId && client.host);
-          clients.push({
-            ...(hostRules as Client),
+          const initInfo: InitClient = {
             userId,
             roomId,
             ws,
             host,
             position,
-            role: host ? 'host' : position ? 'guest' : 'audience',
-          });
+            role: host ? 'host' : ['blue', 'red']?.includes(position as string) ? 'guest' : 'audience',
+          };
+          clients.push(initInfo);
         }
 
         ws.on('message', (message: string) => {
@@ -67,7 +60,14 @@ export async function GET(req: NextRequest) {
           console.log('📩 받은 메시지:', data);
           if (data.type === 'init') {
             const hostRules = clients.find((client) => client.roomId === roomId && client.host);
-            console.log(hostRules, 'hostRules');
+            //Client | Initclient 타입가드
+            const isClient = (v: InitClient | Client): v is Client => {
+              if ((v as Client).hostInfo) {
+                return true;
+              }
+              return false;
+            };
+            console.log(hostRules, hostRules && isClient(hostRules), 'hostRules');
             const roomsClient = clients.filter((client) => client.roomId === data.roomId);
             //host일 때 가져온 rules 정보 세팅
             if (data.host) {
@@ -77,19 +77,29 @@ export async function GET(req: NextRequest) {
                   Object.assign(client, data);
                 }
               });
-            } else if (hostRules) {
+            } else if (hostRules && isClient(hostRules)) {
+              console.log('들어옴', hostRules, roomsClient);
+              const audienceClients = clients.filter(
+                (client) => !client.host && client.roomId === data.roomId && client.role === 'audience',
+              );
               //host 가 아닌 참가자 일때 가져온 rules 정보 세팅
               clients
-                .filter((client) => !client.host && client.roomId === data.roomId && client.userId === data.userId)
+                .filter((client) => client.roomId === data.roomId && client.userId === data.userId)
                 .forEach((client) => {
-                  const { banpickMode, peopleMode, timeUnlimited, nowSet, hostInfo } = hostRules;
-                  client.hostInfo = { ...hostInfo };
-
+                  const { banpickMode, peopleMode, timeUnlimited, nowSet, hostInfo } = hostRules as Client;
+                  (client as Client).hostInfo = { ...hostInfo };
                   if (data.role === 'guest') {
-                    client.guestInfo = { ...data.guestInfo };
-                    client.role = 'guest';
+                    (client as Client).guestInfo = {
+                      myTeam: hostRules.hostInfo.yourTeam,
+                      yourTeam: hostRules.hostInfo.myTeam,
+                      myTeamSide: hostRules.hostInfo.myTeamSide === 'blue' ? 'red' : 'blue',
+                      yourTeamSide: hostRules.hostInfo.myTeamSide === 'blue' ? 'blue' : 'red',
+                      myImg: hostRules.hostInfo.yourImg,
+                      yourImg: hostRules.hostInfo.myImg,
+                      host: false,
+                    };
                   }
-                  client.ws.send(
+                  (client as Client).ws.send(
                     JSON.stringify({
                       ...data,
                       banpickMode,
@@ -97,6 +107,7 @@ export async function GET(req: NextRequest) {
                       timeUnlimited,
                       nowSet,
                       hostInfo,
+                      role: data.role,
                       guestInfo: {
                         myTeam: hostRules.hostInfo.yourTeam,
                         yourTeam: hostRules.hostInfo.myTeam,
@@ -110,19 +121,83 @@ export async function GET(req: NextRequest) {
                     }),
                   );
                 });
+            }
+          }
+          if (data.type === 'join') {
+            const hostRules = clients.find((client) => client.roomId === roomId && client.host);
+
+            console.log(hostRules, 'hostRules');
+            //Client | Initclient 타입가드
+            const isClient = (v: InitClient | Client): v is Client => {
+              if ((v as Client).hostInfo) {
+                return true;
+              }
+              return false;
+            };
+            console.log(hostRules, 'hostRules');
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            //host일 때 가져온 rules 정보 세팅
+            if (data.host) {
+              roomsClient.forEach((client) => {
+                console.log(data, 'data');
+                if (client.host) {
+                  if (isClient(client)) {
+                    client.hostInfo.status = 'join';
+                  }
+                }
+              });
+            } else if (hostRules && isClient(hostRules)) {
+              const guestClients = clients.filter(
+                (client) => !client.host && client.roomId === data.roomId && client.role === 'guest',
+              );
+              if (guestClients.length > 1) {
+                guestClients[1].ws.send(
+                  JSON.stringify({
+                    type: 'overCount',
+                  }),
+                );
+                return;
+              }
+              //host 가 아닌 참가자 일때 가져온 rules 정보 세팅
+              clients
+                .filter((client) => client.roomId === data.roomId && client.userId === data.userId)
+                .forEach((client) => {
+                  const { banpickMode, peopleMode, timeUnlimited, nowSet, hostInfo } = hostRules as Client;
+                  (client as Client).hostInfo = { ...hostInfo };
+                  if (data.role === 'guest') {
+                    (client as Client).guestInfo.status = 'join';
+                  }
+                });
             } else {
+              console.log(roomsClient, 'roomClient');
               roomsClient.forEach((client) => {
                 client.ws.send(JSON.stringify({ type: 'noRoom' }));
               });
+              return;
             }
+
+            const audienceClients = clients.filter(
+              (client) => !client.host && client.roomId === data.roomId && client.role === 'audience',
+            );
+            console.log(roomsClient, '조인');
+            roomsClient.forEach((client) => {
+              (client as Client).ws.send(
+                JSON.stringify({
+                  type: 'join',
+                  userId,
+                  role: client.role,
+                  guestInfo: (client as Client).guestInfo,
+                  hostInfo: (client as Client).hostInfo,
+                  audienceCount: audienceClients.length,
+                }),
+              );
+            });
           }
           //이벤트는 추후 변경 예정
           if (data.type === 'ready') {
             const recipients = clients.filter((client) => client.roomId === data.roomId);
 
             if (recipients) {
-              console.log(recipients, 'recipe');
-              console.log(clients, 'clients');
               recipients.forEach((e) =>
                 e.ws.send(
                   JSON.stringify({
