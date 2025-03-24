@@ -177,33 +177,52 @@ export async function GET(req: NextRequest) {
             });
           }
           //이벤트는 추후 변경 예정
-          if (data.type === 'ready') {
-            const recipients = clients.filter((client) => client.roomId === data.roomId);
+          // if (data.type === 'ready') {
+          //   const recipients = clients.filter((client) => client.roomId === data.roomId);
 
-            if (recipients) {
-              recipients.forEach((e) =>
-                e.ws.send(
-                  JSON.stringify({
-                    ...data,
-                    roomId,
-                    userId,
-                    position,
-                  }),
-                ),
-              );
-            } else {
-              console.warn(`⚠️ 대상 (${data.to})을 찾을 수 없음`);
-              console.log(clients);
-              clients.forEach((e) => {
-                console.log(e, 'ee');
-              });
-            }
-          }
+          //   if (recipients) {
+          //     recipients.forEach((e) =>
+          //       e.ws.send(
+          //         JSON.stringify({
+          //           ...data,
+          //           roomId,
+          //           userId,
+          //           position,
+          //         }),
+          //       ),
+          //     );
+          //   } else {
+          //     console.warn(`⚠️ 대상 (${data.to})을 찾을 수 없음`);
+          //     console.log(clients);
+          //     clients.forEach((e) => {
+          //       console.log(e, 'ee');
+          //     });
+          //   }
+          // }
           if (data.type === 'emit') {
             const roomsClient = clients.filter((client) => client.roomId === data.roomId);
 
             roomsClient.forEach((client) => {
               client.ws.send(JSON.stringify({ type: 'on', params: data.params }));
+            });
+          }
+          if (data.type === 'ready') {
+            const audienceCount = clients.filter(
+              (client) => client.roomId === roomId && client.position === 'audience',
+            ).length;
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              if (data.role === 'host') {
+                client.hostInfo.status = 'ready';
+              }
+              if (data.role === 'guest') {
+                client.guestInfo.status = 'ready';
+              }
+              const { ws, ...sendInfo } = client;
+              console.log(client,sendInfo,"client")
+              console.log({ type: 'ready', ...sendInfo, audienceCount },"result")
+              client.ws.send(JSON.stringify({ type: 'ready', ...sendInfo, audienceCount }));
+
             });
           }
         });

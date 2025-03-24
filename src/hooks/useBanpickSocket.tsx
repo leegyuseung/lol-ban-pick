@@ -164,6 +164,8 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           }
           if (data.type === 'ready') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+            setHostRules(data.hostInfo);
+            setGuestRules(data.guestInfo);
           }
           if (data.type === 'on') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
