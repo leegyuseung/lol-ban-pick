@@ -32,7 +32,7 @@ export const useRulesStore = create<RulesState>()(
         yourImg: '',
       },
 
-      setRules: (data: RulesType) =>{
+      setRules: (data: RulesType) => {
         set({
           banpickMode: data.banpickMode,
           peopleMode: data.peopleMode,
@@ -40,7 +40,7 @@ export const useRulesStore = create<RulesState>()(
           role: data.role,
           position: data.position,
           audienceCount: data.audienceCount,
-        })
+        });
       },
 
       setFormRules: (data: FormsData) =>
@@ -52,7 +52,7 @@ export const useRulesStore = create<RulesState>()(
           position: data.myTeamSide,
         }),
 
-      setHostRules: (data: FormsData) =>
+      setHostRules: (data: FormsData & { status: 'join' | 'ready' }) =>
         set((state) => ({
           ...state,
           hostInfo: {
@@ -67,10 +67,11 @@ export const useRulesStore = create<RulesState>()(
             yourTeamSide: data.myTeamSide === 'blue' ? 'red' : 'blue',
             myImg: data.myTeamSide === 'blue' ? data.blueImg : data.redImg,
             yourImg: data.myTeamSide === 'blue' ? data.redImg : data.blueImg,
+            status: data.status,
           },
         })),
 
-      setGuestRules: (data: FormsData) =>
+      setGuestRules: (data: FormsData & { status: 'join' | 'ready' }) =>
         set((state) => ({
           ...state,
           guestInfo: {
@@ -85,6 +86,7 @@ export const useRulesStore = create<RulesState>()(
             yourTeamSide: data.myTeamSide === 'blue' ? 'red' : 'blue',
             myImg: data.myTeamSide === 'blue' ? data.blueImg : data.redImg,
             yourImg: data.myTeamSide === 'blue' ? data.redImg : data.blueImg,
+            status: data.status,
           },
         })),
 

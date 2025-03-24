@@ -4,23 +4,18 @@ import { usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/st
 import { usePathname, useSearchParams } from 'next/navigation';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
-function useBanpickSocket({
-  userId: _userId,
-  roomId,
-}: {
-  userId: string;
-  roomId: string;
-}) {
+function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
   const searchParams = useSearchParams();
   //room id
   const { setRoomId } = useSocketStore();
   //user id
-  const { setUserId } = useUserStore();
+  const { userId, setUserId } = useUserStore();
   const { ws, setWs } = useSocketStore();
   const router = useRouter();
   const pathName = usePathname();
   const {
+    role,
     setRules,
     setHostRules,
     setGuestRules,
@@ -34,7 +29,7 @@ function useBanpickSocket({
   } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
-    if (pathName !=="/" && !roomId && !searchParams?.get('roomId')) {
+    if (pathName !== '/' && !roomId && !searchParams?.get('roomId')) {
       console.log(`📩 새 메시지: noRoom`);
       setIsOpen(true);
       setContent('공유된 게임이 없습니다.');
@@ -47,13 +42,29 @@ function useBanpickSocket({
           },
         },
       ]);
+    } else if (pathName !== '/' && roomId && !searchParams?.get('roomId')) {
+      ws?.send(
+        JSON.stringify({
+          type: 'join',
+          userId: userId,
+          roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
+          banpickMode,
+          peopleMode,
+          timeUnlimited,
+          nowSet,
+          hostInfo,
+          host: true,
+          role: 'host',
+          position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
+        }),
+      );
     }
   }, [pathName]);
 
   const setSocket = () => {
     // WebSocket이 연결되지 않으면 새로 연결 시도
     if (socketRef.current) return;
-    if (!roomId && !searchParams?.get('roomId')) return;
+    if (ws && !searchParams?.get(roomId)) return;
     if (!socketRef.current) {
       console.log(_userId, 'userid');
       const userId = _userId;
@@ -79,7 +90,6 @@ function useBanpickSocket({
       const connectWebSocket = async () => {
         //파람으로 (공유 url)로 roomId get
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
-
         const response = await fetch(
           `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&position=${searchParams!.get('position') ? searchParams!.get('position') : position}&host=${searchParams!.get('position') ? false : true}`,
         ); // WebSocket 서버 확인 요청
@@ -115,14 +125,6 @@ function useBanpickSocket({
                 }),
               );
             } else {
-              _ws?.send(
-                JSON.stringify({
-                  type: 'join',
-                  host: true,
-                  roomId,
-                  role: 'host',
-                }),
-              );
             }
           } else {
             //이후에 접속된 guest나 관중
@@ -133,9 +135,8 @@ function useBanpickSocket({
                 roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                 host: false,
                 position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
-                role: (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience'
-                    ? 'audience'
-                    : 'guest',
+                role:
+                  (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience' ? 'audience' : 'guest',
               }),
             );
 
@@ -144,9 +145,8 @@ function useBanpickSocket({
                 type: 'join',
                 roomId,
                 userId,
-                role: (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience'
-                    ? 'audience'
-                    : 'guest',
+                role:
+                  (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience' ? 'audience' : 'guest',
               }),
             );
           }
@@ -159,9 +159,6 @@ function useBanpickSocket({
 
           if (data.type === 'init') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
-            setRules(data);
-            setHostRules(data.hostInfo);
-            setGuestRules(data.guestInfo);
           }
           if (data.type === 'ready') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
@@ -171,6 +168,9 @@ function useBanpickSocket({
           }
           if (data.type === 'join') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+            setRules(data);
+            setHostRules(data.hostInfo);
+            setGuestRules(data.guestInfo);
           }
           if (data.type === 'closeByHost') {
             console.log(`📩 새 메시지: 종료`);
@@ -185,6 +185,24 @@ function useBanpickSocket({
                 },
               },
             ]);
+          }
+          if (data.type === 'closeByGuest') {
+            console.log(data,"closeByGuest")
+            setRules(data);
+            setHostRules(data.hostInfo);
+            setGuestRules(data.guestInfo);
+          }
+          if (data.type === 'closeByAudience') {
+            console.log(`📩 closeByAudience`, data);
+            setRules({
+              banpickMode,
+              peopleMode,
+              timeUnlimited,
+              role,
+              position,
+              audienceCount: data.audienceCount,
+              nowSet,
+            });
           }
           if (data.type === 'overCount') {
             setIsOpen(true);

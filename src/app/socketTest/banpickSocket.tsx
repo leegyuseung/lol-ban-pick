@@ -1,6 +1,6 @@
 //소켓 연결 페이지
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
@@ -16,7 +16,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const { ws, setWs, emitFunc } = useSocketStore();
   const { banpickMode, peopleMode, timeUnlimited, nowSet, audienceCount, position, role, hostInfo, guestInfo } =
     useRulesStore();
-  const { setSocket } = useBanpickSocket({ userId: _userId, roomId});
+  const { setSocket } = useBanpickSocket({ userId: _userId, roomId });
   const onReady = () => {
     //현재 설정된 게임의 룰 을 전송
     emitFunc(() => {
@@ -24,8 +24,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
     }, 'PARM');
   };
   useEffect(() => {
-    if(!searchParams?.get("roomId") && !roomId && role==='host'){
-      ws?.send(JSON.stringify({type:"noRoom"}))
+    if (!searchParams?.get('roomId') && !roomId && role === 'host') {
+      ws?.send(JSON.stringify({ type: 'noRoom' }));
     }
     setSocket();
   }, [role]);
@@ -44,6 +44,15 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
       'blue',
     );
   };
+  const redCount = useMemo(() => {
+    const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
+    return !teamSide || !teamSide.status || teamSide.status !== 'join' ? 0 : 1;
+  }, [guestInfo, hostInfo]);
+  const blueCount = useMemo(() => {
+    const teamSide = hostInfo.myTeamSide === 'blue' ? hostInfo : guestInfo;
+    
+    return !teamSide || !teamSide.status || teamSide.status !== 'join' ? 0 : 1;
+  }, [guestInfo, hostInfo]);
   return (
     <>
       {true ? (
@@ -62,22 +71,21 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             guestInfo,
           })}
           <div className="grid grid-cols-3 gap-6 w-full max-w-4xl">
-            {/* 레드팀 */}
-            <div className="bg-red-700 p-6 rounded-lg shadow-lg border-2 border-red-500">
-              <h2 className="text-xl font-semibold">레드팀 (1/1)</h2>
-              <p className="mt-2 text-sm text-gray-300">플레이어 1</p>
+            {/* 블루팀 */}
+            <div className="bg-blue-700 p-6 rounded-lg shadow-lg border-2 border-blue-500">
+              <h2 className="text-xl font-semibold">블루팀 ({blueCount}/1)</h2>
+              <p className="mt-2 text-sm text-gray-300">플레이어 2</p>
             </div>
-
             {/* 관전자 */}
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg border-2 border-gray-600">
               <h2 className="text-xl font-semibold">관전자 (무제한)</h2>
               <p className="mt-2 text-sm text-gray-300">현재 접속자: {audienceCount}명</p>
             </div>
 
-            {/* 블루팀 */}
-            <div className="bg-blue-700 p-6 rounded-lg shadow-lg border-2 border-blue-500">
-              <h2 className="text-xl font-semibold">블루팀 (1/1)</h2>
-              <p className="mt-2 text-sm text-gray-300">플레이어 2</p>
+            {/* 레드팀 */}
+            <div className="bg-red-700 p-6 rounded-lg shadow-lg border-2 border-red-500">
+              <h2 className="text-xl font-semibold">레드팀 ({redCount}/1)</h2>
+              <p className="mt-2 text-sm text-gray-300">플레이어 1</p>
             </div>
           </div>
 
@@ -85,7 +93,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
 
             <button onClick={onReady}>준비하기</button>
-            {role+"role"}
+            {role + 'role'}
             {role === 'host' ? <button onClick={goEnter}>시작하기</button> : null}
           </div>
         </div>
