@@ -53,6 +53,15 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
     
     return !teamSide || !teamSide.status || teamSide.status !== 'join' ? 0 : 1;
   }, [guestInfo, hostInfo]);
+  const redTeamName = useMemo(() => {
+    const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
+    return teamSide.myTeam
+  }, [guestInfo, hostInfo]);
+  const blueTeamName = useMemo(() => {
+    const teamSide = hostInfo.myTeamSide === 'blue' ? hostInfo : guestInfo;
+    
+    return teamSide.myTeam
+  }, [guestInfo, hostInfo]);
   return (
     <>
       {true ? (
@@ -73,8 +82,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
           <div className="grid grid-cols-3 gap-6 w-full max-w-4xl">
             {/* 블루팀 */}
             <div className="bg-blue-700 p-6 rounded-lg shadow-lg border-2 border-blue-500">
-              <h2 className="text-xl font-semibold">블루팀 ({blueCount}/1)</h2>
-              <p className="mt-2 text-sm text-gray-300">플레이어 2</p>
+              <h2 className="text-xl font-semibold">{blueTeamName} ({blueCount}/1)</h2>
+              <p className="mt-2 text-sm text-gray-300">플레이어 1</p>
             </div>
             {/* 관전자 */}
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg border-2 border-gray-600">
@@ -84,8 +93,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
             {/* 레드팀 */}
             <div className="bg-red-700 p-6 rounded-lg shadow-lg border-2 border-red-500">
-              <h2 className="text-xl font-semibold">레드팀 ({redCount}/1)</h2>
-              <p className="mt-2 text-sm text-gray-300">플레이어 1</p>
+              <h2 className="text-xl font-semibold">{redTeamName} ({redCount}/1)</h2>
+              <p className="mt-2 text-sm text-gray-300">플레이어 2</p>
             </div>
           </div>
 

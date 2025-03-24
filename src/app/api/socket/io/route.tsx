@@ -69,6 +69,7 @@ export async function GET(req: NextRequest) {
             const roomsClient = clients.filter((client) => client.roomId === data.roomId);
             //host일 때 가져온 rules 정보 세팅
             if (data.host) {
+              //호스트 정보 바탕으로 세팅
               roomsClient.forEach((client) => {
                 console.log(data, 'data');
                 if (client.host) {
@@ -98,7 +99,6 @@ export async function GET(req: NextRequest) {
             const guestClients = clients.filter(
               (client) => !client.host && client.roomId === data.roomId && client.role === 'guest',
             );
-            console.log(hostRules, 'hostRules');
             //Client | Initclient 타입가드
             const isClient = (v: InitClient | Client): v is Client => {
               if ((v as Client).hostInfo) {
@@ -107,12 +107,13 @@ export async function GET(req: NextRequest) {
               return false;
             };
             console.log(hostRules, 'hostRules');
-            //host일 때 가져온 rules 정보 세팅
+            //host가 조인할때
             if (data.host) {
               roomsClient.forEach((client) => {
                 (client as Client).hostInfo.status = 'join';
               });
             } else if (hostRules && isClient(hostRules)) {
+              //두명의 게스트가 들어올때
               if (guestClients.length > 1) {
                 guestClients[1].ws.send(
                   JSON.stringify({
@@ -121,8 +122,7 @@ export async function GET(req: NextRequest) {
                 );
                 return;
               }
-              //host 가 아닌 참가자 일때 가져온 rules 정보 세팅
-
+              //게스타 조인할때
               if (data.role === 'guest') {
                 roomsClient.forEach((client) => {
                   (client as Client).guestInfo.status = 'join';
@@ -143,6 +143,7 @@ export async function GET(req: NextRequest) {
               });
             } else {
               console.log(roomsClient, 'roomClient');
+              //호스트가 게임을 종료할때
               roomsClient.forEach((client) => {
                 client.ws.send(JSON.stringify({ type: 'noRoom' }));
               });
