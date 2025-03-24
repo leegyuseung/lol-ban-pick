@@ -1,12 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Button from '../Button';
 import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
 import { useForm } from 'react-hook-form';
-import { useRulesStore, usePeerlessStore } from '@/store';
+import { useRulesStore, usePeerlessStore, useSocketStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 import SharePopup from '@/app/share/sharePopup';
@@ -14,6 +14,7 @@ import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 
 export default function Form() {
   useImageLoaded();
+  const { setWs, ws } = useSocketStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearMyBan, setClearYourBan } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
@@ -67,9 +68,11 @@ export default function Form() {
     setIsShareOpen(true);
   };
 
-  const closeSharePopup = () => {
+  const closeSharePopup = useCallback(() => {
+    ws?.close();
+    // setWs(null);
     setIsShareOpen(false);
-  };
+  },[ws]);
   const openPopup = (teamColor: string) => {
     setSelectedTeamColor(teamColor);
     setIsOpen(true);

@@ -29,6 +29,9 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
   } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
+    if (pathName === '/') {
+      setWs(null);
+    }
     if (pathName !== '/' && !roomId && !searchParams?.get('roomId')) {
       console.log(`📩 새 메시지: noRoom`);
       setIsOpen(true);
@@ -124,7 +127,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
                   position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
                 }),
               );
-            } else {
             }
           } else {
             //이후에 접속된 guest나 관중
@@ -187,7 +189,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             ]);
           }
           if (data.type === 'closeByGuest') {
-            console.log(data,"closeByGuest")
+            console.log(data, 'closeByGuest');
             setRules(data);
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);

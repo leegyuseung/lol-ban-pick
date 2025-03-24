@@ -52,7 +52,7 @@ export const useRulesStore = create<RulesState>()(
           position: data.myTeamSide,
         }),
 
-      setHostRules: (data: FormsData & { status: 'join' | 'ready' }) =>
+      setHostRules: (data: FormsData & { status: 'join' | 'ready' | '' }) =>
         set((state) => ({
           ...state,
           hostInfo: {
@@ -71,7 +71,7 @@ export const useRulesStore = create<RulesState>()(
           },
         })),
 
-      setGuestRules: (data: FormsData & { status: 'join' | 'ready' }) =>
+      setGuestRules: (data: FormsData & { status: 'join' | 'ready' | '' }) =>
         set((state) => ({
           ...state,
           guestInfo: {

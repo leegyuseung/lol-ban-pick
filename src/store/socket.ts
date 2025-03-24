@@ -7,7 +7,6 @@ type SocketState = {
   setRoomId: (roomId: string) => void;
   ws: WebSocket | null;
   setWs: (ws: any) => void;
-  closeWs: (ws: any) => void;
   emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
 };
 
@@ -23,13 +22,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     set({
       ws,
     }),
-  closeWs: (ws?: WebSocket | null) => {
-    if (ws) ws?.close();
-    set({
-      ws: null,
-    });
-    return {};
-  },
   emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, params: any): void => {
     const rulesState = useRulesStore.getState(); // rules 상태 가져오기
     console.log(rulesState);
