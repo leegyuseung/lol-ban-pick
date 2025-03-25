@@ -52,7 +52,8 @@ export const useRulesStore = create<RulesState>()(
           position: data.myTeamSide,
         }),
 
-      setHostRules: (data: FormsData & { status: 'join' | 'ready' | '' }) =>
+      setHostRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => {
+        console.log(data,"setH")
         set((state) => ({
           ...state,
           hostInfo: {
@@ -65,13 +66,14 @@ export const useRulesStore = create<RulesState>()(
               (data.myTeamSide === 'blue' ? data.redTeamName || '레드팀' : data.blueTeamName || '블루팀'),
             myTeamSide: data.myTeamSide === 'blue' ? 'blue' : 'red',
             yourTeamSide: data.myTeamSide === 'blue' ? 'red' : 'blue',
-            myImg: data.myTeamSide === 'blue' ? data.blueImg : data.redImg,
-            yourImg: data.myTeamSide === 'blue' ? data.redImg : data.blueImg,
+            myImg: data.myImg || (data.myTeamSide === 'blue' ? data.blueImg : data.redImg),
+            yourImg: data.yourImg || (data.myTeamSide === 'blue' ? data.redImg : data.blueImg),
             status: data.status,
           },
-        })),
-
-      setGuestRules: (data: FormsData & { status: 'join' | 'ready' | '' }) =>
+        }));
+      },
+      setGuestRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => {
+        console.log(data,"setG")
         set((state) => ({
           ...state,
           guestInfo: {
@@ -84,11 +86,12 @@ export const useRulesStore = create<RulesState>()(
               (data.myTeamSide === 'blue' ? data.redTeamName || '레드팀' : data.blueTeamName || '블루팀'),
             myTeamSide: data.myTeamSide === 'blue' ? 'blue' : 'red',
             yourTeamSide: data.myTeamSide === 'blue' ? 'red' : 'blue',
-            myImg: data.myTeamSide === 'blue' ? data.blueImg : data.redImg,
-            yourImg: data.myTeamSide === 'blue' ? data.redImg : data.blueImg,
+            myImg: data.myImg || (data.myTeamSide === 'blue' ? data.blueImg : data.redImg),
+            yourImg: data.yourImg || (data.myTeamSide === 'blue' ? data.redImg : data.blueImg),
             status: data.status,
           },
-        })),
+        }));
+      },
 
       setPeerlessSet: () =>
         set((state) => {

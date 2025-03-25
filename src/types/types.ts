@@ -30,6 +30,8 @@ export type FormsData = {
   nowSet: number;
   myTeam: string;
   yourTeam: string;
+  myImg?: string;
+  yourImg?: string;
 };
 
 export type RulesType = {

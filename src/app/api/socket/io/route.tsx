@@ -84,8 +84,11 @@ export async function GET(req: NextRequest) {
                 console.log(data, 'data');
                 if (client.host) {
                   const { type, ...hostInfo } = data;
+
+                  console.log(data, hostInfo, 'data&hostInfo');
                   hostInfo.hostInfo.status = '';
                   Object.assign(client, hostInfo);
+                  console.log(client, 'data&hostInfo');
                 }
 
                 ((client as Client).guestInfo as InfoType) = {
@@ -135,17 +138,23 @@ export async function GET(req: NextRequest) {
                 });
               }
               roomsClient.forEach((client) => {
-                ((client as Client).guestInfo as InfoType) = {
-                  myTeam: (hostRules.hostInfo as InfoType).yourTeam,
-                  yourTeam: (hostRules.hostInfo as InfoType).myTeam,
-                  myTeamSide: (hostRules.hostInfo as InfoType).myTeamSide === 'blue' ? 'red' : 'blue',
-                  yourTeamSide: (hostRules.hostInfo as InfoType).myTeamSide === 'blue' ? 'blue' : 'red',
-                  myImg: (hostRules.hostInfo as InfoType).yourImg,
-                  yourImg: (hostRules.hostInfo as InfoType).myImg,
-                  host: false,
-                  status: (client as Client).guestInfo.status,
-                };
-                ((client as Client).hostInfo as InfoType) = { ...(hostRules.hostInfo as InfoType) };
+                if (isClient(client)) {
+                  client.banpickMode = hostRules.banpickMode;
+                  client.peopleMode = hostRules.peopleMode;
+                  client.timeUnlimited = hostRules.timeUnlimited;
+                  client.nowSet = hostRules.nowSet;
+                  (client.guestInfo as InfoType) = {
+                    myTeam: (hostRules.hostInfo as InfoType).yourTeam,
+                    yourTeam: (hostRules.hostInfo as InfoType).myTeam,
+                    myTeamSide: (hostRules.hostInfo as InfoType).myTeamSide === 'blue' ? 'red' : 'blue',
+                    yourTeamSide: (hostRules.hostInfo as InfoType).myTeamSide === 'blue' ? 'blue' : 'red',
+                    myImg: (hostRules.hostInfo as InfoType).yourImg,
+                    yourImg: (hostRules.hostInfo as InfoType).myImg,
+                    host: false,
+                    status: client.guestInfo.status,
+                  };
+                  (client.hostInfo as InfoType) = { ...(hostRules.hostInfo as InfoType) };
+                }
               });
             } else {
               console.log(roomsClient, 'roomClient');
