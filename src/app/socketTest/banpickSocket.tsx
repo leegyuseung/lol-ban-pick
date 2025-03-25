@@ -4,8 +4,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
-import useBanpickSocket from '@/hooks/useBanpickSocket';
 import { useRouter } from 'next/navigation';
+import useBanpickSocket from '@/hooks/useBanpickSocket';
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();

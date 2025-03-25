@@ -2,12 +2,13 @@
 import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
-import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { useRulesStore, usePeerlessStore } from '@/store';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
-import { ChampionInfoI } from '@/types/types';
-import { BanArray, InfoData } from '@/store/banpick';
+import { ChampionInfoI, InfoType } from '@/types/types';
+import { BanArray } from '@/store/banpick';
 import { useRouter } from 'next/navigation';
+import { useBanTeamStore, useBanStore } from '@/store';
 
 const lineMapping: Record<string, number> = {
   top: 0,
@@ -24,45 +25,62 @@ export default function SelectChampions() {
   const {
     championInfo,
     setChampionInfo,
-    setChangeChampionInfo,
     setChangeChampionPeerInfo,
     selectedTeam,
-    selectedTeamIndex,
-    setSelectedTeamIndex,
     setClearSelectTeamIndex,
-    currentSelectedPick,
-    setCurrentSelectedPick,
-    currentLocation,
-    setCurrentLocation,
     setClearCurrentLocation,
-    banPickObject,
-    setBanPickObject,
     setClearBanPickObject,
     headerSecond,
+    currentSelectedPick,
+    selectedTeamIndex,
   } = useBanStore();
-  const { banpickMode, nowSet, hostInfo, setPeerlessSet } = useRulesStore();
+  const { SelectTeamImage, SelectTeamChampion } = useBanTeamStore();
+
+  const { banpickMode, nowSet, role, hostInfo, guestInfo, setPeerlessSet } = useRulesStore();
   const { setMyBan, setYourBan, myBan, yourBan, setClearMyBan, setClearYourBan } = usePeerlessStore();
   const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
   const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 블루팀 배열
   const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 레드팀 배열
   const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
-
+  const InfoDataRef = useRef<InfoType>();
   const router = useRouter();
 
+  // InfoData 세팅
+  useEffect(() => {
+    if (role === 'host') {
+      InfoDataRef.current = hostInfo;
+    } else if (role === 'guest') {
+      InfoDataRef.current = guestInfo;
+    } else if (role === 'audience') {
+      InfoDataRef.current = {
+        myTeam: '',
+        yourTeam: '',
+        myTeamSide: 'audience',
+        yourTeamSide: 'audience',
+        myImg: '',
+        yourImg: '',
+      };
+    }
+  }, [role, hostInfo, guestInfo]);
+
+  // 챔피언 정보 가져오기
   useEffect(() => {
     setChampionInfo();
   }, []);
 
+  // 피어리스 밴픽에 따른 챔피언 정보 변경
   useEffect(() => {
     setChangeChampionPeerInfo(myBan, yourBan);
   }, [myBan, yourBan]);
 
+  // 챔피언 정보 필터링
   useEffect(() => {
     setFilteredChampions(championInfo); // 챔피언 정보가 변경될 때 필터링 데이터 초기화
     setSelectedFilter(null);
   }, [championInfo]);
 
+  // 라인별 필터링
   const onClickFilter = useCallback(
     (type: string) => {
       if (selectedFilter === type) {
@@ -99,38 +117,17 @@ export default function SelectChampions() {
   // Image 클릭시
   const onClick = useCallback(
     (pickName: string, info: ChampionInfoI) => {
-      if (pickName === '') return;
-      setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
+      if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || pickName === '') return;
+      SelectTeamImage(pickName, info); // 선택한 챔피언 정보를 저장
     },
-    [setCurrentSelectedPick],
+    [SelectTeamImage, selectedTeamIndex],
   );
 
   // 챔피언 선택 버튼 클릭시
   const onClickButton = useCallback(() => {
-    let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
-
-    setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
-    setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick);
-
-    const selectedChampion = {
-      name: currentSelectedPick[0].name,
-      info: currentSelectedPick[0].info,
-      line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
-    };
-
-    if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
-      if (selectedTeam[selectedTeamIndex].color === 'red') {
-        setRedPeerlessArray((prev) => [...prev, selectedChampion]);
-      } else {
-        setBluePeerlessArray((prev) => [...prev, selectedChampion]);
-      }
-    }
-
-    index += 1;
-    setCurrentLocation(index);
-    setCurrentSelectedPick('', InfoData);
-    setSelectedTeamIndex();
-  }, [banPickObject, currentLocation, currentSelectedPick, selectedTeam, selectedTeamIndex]);
+    if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide) return;
+    SelectTeamChampion();
+  }, [SelectTeamChampion, selectedTeam, selectedTeamIndex]);
 
   const onNextSet = () => {
     // 피어리스 밴픽 추가
@@ -203,7 +200,7 @@ export default function SelectChampions() {
       >
         {Object.entries(filteredChampions).map(([name, info], idx) => (
           <div
-            className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === currentSelectedPick[0].name ? 'opacity-20' : ''}`}
+            className={`relative flex flex-col items-center ${selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === currentSelectedPick[0].name ? 'opacity-20' : ''}`}
             key={idx}
           >
             <ImageComp
@@ -221,9 +218,9 @@ export default function SelectChampions() {
         ))}
       </div>
       <div className="relative flex justify-center">
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
-          (banpickMode === 'tournament' && headerSecond === '') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '')) && (
+        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '' && role === 'host') ||
+          (banpickMode === 'tournament' && headerSecond === '' && role === 'host') ||
+          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '' && role === 'host')) && (
           <div className="absolute left-0">
             <Button
               text={'뒤로가기'}
@@ -237,15 +234,15 @@ export default function SelectChampions() {
           <div className="absolute">
             <Button
               text={'챔피언 선택'}
-              className={`${currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
+              className={`${selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
               onClick={currentSelectedPick[0].name === '' || headerSecond === '' ? undefined : onClickButton}
             />
           </div>
         )}
 
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '') ||
-          (banpickMode === 'tournament' && headerSecond === '')) && (
+        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '' && role === 'host') ||
+          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '' && role === 'host') ||
+          (banpickMode === 'tournament' && headerSecond === '' && role === 'host')) && (
           <div className="absolute right-0">
             <Button
               text={'다시하기'}
@@ -255,8 +252,16 @@ export default function SelectChampions() {
           </div>
         )}
 
-        {((banpickMode !== 'tournament' && banpickMode === 'peerless3' && nowSet < 3 && headerSecond === '') ||
-          (banpickMode !== 'tournament' && banpickMode === 'peerless5' && nowSet < 5 && headerSecond === '')) && (
+        {((banpickMode !== 'tournament' &&
+          banpickMode === 'peerless3' &&
+          nowSet < 3 &&
+          headerSecond === '' &&
+          role === 'host') ||
+          (banpickMode !== 'tournament' &&
+            banpickMode === 'peerless5' &&
+            nowSet < 5 &&
+            headerSecond === '' &&
+            role === 'host')) && (
           <div className="absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}

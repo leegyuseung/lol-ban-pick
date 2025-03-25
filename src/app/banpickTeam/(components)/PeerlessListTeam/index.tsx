@@ -1,5 +1,5 @@
 'use client';
-import PeerlessImage from './PeerlessImage';
+import PeerlessImage from './PeerlessImageTeam';
 import { usePeerlessStore, useRulesStore } from '@/store';
 
 type PropsType = {

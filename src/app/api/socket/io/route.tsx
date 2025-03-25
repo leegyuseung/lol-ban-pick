@@ -220,6 +220,26 @@ export async function GET(req: NextRequest) {
               client.ws.send(JSON.stringify({ type: 'banpickStart' }));
             });
           }
+          if (data.type === 'image') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'image', params: data.data }));
+            });
+          }
+
+          if (data.type === 'champion') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'champion' }));
+            });
+          }
+
+          if (data.type === 'random') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'random', data: data.data }));
+            });
+          }
         });
         ws.on('close', () => {
           //host가 종료하면 room 삭제
@@ -232,6 +252,9 @@ export async function GET(req: NextRequest) {
             clients = clients.filter((client) => client.roomId !== roomId);
           } else {
             if (position !== 'audience' && !host) {
+              const audienceClients = clients.filter(
+                (client) => !client.host && client.roomId === roomId && client.role === 'audience',
+              );
               console.log(
                 clients.filter((client) => client.roomId === roomId),
                 roomId,
@@ -248,7 +271,9 @@ export async function GET(req: NextRequest) {
                 .filter((client) => client.roomId === roomId)
                 .forEach((client) => {
                   const { ws, ...sendInfo } = client;
-                  client.ws.send(JSON.stringify({ type: 'closeByGuest', ...sendInfo, audienceCount }));
+                  client.ws.send(
+                    JSON.stringify({ type: 'closeByGuest', ...sendInfo, audienceCount: audienceClients.length }),
+                  );
                 });
               clients = clients.filter((client) => client.userId !== userId);
             } else if (position === 'audience') {

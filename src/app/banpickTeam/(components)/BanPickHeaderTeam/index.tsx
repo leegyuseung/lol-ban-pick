@@ -1,32 +1,53 @@
 'use client';
 import Image from 'next/image';
-import { useBanStore, useRulesStore } from '@/store';
+import { useBanStore, useBanTeamStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
+import { InfoType } from '@/types/types';
 
 export default function BanPickHeader() {
-  const { hostInfo, banpickMode, timeUnlimited, nowSet, audienceCount } = useRulesStore();
-  const { selectedTeam, selectedTeamIndex, RandomPick, headerSecond, setHeaderSecond } = useBanStore();
+  const { hostInfo, banpickMode, timeUnlimited, nowSet, role, guestInfo } = useRulesStore();
+  const { selectedTeam, selectedTeamIndex, headerSecond, setHeaderSecond } = useBanStore();
+  const { TeamRandomPick } = useBanTeamStore();
   const [currentColor, setCurrentColor] = useState('');
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const secondRef = useRef(headerSecond);
+  const InfoDataRef = useRef<InfoType>();
+
+  // InfoData 세팅
+  useEffect(() => {
+    if (role === 'host') {
+      InfoDataRef.current = hostInfo;
+    } else if (role === 'guest') {
+      InfoDataRef.current = guestInfo;
+    } else if (role === 'audience') {
+      InfoDataRef.current = {
+        myTeam: '',
+        yourTeam: '',
+        myTeamSide: 'audience',
+        yourTeamSide: 'audience',
+        myImg: '',
+        yourImg: '',
+      };
+    }
+  }, [role, hostInfo, guestInfo]);
 
   useEffect(() => {
-    console.log(timeUnlimited, '⭐️timeUnlimited');
-    setHeaderSecond(timeUnlimited === 'true' ? '∞' : '30');
+    setHeaderSecond(timeUnlimited === 'true' ? '∞' : '5');
   }, [timeUnlimited]);
 
   // 시간
   useEffect(() => {
-    console.log(timeUnlimited, '⭐️timeUnlimited');
     if (timeUnlimited === 'true' || headerSecond === '') return;
 
     timerRef.current = setInterval(() => {
       if (secondRef.current === '0') {
         // 30초가 그냥 지나갈 경우 랜덤픽으로 넣어야한다
-        RandomPick();
-        secondRef.current = '30';
-        setHeaderSecond('30');
+        if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide) {
+          TeamRandomPick();
+        }
+        secondRef.current = '5';
+        setHeaderSecond('5');
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
         setHeaderSecond(secondRef.current);
@@ -47,8 +68,8 @@ export default function BanPickHeader() {
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
     } else if (selectedTeam[selectedTeamIndex].color === 'blue' || selectedTeam[selectedTeamIndex].color === 'red') {
       if (timeUnlimited !== 'true') {
-        secondRef.current = '30';
-        setHeaderSecond('30');
+        secondRef.current = '5';
+        setHeaderSecond('5');
       } else {
         secondRef.current = '∞';
         setHeaderSecond('∞');
@@ -62,32 +83,32 @@ export default function BanPickHeader() {
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
           <div className="relative w-[80px] h-[65px] ml-10">
-            {hostInfo.myTeamSide === 'blue'
-              ? hostInfo.myImg && (
+            {InfoDataRef.current?.myTeamSide === 'blue'
+              ? InfoDataRef.current?.myImg && (
                   <Image
                     sizes="w-[80px] h-[65px]"
                     className="object-contain"
-                    src={hostInfo.myImg}
+                    src={InfoDataRef.current?.myImg}
                     alt="logo"
                     fill
                     priority
                   />
                 )
-              : hostInfo.yourImg && (
+              : InfoDataRef.current?.yourImg && (
                   <Image
                     sizes="w-[80px] h-[65px]"
                     className="object-contain"
-                    src={hostInfo.yourImg}
+                    src={InfoDataRef.current?.yourImg}
                     alt="logo"
                     fill
                     priority
                   />
                 )}
           </div>
-          {hostInfo.myTeamSide === 'blue' ? (
-            <span className="text-2xl mr-10">{hostInfo.myTeam}</span>
+          {InfoDataRef.current?.myTeamSide === 'blue' ? (
+            <span className="text-2xl mr-10">{InfoDataRef.current?.myTeam}</span>
           ) : (
-            <span className="text-2xl mr-10">{hostInfo.yourTeam}</span>
+            <span className="text-2xl mr-10">{InfoDataRef.current?.yourTeam}</span>
           )}
         </div>
         <div className="flex-[1] w-full relative overflow-hidden h-4">
@@ -102,28 +123,28 @@ export default function BanPickHeader() {
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
-          {hostInfo.myTeamSide === 'blue' ? (
-            <span className="text-2xl ml-10">{hostInfo.yourTeam}</span>
+          {InfoDataRef.current?.myTeamSide === 'blue' ? (
+            <span className="text-2xl ml-10">{InfoDataRef.current?.yourTeam}</span>
           ) : (
-            <span className="text-2xl ml-10">{hostInfo.myTeam}</span>
+            <span className="text-2xl ml-10">{InfoDataRef.current?.myTeam}</span>
           )}
           <div className="relative w-[80px] h-[65px] mr-10">
-            {hostInfo.myTeamSide === 'blue'
-              ? hostInfo.yourImg && (
+            {InfoDataRef.current?.myTeamSide === 'blue'
+              ? InfoDataRef.current?.yourImg && (
                   <Image
                     className="object-contain"
                     sizes="w-[80px] h-[65px]"
-                    src={hostInfo.yourImg}
+                    src={InfoDataRef.current?.yourImg}
                     alt="logo"
                     fill
                     priority
                   />
                 )
-              : hostInfo.myImg && (
+              : InfoDataRef.current?.myImg && (
                   <Image
                     className="object-contain"
                     sizes="w-[80px] h-[65px]"
-                    src={hostInfo.myImg}
+                    src={InfoDataRef.current?.myImg}
                     alt="logo"
                     fill
                     priority
