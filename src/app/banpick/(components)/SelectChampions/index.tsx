@@ -40,7 +40,7 @@ export default function SelectChampions() {
     setClearBanPickObject,
     headerSecond,
   } = useBanStore();
-  const { banpickMode, nowSet, hostInfo, setPeerlessSet } = useRulesStore();
+  const { banpickMode, nowSet, hostInfo, setPeerlessSet, setClearPeerlessSet } = useRulesStore();
   const { setMyBan, setYourBan, myBan, yourBan, setClearMyBan, setClearYourBan } = usePeerlessStore();
   const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
@@ -132,37 +132,43 @@ export default function SelectChampions() {
     setSelectedTeamIndex();
   }, [banPickObject, currentLocation, currentSelectedPick, selectedTeam, selectedTeamIndex]);
 
+  // 다음 세트 버튼 클릭시
   const onNextSet = () => {
     // 피어리스 밴픽 추가
     if (hostInfo.myTeamSide === 'blue') {
-      setMyBan(bluePeerlessArray);
-      setYourBan(redPeerlessArray);
+      setMyBan(bluePeerlessArray); // 내 밴 추가
+      setYourBan(redPeerlessArray); // 상대 밴 추가
     } else {
-      setMyBan(redPeerlessArray);
-      setYourBan(bluePeerlessArray);
+      setMyBan(redPeerlessArray); // 내 밴 추가
+      setYourBan(bluePeerlessArray); // 상대 밴 추가
     }
-    setPeerlessSet();
+    setPeerlessSet(); // 피어리스 세트 증가
 
     // 리스트들 초기화를 해줘야한다.
-    setClearBanPickObject();
-    setClearSelectTeamIndex();
-    setClearCurrentLocation();
-    setRedPeerlessArray([]);
-    setBluePeerlessArray([]);
+    setClearBanPickObject(); // 밴픽 객체 초기화
+    setClearSelectTeamIndex(); // 선택된 팀 인덱스 초기화
+    setClearCurrentLocation(); // 현재 위치 초기화
+    setRedPeerlessArray([]); // 레드피어리스 초기화
+    setBluePeerlessArray([]); // 블루피어리스 초기화
     router.refresh();
   };
 
+  // 다시하기 버튼 클릭시
   const onReplay = useCallback(() => {
-    setClearBanPickObject();
-    setClearSelectTeamIndex();
-    setClearCurrentLocation();
+    setChampionInfo(); // 챔피언 정보 초기화
+    setClearBanPickObject(); // 밴픽 객체 초기화
+    setClearSelectTeamIndex(); // 선택된 팀 인덱스 초기화
+    setClearCurrentLocation(); // 현재 위치 초기화
+
+    // 피어리스 밴픽 초기화
     if (banpickMode !== 'tournament') {
-      setRedPeerlessArray([]);
-      setBluePeerlessArray([]);
-      setClearMyBan();
-      setClearYourBan();
+      setClearPeerlessSet(); // 피어리스 세트 초기화
+      setRedPeerlessArray([]); // 레드피어리스 초기화
+      setBluePeerlessArray([]); // 블루피어리스 초기화
+      setClearMyBan(); // 내 밴 초기화
+      setClearYourBan(); // 상대 밴 초기화
     }
-    location.reload();
+    router.refresh();
   }, [
     banpickMode,
     setClearBanPickObject,
