@@ -167,6 +167,10 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);
           }
+          if (data.type === 'banpickStart') {
+            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+            router.push('/banpick');
+          }
           if (data.type === 'on') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
           }
@@ -176,6 +180,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);
           }
+
           if (data.type === 'closeByHost') {
             console.log(`📩 새 메시지: 종료`);
             setIsOpen(true);

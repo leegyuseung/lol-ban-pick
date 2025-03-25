@@ -56,8 +56,19 @@ export async function GET(req: NextRequest) {
         ws.on('message', (message: string) => {
           const data = JSON.parse(message);
           console.log('📩 받은 메시지:', data);
+
+          const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+          const audienceClients = clients.filter(
+            (client) => !client.host && client.roomId === data.roomId && client.role === 'audience',
+          );
+          const guestInfoClient = clients.find(
+            (client) => client.roomId === data.roomId && client.role === 'guest' && client.guestInfo.status === 'join',
+          );
+          const hostInfoClient = clients.find(
+            (client) => client.roomId === data.roomId && client.role === 'host' && client.hostInfo.status === 'join',
+          );
+          const hostRules = clients.find((client) => client.roomId === roomId && client.host);
           if (data.type === 'init') {
-            const hostRules = clients.find((client) => client.roomId === roomId && client.host);
             //Client | Initclient 타입가드
             const isClient = (v: InitClient | Client): v is Client => {
               if ((v as Client).hostInfo) {
@@ -66,7 +77,6 @@ export async function GET(req: NextRequest) {
               return false;
             };
             console.log(hostRules, hostRules && isClient(hostRules), 'hostRules');
-            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
             //host일 때 가져온 rules 정보 세팅
             if (data.host) {
               //호스트 정보 바탕으로 세팅
@@ -92,10 +102,6 @@ export async function GET(req: NextRequest) {
             }
           }
           if (data.type === 'join') {
-            const hostRules = clients.find((client) => client.roomId === roomId && client.host);
-
-            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
-
             const guestClients = clients.filter(
               (client) => !client.host && client.roomId === data.roomId && client.role === 'guest',
             );
@@ -150,19 +156,8 @@ export async function GET(req: NextRequest) {
               return;
             }
 
-            const audienceClients = clients.filter(
-              (client) => !client.host && client.roomId === data.roomId && client.role === 'audience',
-            );
-            const guestInfoClient = clients.find(
-              (client) =>
-                client.roomId === data.roomId && client.role === 'guest' && client.guestInfo.status === 'join',
-            );
-            const hostInfoClient = clients.find(
-              (client) => client.roomId === data.roomId && client.role === 'host' && client.hostInfo.status === 'join',
-            );
             console.log(guestInfoClient, hostInfoClient, '@@@');
             roomsClient.forEach((client) => {
-              const { ws, ...sendInfo } = client;
               if (guestInfoClient) {
                 ((client as Client).guestInfo as InfoType) = guestInfoClient?.guestInfo as InfoType;
               }
@@ -200,17 +195,11 @@ export async function GET(req: NextRequest) {
           //   }
           // }
           if (data.type === 'emit') {
-            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
-
             roomsClient.forEach((client) => {
               client.ws.send(JSON.stringify({ type: 'on', params: data.params }));
             });
           }
           if (data.type === 'ready') {
-            const audienceCount = clients.filter(
-              (client) => client.roomId === roomId && client.position === 'audience',
-            ).length;
-            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
             roomsClient.forEach((client) => {
               if (data.role === 'host') {
                 client.hostInfo.status = 'ready';
@@ -219,10 +208,16 @@ export async function GET(req: NextRequest) {
                 client.guestInfo.status = 'ready';
               }
               const { ws, ...sendInfo } = client;
-              console.log(client,sendInfo,"client")
-              console.log({ type: 'ready', ...sendInfo, audienceCount },"result")
-              client.ws.send(JSON.stringify({ type: 'ready', ...sendInfo, audienceCount }));
+              console.log(client, sendInfo, 'client');
+              console.log({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }, 'result');
+              client.ws.send(JSON.stringify({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }));
+            });
+          }
 
+          if (data.type === 'banpickStart') {
+            roomsClient.forEach((client) => {
+              const { ws, ...sendInfo } = client;
+              client.ws.send(JSON.stringify({ type: 'banpickStart' }));
             });
           }
         });
@@ -249,9 +244,6 @@ export async function GET(req: NextRequest) {
                   client.guestInfo.status = '';
                 });
 
-              const audienceCount = clients.filter(
-                (client) => client.roomId === roomId && client.position === 'audience',
-              ).length;
               clients
                 .filter((client) => client.roomId === roomId)
                 .forEach((client) => {

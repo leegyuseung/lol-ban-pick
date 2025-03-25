@@ -27,19 +27,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
     setSocket();
   }, [role]);
   const goEnter = () => {
-    router.push('/banpick');
-    emitFunc(
-      () =>
-        ws?.send(
-          JSON.stringify({
-            type: 'start',
-            userId: userId,
-            roomId: roomId,
-            host: !!searchParams!.get('roomId'),
-          }),
-        ),
-      'blue',
-    );
+    ws?.send(JSON.stringify({ type: 'banpickStart',roomId }));
   };
   const redCount = useMemo(() => {
     const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
