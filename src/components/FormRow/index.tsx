@@ -67,11 +67,11 @@ export default function Form() {
     setIsShareOpen(true);
   };
 
-  const closeSharePopup = useCallback(() => {
-    ws?.close();
+  const setSharePopup = (b: boolean) => {
+    // if(!b)ws?.close();
     // setWs(null);
-    setIsShareOpen(false);
-  },[ws]);
+    setIsShareOpen(b);
+  };
   const openPopup = (teamColor: string) => {
     setSelectedTeamColor(teamColor);
     setIsOpen(true);
@@ -196,7 +196,7 @@ export default function Form() {
       </form>
 
       {/* 공유하기 팝업 */}
-      {<SharePopupWrapper closePopup={closeSharePopup} isOpen={isShareOpen} />}
+      {<SharePopupWrapper setSharePopup={setSharePopup} isShareOpen={isShareOpen} />}
       {/* 이미지 선택 팝업 */}
       {isOpen && (
         <TeamLogoPopup

@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
               }
               return false;
             };
-            console.log(hostRules, hostRules && isClient(hostRules), 'hostRules');
+            console.log(clients, roomId, hostRules, hostRules && isClient(hostRules), 'hostRules');
             //host일 때 가져온 rules 정보 세팅
             if (data.host) {
               //호스트 정보 바탕으로 세팅
@@ -249,9 +249,28 @@ export async function GET(req: NextRequest) {
               client.ws.send(JSON.stringify({ type: 'random', data: data.data }));
             });
           }
+          if (data.type === 'closeSharePopup') {
+            console.log(
+              clients,
+              clients
+                .filter((client) => client.roomId === data.roomId && !client.host)
+                .forEach((client) => {
+                  client.ws.send(JSON.stringify({ type: 'noRoom' }));
+                }),data.roomId,
+              'closeSharePopup',
+            );
+            clients = clients.filter((client) => client.roomId !== data.roomId || (client.roomId == data.roomId &&client.host));
+            // clients.filter((client) => client.roomId !== data.roomId || client.host).forEach(client=>{
+            //   client.roomId
+            // })
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'closeSharePopup', data: data.data }));
+            });
+          }
         });
         ws.on('close', () => {
           //host가 종료하면 room 삭제
+          console.log(clients, '클로즈');
           if (host) {
             clients.forEach((client) => {
               if (client.roomId === roomId) {

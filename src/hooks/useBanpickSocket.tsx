@@ -6,7 +6,7 @@ import { InfoData } from '@/store/banpick';
 
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
-    useRulesStore();
+  useRulesStore();
   const { setCurrentSelectedPick, setBanPickObject, setChangeChampionInfo, setCurrentLocation, setSelectedTeamIndex } =
     useBanStore();
   //room id
@@ -72,7 +72,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     // WebSocket이 연결되지 않으면 새로 연결 시도
     if (socketRef.current) return;
     if (ws && !searchParams?.get(roomId)) return;
-    if (!socketRef.current) {
+    if (!socketRef.current && !ws) {
       console.log(_userId, 'userid');
       const userId = _userId;
       setUserId(userId);
@@ -134,6 +134,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             }
           } else {
             //이후에 접속된 guest나 관중
+
             _ws?.send(
               JSON.stringify({
                 type: 'init',
@@ -149,7 +150,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             _ws?.send(
               JSON.stringify({
                 type: 'join',
-                roomId,
+                roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                 userId,
                 role:
                   (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience' ? 'audience' : 'guest',
