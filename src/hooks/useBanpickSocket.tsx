@@ -33,9 +33,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if (pathName === '/') {
-      // setWs(null);
-    }
     if (pathName !== '/' && !roomId && !searchParams?.get('roomId')) {
       console.log(`📩 새 메시지: noRoom`);
       setIsOpen(true);
@@ -93,7 +90,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             ? 'audience'
             : 'guest',
       });
-      // if (roomId) setRoomId(roomId);
       const connectWebSocket = async () => {
         //파람으로 (공유 url)로 roomId get
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
@@ -116,7 +112,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             //host일때 (sharePop.tsx에서 메인 페이지에서 가장 먼저 세팅됨)
             console.log(hostInfo, 'hostInfo');
             if (pathName === '/') {
-              debugger;
+              //초기 화면 소켓 실행
               _ws?.send(
                 JSON.stringify({
                   type: 'init',
@@ -294,7 +290,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     return () => {
       if (ws) {
         console.log(ws);
-        ws!.onclose();
+        ws!.close();
       }
     };
   };

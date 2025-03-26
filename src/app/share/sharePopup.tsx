@@ -39,95 +39,21 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   //랜덤
   const randomId = useRef<string>(Math.random().toString(36).substr(2, 20));
   const router = useRouter();
-  const { ws, closeWs } = useSocketStore();
+  const { ws } = useSocketStore();
   const { roomId, setRoomId } = useSocketStore();
   const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet } = useRulesStore();
   const { setBtnList, setIsOpen, setTitle, setContent, setPopup, isOpen } = usePopupStore();
   const pathName = usePathname();
   const { setSocket } = useBanpickSocket({ userId, roomId: randomId.current });
-  const unsubscribeWsRef = useRef<(() => void) | null>(null);
   const unsubscribeIsOpenRef = useRef<(() => void) | null>(null);
-  // // ✅ isOpen 상태가 변경될 때 감지
-  // useEffect(() => {
-  //   if (!isOpen && ws?.readyState === WebSocket.OPEN) {
-  //     ws.send(JSON.stringify({ type: 'closeSharePopup', roomId }));
-  //   }
-  // }, [isOpen]);
-
-  useEffect(() => {
-    unsubscribeWsRef.current = useSocketStore.subscribe((state) => {
-      console.log('WebSocket 상태 변경됨:', state.ws);
-
-      const { isOpen } = usePopupStore.getState(); // 최신 상태 가져오기
-
-      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-        debugger;
-        if (!isOpen) {
-          // state.ws.send(JSON.stringify({ type: 'closeSharePopup', roomId, userId }));
-          // state.ws.send(JSON.stringify({ type: 'closeSharePopup', roomId }));
-        } else {
-          // state.ws.send(
-          //   JSON.stringify({
-          //     type: 'init',
-          //     userId,
-          //     roomId: randomId.current,
-          //     banpickMode,
-          //     peopleMode,
-          //     timeUnlimited,
-          //     nowSet,
-          //     hostInfo,
-          //     host: true,
-          //     role: 'host',
-          //     position,
-          //   }),
-          // );
-          // state.ws.send(
-          //   JSON.stringify({
-          //     type: 'init',
-          //     userId,
-          //     roomId,
-          //     banpickMode,
-          //     peopleMode,
-          //     timeUnlimited,
-          //     nowSet,
-          //     hostInfo,
-          //     host: true,
-          //     role: 'host',
-          //     position,
-          //   }),
-          // );
-        }
-      }
-    });
-
-    unsubscribeIsOpenRef.current = usePopupStore.subscribe((state) => {
-      console.log('Popup 상태 변경됨:', state.isOpen);
-      const { ws, roomId } = useSocketStore.getState(); // 최신 상태 가져오기
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        if (!state.isOpen) {
-          if (pathName != '/') {
-            return;
-          }
-          debugger;
-          ws.send(JSON.stringify({ type: 'closeSharePopup', roomId, userId }));
-          // randomId.current = Math.random().toString(36).substr(2, 20);
-        } else {
-        }
-      }
-    });
-
-    return () => {
-      if (unsubscribeWsRef.current) unsubscribeWsRef.current();
-      if (unsubscribeIsOpenRef.current) unsubscribeIsOpenRef.current();
-    };
-  }, []);
 
   //room id 설정
   useEffect(() => {
     if (isShareOpen) {
       setRoomId(randomId.current);
-      // 첫 번째로 상태를 설정합니다.
+      //가장 처음 소켓 세팅
       if (!ws) setSocket();
+      //팝업 닫고 다시 실행 시나 ws가 세팅 되어있을때
       if (ws)
         ws.send(
           JSON.stringify({
@@ -159,31 +85,21 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
           },
         ],
       });
-      // setRoomId(randomId.current);
     } else {
-      // isShareOpen이 false일 때 초기화 등을 처리할 수 있습니다.
       setIsOpen(false);
       setSharePopup(false);
     }
   }, [isShareOpen]); // 의존성 배열에 isShareOpen만 남겨두고 상태 업데이트 순서를 조정
-  // useEffect(() => {
-  //   console.log(isShareOpen,"isShare")
-  //   if (!ws && isShareOpen) setSocket();
-  //   if (!isShareOpen) {
-  //     debugger;
-  //     if (ws?.readyState === ws?.OPEN) {
-  //       ws?.send(JSON.stringify({ type: 'closeSharePopup', roomId }));
-  //     }
-  //   }
-  // }, [isOpen]);
+
   useEffect(() => {}, [pathName]);
   const goBanpick = () => {
+    //페이지를 이동할때는 소켓 세팅 필요 x
     if (unsubscribeIsOpenRef.current) {
       unsubscribeIsOpenRef.current();
     }
     router.push('/socketTest');
   };
-  return <>{roomId + 'roomId'}</>;
+  return <></>;
 });
 SharePopup.displayName = 'SharePopup';
 export default SharePopup;
