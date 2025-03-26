@@ -46,7 +46,36 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   const pathName = usePathname();
   const { setSocket } = useBanpickSocket({ userId, roomId: randomId.current });
   const unsubscribeIsOpenRef = useRef<(() => void) | null>(null);
+  const unsubscribeWsRef = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    unsubscribeWsRef.current = useSocketStore.subscribe((state) => {
+      console.log('WebSocket 상태 변경됨:', state.ws);
 
+      const { isOpen } = usePopupStore.getState(); // 최신 상태 가져오기
+
+    });
+
+    unsubscribeIsOpenRef.current = usePopupStore.subscribe((state) => {
+      console.log('Popup 상태 변경됨:', state.isOpen);
+      const { ws, roomId } = useSocketStore.getState(); // 최신 상태 가져오기
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        if (!state.isOpen) {
+          if (pathName != '/') {
+            return;
+          }
+          debugger;
+          ws.send(JSON.stringify({ type: 'closeSharePopup', roomId, userId }));
+          // randomId.current = Math.random().toString(36).substr(2, 20);
+        } else {
+        }
+      }
+    });
+
+    return () => {
+      if (unsubscribeWsRef.current) unsubscribeWsRef.current();
+      if (unsubscribeIsOpenRef.current) unsubscribeIsOpenRef.current();
+    };
+  }, []);
   //room id 설정
   useEffect(() => {
     if (isShareOpen) {
