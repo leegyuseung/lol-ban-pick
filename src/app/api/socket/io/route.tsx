@@ -285,6 +285,14 @@ export async function GET(req: NextRequest) {
               client.ws.send(JSON.stringify({ type: 'random', data: data.data }));
             });
           }
+
+          if (data.type === 'Peerless') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'Peerless', data: data.data }));
+            });
+          }
+
           if (data.type === 'closeSharePopup') {
             console.log(
               clients,
@@ -318,6 +326,7 @@ export async function GET(req: NextRequest) {
             });
           }
         });
+
         ws.on('close', () => {
           //host가 종료하면 room 삭제
           console.log(clients, '클로즈');

@@ -41,7 +41,7 @@ export default function SelectChampions() {
     headerSecond,
   } = useBanStore();
   const { banpickMode, nowSet, hostInfo, setPeerlessSet, setClearPeerlessSet } = useRulesStore();
-  const { setMyBan, setYourBan, myBan, yourBan, setClearMyBan, setClearYourBan } = usePeerlessStore();
+  const { setHostBan, setGuestBan, hostBan, guestBan, setClearHostBan, setClearGuestBan } = usePeerlessStore();
   const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
   const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 블루팀 배열
@@ -55,8 +55,8 @@ export default function SelectChampions() {
   }, []);
 
   useEffect(() => {
-    setChangeChampionPeerInfo(myBan, yourBan);
-  }, [myBan, yourBan]);
+    setChangeChampionPeerInfo(hostBan, guestBan);
+  }, [hostBan, guestBan]);
 
   useEffect(() => {
     setFilteredChampions(championInfo); // 챔피언 정보가 변경될 때 필터링 데이터 초기화
@@ -136,11 +136,11 @@ export default function SelectChampions() {
   const onNextSet = () => {
     // 피어리스 밴픽 추가
     if (hostInfo.myTeamSide === 'blue') {
-      setMyBan(bluePeerlessArray); // 내 밴 추가
-      setYourBan(redPeerlessArray); // 상대 밴 추가
+      setHostBan(bluePeerlessArray); // 내 밴 추가
+      setGuestBan(redPeerlessArray); // 상대 밴 추가
     } else {
-      setMyBan(redPeerlessArray); // 내 밴 추가
-      setYourBan(bluePeerlessArray); // 상대 밴 추가
+      setHostBan(redPeerlessArray); // 내 밴 추가
+      setGuestBan(bluePeerlessArray); // 상대 밴 추가
     }
     setPeerlessSet(); // 피어리스 세트 증가
 
@@ -165,8 +165,8 @@ export default function SelectChampions() {
       setClearPeerlessSet(); // 피어리스 세트 초기화
       setRedPeerlessArray([]); // 레드피어리스 초기화
       setBluePeerlessArray([]); // 블루피어리스 초기화
-      setClearMyBan(); // 내 밴 초기화
-      setClearYourBan(); // 상대 밴 초기화
+      setClearHostBan(); // 내 밴 초기화
+      setClearGuestBan(); // 상대 밴 초기화
     }
     router.refresh();
   }, [
@@ -174,8 +174,8 @@ export default function SelectChampions() {
     setClearBanPickObject,
     setClearSelectTeamIndex,
     setClearCurrentLocation,
-    setClearMyBan,
-    setClearYourBan,
+    setClearHostBan,
+    setClearGuestBan,
   ]);
 
   return (

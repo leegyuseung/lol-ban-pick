@@ -16,7 +16,7 @@ export default function Form() {
   const { setWs, ws } = useSocketStore();
   const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
-  const { setClearMyBan, setClearYourBan } = usePeerlessStore();
+  const { setClearHostBan, setClearGuestBan } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
       blueTeamName: '',
@@ -39,8 +39,8 @@ export default function Form() {
     setClearSelectTeamIndex(); // 선택된 팀 인덱스 초기화
     setClearCurrentLocation(); // 현재 위치 초기화
     setClearPeerlessSet();
-    setClearMyBan();
-    setClearYourBan();
+    setClearHostBan();
+    setClearGuestBan();
   }, []);
 
   const blueTeam = watch('blueTeamName') || '블루팀';

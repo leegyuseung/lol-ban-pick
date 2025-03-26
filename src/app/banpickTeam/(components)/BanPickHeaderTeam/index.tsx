@@ -46,8 +46,11 @@ export default function BanPickHeader() {
         if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide) {
           TeamRandomPick();
         }
-        secondRef.current = '5';
-        setHeaderSecond('5');
+
+        setTimeout(() => {
+          secondRef.current = '5';
+          setHeaderSecond('5');
+        }, 1000);
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
         setHeaderSecond(secondRef.current);
@@ -64,7 +67,7 @@ export default function BanPickHeader() {
     if (!selectedTeam[selectedTeamIndex]) return;
 
     if (selectedTeam[selectedTeamIndex].color === '') {
-      setTimeout(() => setHeaderSecond(''), 0);
+      setHeaderSecond('');
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
     } else if (selectedTeam[selectedTeamIndex].color === 'blue' || selectedTeam[selectedTeamIndex].color === 'red') {
       if (timeUnlimited !== 'true') {

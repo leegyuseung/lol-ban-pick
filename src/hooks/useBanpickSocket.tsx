@@ -2,13 +2,15 @@ import { useEffect, useRef } from 'react';
 import { useBanStore, usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { InfoData } from '@/store/banpick';
+import { InfoData, usePeerlessStore } from '@/store/banpick';
 
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
   useRulesStore();
   const { setCurrentSelectedPick, setBanPickObject, setChangeChampionInfo, setCurrentLocation, setSelectedTeamIndex } =
     useBanStore();
+  const { setTeamBan } = usePeerlessStore();
+
   //room id
   const { setRoomId, ws, setWs } = useSocketStore();
   //user id
@@ -171,7 +173,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           }
           if (data.type === 'banpickStart') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
-            router.push('/banpick');
+            router.push('/banpickTeam');
           }
           if (data.type === 'on') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
@@ -276,6 +278,10 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setCurrentLocation(index); // 다음 위치를 저장한다
             setCurrentSelectedPick('', InfoData); // 초기화
             setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
+          }
+          if (data.type === 'Peerless') {
+            console.log('🔥Peerless', data.data.blue, data.data.red);
+            setTeamBan(data.data.blue, data.data.red);
           }
         };
 

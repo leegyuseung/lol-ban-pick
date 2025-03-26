@@ -3,6 +3,7 @@ import { ChampionInfoI } from '@/types/types';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { useSocketStore } from './socket';
+import { useRulesStore } from './rules';
 
 type Store = {
   championInfo: Record<string, ChampionInfoI>;
@@ -17,12 +18,14 @@ export type BanArray = {
 };
 
 type PeerlessStore = {
-  myBan: BanArray[][];
-  yourBan: BanArray[][];
-  setMyBan: (array: BanArray[]) => void;
-  setYourBan: (array: BanArray[]) => void;
-  setClearMyBan: () => void;
-  setClearYourBan: () => void;
+  hostBan: BanArray[][];
+  guestBan: BanArray[][];
+  setHostBan: (array: BanArray[]) => void;
+  setTeamBan: (blue: BanArray[], red: BanArray[]) => void;
+  setGuestBan: (array: BanArray[]) => void;
+  setClearHostBan: () => void;
+  setClearGuestBan: () => void;
+  setTeamPeerless: (blue: BanArray[], red: BanArray[]) => void;
 };
 
 export type BanPickObjectType = {
@@ -520,34 +523,67 @@ export const useBanStore = create<BanI>()((set, get) => ({
 export const usePeerlessStore = create<PeerlessStore>()(
   persist(
     (set) => ({
-      myBan: [],
-      yourBan: [],
+      hostBan: [],
+      guestBan: [],
 
-      setMyBan: (array) =>
+      setHostBan: (array) =>
         set((state) => {
-          const updatedMyban = [...state.myBan, array];
+          const updatedHostban = [...state.hostBan, array];
 
-          return { myBan: updatedMyban };
+          return { hostBan: updatedHostban };
         }),
 
-      setYourBan: (array) =>
+      setTeamBan: (blue, red) =>
         set((state) => {
-          const updatedYourban = [...state.yourBan, array];
+          console.log('🔥setTeamBan', blue, red);
+          const { hostInfo } = useRulesStore.getState();
 
-          return { yourBan: updatedYourban };
+          let updatedHostban: BanArray[][] = [];
+          let updatedGuestban: BanArray[][] = [];
+
+          if (hostInfo.myTeamSide === 'blue') {
+            updatedHostban = [...state.hostBan, blue];
+            updatedGuestban = [...state.guestBan, red];
+          } else {
+            updatedHostban = [...state.hostBan, red];
+            updatedGuestban = [...state.guestBan, blue];
+          }
+
+          return { hostBan: updatedHostban, guestBan: updatedGuestban };
         }),
 
-      setClearMyBan: () =>
+      setGuestBan: (array) =>
+        set((state) => {
+          const updatedGuestban = [...state.guestBan, array];
+
+          return { guestBan: updatedGuestban };
+        }),
+
+      setClearHostBan: () =>
         set(() => {
           localStorage.removeItem('peerless-store');
-          return { myBan: [] };
+          return { hostBan: [] };
         }),
 
-      setClearYourBan: () =>
+      setClearGuestBan: () =>
         set(() => {
           localStorage.removeItem('peerless-store');
-          return { yourBan: [] };
+          return { guestBan: [] };
         }),
+
+      setTeamPeerless: (blue, red) => {
+        const socketState = useSocketStore.getState();
+        if (!socketState) return;
+        const message = {
+          type: 'Peerless',
+          roomId: socketState.roomId,
+          data: { blue, red },
+        };
+
+        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+          socketState.ws?.send(JSON.stringify(message));
+        }
+      },
     }),
     {
       name: 'peerless-store',
