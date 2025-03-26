@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
           const hostInfoClient = clients.find(
             (client) => client.roomId === data.roomId && client.role === 'host' && client.hostInfo.status === 'join',
           );
-          const hostRules = clients.find((client) => client.roomId === roomId && client.host);
+          let hostRules = clients.find((client) => client.roomId === (roomId || data.roomId) && client.host);
           if (data.type === 'init') {
             //Client | Initclient 타입가드
             const isClient = (v: InitClient | Client): v is Client => {
@@ -76,9 +76,45 @@ export async function GET(req: NextRequest) {
               }
               return false;
             };
-            console.log(clients, roomId, hostRules, hostRules && isClient(hostRules), 'hostRules');
             //host일 때 가져온 rules 정보 세팅
             if (data.host) {
+              const target: any = clients.find((w) => w.userId == userId);
+              console.log(
+                clients,
+                roomId,
+                data.roomId,
+                hostRules,
+                hostRules && isClient(hostRules),
+                target,
+                'hostRules',
+              );
+              if (target) {
+                //host 정보를 세팅하고
+                //공유를 시작
+                //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
+                const initInfo: InitClient = {
+                  userId,
+                  roomId: data.roomId,
+                  ws,
+                  host,
+                  position,
+                  role: host ? 'host' : ['blue', 'red']?.includes(position as string) ? 'guest' : 'audience',
+                  hostInfo: { status: '' },
+                  guestInfo: { status: '' },
+                };
+                console.log(userId, '11111');
+                clients = clients.map((w) => {
+                  console.log(userId, { ...w, ...initInfo }, data.roomId, '2222222');
+                  if (w.userId == userId) {
+                    w = { ...w, ...initInfo };
+                  }
+                  return w;
+                });
+
+                hostRules = clients.find((client) => client.roomId === data.roomId && client.host);
+              }
+              const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+              console.log(roomsClient, clients, 'roomClient');
               //호스트 정보 바탕으로 세팅
               roomsClient.forEach((client) => {
                 console.log(data, 'data');
@@ -115,7 +151,7 @@ export async function GET(req: NextRequest) {
               }
               return false;
             };
-            console.log(hostRules, 'hostRules');
+            console.log(clients, 'hostRulesGuestJoin');
             //host가 조인할때
             if (data.host) {
               roomsClient.forEach((client) => {
@@ -256,10 +292,24 @@ export async function GET(req: NextRequest) {
                 .filter((client) => client.roomId === data.roomId && !client.host)
                 .forEach((client) => {
                   client.ws.send(JSON.stringify({ type: 'noRoom' }));
-                }),data.roomId,
+                }),
+              data.roomId,
               'closeSharePopup',
             );
-            clients = clients.filter((client) => client.roomId !== data.roomId || (client.roomId == data.roomId &&client.host));
+            clients = clients.filter(
+              (client) => client.roomId !== data.roomId || (client.userId == data.userId && client.host),
+            );
+            console.log(
+              clients,
+              clients
+                .filter((client) => client.roomId === data.roomId && !client.host)
+                .forEach((client) => {
+                  client.ws.send(JSON.stringify({ type: 'noRoom' }));
+                }),
+              data.userId,
+              data.roomId,
+              'closeSharePopup2',
+            );
             // clients.filter((client) => client.roomId !== data.roomId || client.host).forEach(client=>{
             //   client.roomId
             // })

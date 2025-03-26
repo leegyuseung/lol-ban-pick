@@ -34,7 +34,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
   useEffect(() => {
     if (pathName === '/') {
-      setWs(null);
+      // setWs(null);
     }
     if (pathName !== '/' && !roomId && !searchParams?.get('roomId')) {
       console.log(`📩 새 메시지: noRoom`);
@@ -75,7 +75,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     if (!socketRef.current && !ws) {
       console.log(_userId, 'userid');
       const userId = _userId;
-      setUserId(userId);
+      setUserId(localStorage.getItem('lol_ban_id') as string);
       //host 는 postion 을 던져주지 않음
       const positionValue = (searchParams!.get('position') as 'blue' | 'red' | 'audience') ?? position;
 
@@ -93,7 +93,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             ? 'audience'
             : 'guest',
       });
-      if (roomId) setRoomId(roomId);
+      // if (roomId) setRoomId(roomId);
       const connectWebSocket = async () => {
         //파람으로 (공유 url)로 roomId get
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
@@ -116,6 +116,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             //host일때 (sharePop.tsx에서 메인 페이지에서 가장 먼저 세팅됨)
             console.log(hostInfo, 'hostInfo');
             if (pathName === '/') {
+              debugger;
               _ws?.send(
                 JSON.stringify({
                   type: 'init',
