@@ -7,13 +7,14 @@ import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
 import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
-import { useRulesStore, usePeerlessStore, useSocketStore } from '@/store';
+import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
 export default function Form() {
   useImageLoaded();
   const { setWs, ws } = useSocketStore();
+  const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearMyBan, setClearYourBan } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
@@ -31,7 +32,12 @@ export default function Form() {
     },
   });
 
+  // 전부 초기화
   useEffect(() => {
+    setChampionInfo(); // 챔피언 정보 초기화
+    setClearBanPickObject(); // 밴픽 객체 초기화
+    setClearSelectTeamIndex(); // 선택된 팀 인덱스 초기화
+    setClearCurrentLocation(); // 현재 위치 초기화
     setClearPeerlessSet();
     setClearMyBan();
     setClearYourBan();
