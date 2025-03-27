@@ -78,7 +78,8 @@ export async function GET(req: NextRequest) {
             };
             //host일 때 가져온 rules 정보 세팅
             if (data.host) {
-              const target: any = clients.find((w) => w.userId == userId);
+              //host의 아이디가 사용된 ws가 있다면 그 값에 initData추가
+              const target: Client | undefined = clients.find((w) => w.userId == userId) as Client;
               console.log(
                 clients,
                 roomId,
@@ -92,6 +93,7 @@ export async function GET(req: NextRequest) {
                 //host 정보를 세팅하고
                 //공유를 시작
                 //파람이 undefined 이면 host이며 그사람이 설정한 데이터가 기준!
+
                 const initInfo: InitClient = {
                   userId,
                   roomId: data.roomId,
@@ -102,9 +104,7 @@ export async function GET(req: NextRequest) {
                   hostInfo: { status: '' },
                   guestInfo: { status: '' },
                 };
-                console.log(userId, '11111');
                 clients = clients.map((w) => {
-                  console.log(userId, { ...w, ...initInfo }, data.roomId, '2222222');
                   if (w.userId == userId) {
                     w = { ...w, ...initInfo };
                   }
@@ -140,6 +140,7 @@ export async function GET(req: NextRequest) {
               });
             }
           }
+          //공유페이지에 접속했을때
           if (data.type === 'join') {
             const guestClients = clients.filter(
               (client) => !client.host && client.roomId === data.roomId && client.role === 'guest',
@@ -216,29 +217,6 @@ export async function GET(req: NextRequest) {
               client.ws.send(JSON.stringify({ type: 'join', ...sendInfo, audienceCount: audienceClients.length }));
             });
           }
-          //이벤트는 추후 변경 예정
-          // if (data.type === 'ready') {
-          //   const recipients = clients.filter((client) => client.roomId === data.roomId);
-
-          //   if (recipients) {
-          //     recipients.forEach((e) =>
-          //       e.ws.send(
-          //         JSON.stringify({
-          //           ...data,
-          //           roomId,
-          //           userId,
-          //           position,
-          //         }),
-          //       ),
-          //     );
-          //   } else {
-          //     console.warn(`⚠️ 대상 (${data.to})을 찾을 수 없음`);
-          //     console.log(clients);
-          //     clients.forEach((e) => {
-          //       console.log(e, 'ee');
-          //     });
-          //   }
-          // }
           if (data.type === 'emit') {
             roomsClient.forEach((client) => {
               client.ws.send(JSON.stringify({ type: 'on', params: data.params }));
@@ -292,7 +270,8 @@ export async function GET(req: NextRequest) {
               client.ws.send(JSON.stringify({ type: 'Peerless', data: data.data }));
             });
           }
-
+          //메인페이지에서 공유 팝업 닫기를 누를때!
+          //userId에 할당된 room에 room번호만 삭제
           if (data.type === 'closeSharePopup') {
             console.log(
               clients,
@@ -305,19 +284,15 @@ export async function GET(req: NextRequest) {
               'closeSharePopup',
             );
             clients = clients.filter(
-              (client) => client.roomId !== data.roomId || (client.userId == data.userId && client.host),
+              (client) => client.roomId !== data.roomId || (client.userId == userId && client.host),
             );
-            console.log(
-              clients,
-              clients
-                .filter((client) => client.roomId === data.roomId && !client.host)
-                .forEach((client) => {
-                  client.ws.send(JSON.stringify({ type: 'noRoom' }));
-                }),
-              data.userId,
-              data.roomId,
-              'closeSharePopup2',
-            );
+            //나온 팝업에 의해 공유된 페이지 종료
+            clients
+              .filter((client) => client.roomId === data.roomId && !client.host)
+              .forEach((client) => {
+                client.ws.send(JSON.stringify({ type: 'noRoom' }));
+              });
+            console.log(clients, data.userId, data.roomId, 'closeSharePopup2');
             // clients.filter((client) => client.roomId !== data.roomId || client.host).forEach(client=>{
             //   client.roomId
             // })
@@ -343,11 +318,11 @@ export async function GET(req: NextRequest) {
                 (client) => !client.host && client.roomId === roomId && client.role === 'audience',
               );
               console.log(
+                clients,
                 clients.filter((client) => client.roomId === roomId),
                 roomId,
                 'guest@@',
               );
-              console.log(clients, 'guest@@');
               clients
                 .filter((client) => client.roomId === roomId)
                 .forEach((client) => {
