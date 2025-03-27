@@ -141,7 +141,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
               _ws?.send(
                 JSON.stringify({
                   type: 'init',
-                  userId: userId,
+                  userId: localStorage.getItem("lol_ban_host_id") as string,
                   roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                   banpickMode,
                   peopleMode,
