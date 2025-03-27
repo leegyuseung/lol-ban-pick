@@ -109,16 +109,23 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             : 'guest',
       });
       const connectWebSocket = async () => {
-        //파람으로 (공유 url)로 roomId get
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
-        const response = await fetch(
-          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&position=${searchParams!.get('position') ? searchParams!.get('position') : position}&host=${searchParams!.get('position') ? false : true}`,
-        ); // WebSocket 서버 확인 요청
+        // WebSocket 서버 URL 가져오기
+        const response = await fetch('/api/socket/io');
+        const { wsUrl } = await response.json();
+        
         if (!response.ok) throw new Error('WebSocket server not ready');
-        const _ws = new WebSocket(
-          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&position=${searchParams!.get('position') ? searchParams!.get('position') : position}&host=${searchParams!.get('position') ? false : true}`,
-        );
-        setWs(_ws); // WebSocket 서버 주소로 변경
+
+        // WebSocket 연결 파라미터
+        const params = new URLSearchParams({
+          roomId: searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId,
+          userId: userId,
+          position: searchParams!.get('position') ? searchParams!.get('position') : position,
+          host: String(searchParams!.get('position') ? false : true)
+        });
+
+        const _ws = new WebSocket(`${wsUrl}?${params.toString()}`);
+        setWs(_ws);
 
         _ws.onopen = () => {
           console.log(

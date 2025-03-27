@@ -57,7 +57,10 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
       userId = userIdStore;
       //host시에는 고유한 userId를 계속 사용해야하기때문에 localstorage에 저장
       //guest는 새창이 나올때마다 새로운 id부여
-      if (localStorage.getItem('lol_ban_host_id') && role === 'host') {
+      if (role === 'host') {
+        if (!localStorage.getItem('lol_ban_host_id') || userId) {
+          localStorage.setItem('lol_ban_host_id', `${Math.floor(Math.random() * 100000000)}`);
+        }
         userId = localStorage.getItem('lol_ban_host_id') as string;
       }
       const { isOpen } = usePopupStore.getState(); // 최신 상태 가져오기

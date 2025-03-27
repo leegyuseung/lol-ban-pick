@@ -1,12 +1,16 @@
 {
-  "name": "lol_ban_pick",
+  "name": "lol-ban-pick",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "server"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "server": "yarn workspace server dev"
   },
   "dependencies": {
     "bufferutil": "^4.0.9",
