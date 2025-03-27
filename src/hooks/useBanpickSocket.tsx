@@ -74,7 +74,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     if (!socketRef.current && !ws) {
       console.log(_userId, 'userid');
       const userId = _userId;
-      setUserId(localStorage.getItem('lol_ban_id') as string);
+      setUserId(_userId);
       //host 는 postion 을 던져주지 않음
       const positionValue = (searchParams!.get('position') as 'blue' | 'red' | 'audience') ?? position;
 

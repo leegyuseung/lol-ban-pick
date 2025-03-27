@@ -52,7 +52,6 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
       console.log('WebSocket 상태 변경됨:', state.ws);
 
       const { isOpen } = usePopupStore.getState(); // 최신 상태 가져오기
-
     });
 
     unsubscribeIsOpenRef.current = usePopupStore.subscribe((state) => {
@@ -63,10 +62,8 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
           if (pathName != '/') {
             return;
           }
-          debugger;
           ws.send(JSON.stringify({ type: 'closeSharePopup', roomId, userId }));
           // randomId.current = Math.random().toString(36).substr(2, 20);
-        } else {
         }
       }
     });

@@ -7,13 +7,13 @@ import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
 import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
-import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
+import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore, useUserStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
 export default function Form() {
   useImageLoaded();
-  const { setWs, ws } = useSocketStore();
+  const { ws, setRoomId, setWs , } = useSocketStore();
   const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearHostBan, setClearGuestBan } = usePeerlessStore();
@@ -41,6 +41,10 @@ export default function Form() {
     setClearPeerlessSet();
     setClearHostBan();
     setClearGuestBan();
+    if (ws) {
+      setWs(null)
+      setRoomId('');
+    }
   }, []);
 
   const blueTeam = watch('blueTeamName') || '블루팀';
@@ -69,6 +73,17 @@ export default function Form() {
     }
   };
 
+  // useEffect(() => {
+  //   const handlePopState = () => {
+  //     console.log("뒤로 가기 버튼 클릭 감지!");
+  //   };
+  //   console.log(handlePopState)
+  //   window.addEventListener("popstate", handlePopState);
+
+  //   return () => {
+  //     window.removeEventListener("popstate", handlePopState);
+  //   };
+  // }, []);
   const openSharePopup = () => {
     setIsShareOpen(true);
   };

@@ -11,10 +11,7 @@ function PopupComp() {
   useLayoutEffect(() => {
     initPopupState();
   }, [pathName, initPopupState]); // pathName이 변경될 때마다 실행
-  useEffect(() => {
-    if (localStorage.getItem('lol_ban_id'))
-      localStorage.setItem('lol_ban_id', `${Math.floor(Math.random() * 100000000)}`);
-  }, []);
+
 
   return (
     <>
