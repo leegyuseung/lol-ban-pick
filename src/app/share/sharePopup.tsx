@@ -3,7 +3,7 @@
 'use client';
 import React, { SyntheticEvent, useEffect, useRef } from 'react';
 
-import { useSocketStore, useRulesStore, usePopupStore } from '@/store';
+import { useSocketStore, useRulesStore, usePopupStore, useUserStore } from '@/store';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
@@ -41,16 +41,25 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   const router = useRouter();
   const { ws } = useSocketStore();
   const { roomId, setRoomId } = useSocketStore();
-  const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet } = useRulesStore();
+  const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet, role } = useRulesStore();
   const { setBtnList, setIsOpen, setTitle, setContent, setPopup, isOpen } = usePopupStore();
+  const { userId: userIdStore } = useUserStore();
   const pathName = usePathname();
-  const { setSocket } = useBanpickSocket({ userId, roomId: randomId.current });
+  const { setSocket } = useBanpickSocket({
+    userId: localStorage.getItem('lol_ban_host_id') as string,
+    roomId: randomId.current,
+  });
   const unsubscribeIsOpenRef = useRef<(() => void) | null>(null);
   const unsubscribeWsRef = useRef<(() => void) | null>(null);
   useEffect(() => {
     unsubscribeWsRef.current = useSocketStore.subscribe((state) => {
       console.log('WebSocket 상태 변경됨:', state.ws);
-
+      userId = userIdStore;
+      //host시에는 고유한 userId를 계속 사용해야하기때문에 localstorage에 저장
+      //guest는 새창이 나올때마다 새로운 id부여
+      if (localStorage.getItem('lol_ban_host_id') && role === 'host') {
+        userId = localStorage.getItem('lol_ban_host_id') as string;
+      }
       const { isOpen } = usePopupStore.getState(); // 최신 상태 가져오기
     });
 
