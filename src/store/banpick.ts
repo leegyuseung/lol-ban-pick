@@ -18,6 +18,15 @@ export type BanArray = {
 };
 
 type PeerlessStore = {
+  redBan: BanArray[];
+  blueBan: BanArray[];
+
+  setRedBan: (obj: BanArray) => void;
+  setBlueBan: (obj: BanArray) => void;
+
+  setRedBanClear: () => void;
+  setBlueBanClear: () => void;
+
   hostBan: BanArray[][];
   guestBan: BanArray[][];
   setHostBan: (array: BanArray[]) => void;
@@ -25,7 +34,8 @@ type PeerlessStore = {
   setGuestBan: (array: BanArray[]) => void;
   setClearHostBan: () => void;
   setClearGuestBan: () => void;
-  setTeamPeerless: (blue: BanArray[], red: BanArray[]) => void;
+  setTeamPeerless: () => void;
+  clearTeamPeerless: () => void;
 };
 
 export type BanPickObjectType = {
@@ -523,6 +533,31 @@ export const useBanStore = create<BanI>()((set, get) => ({
 export const usePeerlessStore = create<PeerlessStore>()(
   persist(
     (set) => ({
+      redBan: [],
+      blueBan: [],
+
+      setRedBan: (obj) =>
+        set((state) => {
+          console.log('🔥redBan', obj);
+          return { redBan: [...state.redBan, obj] };
+        }),
+
+      setBlueBan: (obj) =>
+        set((state) => {
+          console.log('🔥blueBan', obj);
+          return { blueBan: [...state.blueBan, obj] };
+        }),
+
+      setRedBanClear: () =>
+        set(() => {
+          return { redBan: [] };
+        }),
+
+      setBlueBanClear: () =>
+        set(() => {
+          return { blueBan: [] };
+        }),
+
       hostBan: [],
       guestBan: [],
 
@@ -539,14 +574,23 @@ export const usePeerlessStore = create<PeerlessStore>()(
           let updatedHostban: BanArray[][] = [];
           let updatedGuestban: BanArray[][] = [];
 
+          console.log('🔥setTeamBan', blue, red, role);
           if (role === 'host') {
-            console.log('🔥hostInfo', role, hostInfo.myTeamSide);
-            if (hostInfo.myTeamSide === 'blue') updatedHostban = [...state.hostBan, blue];
-            else updatedHostban = [...state.hostBan, red];
-          } else {
-            console.log('🔥guestInfo', role, guestInfo.myTeamSide);
-            if (guestInfo.myTeamSide === 'blue') updatedGuestban = [...state.guestBan, blue];
-            else updatedGuestban = [...state.guestBan, red];
+            if (hostInfo.myTeamSide === 'blue') {
+              updatedHostban = [...state.hostBan, blue];
+              updatedGuestban = [...state.guestBan, red];
+            } else if (hostInfo.myTeamSide === 'red') {
+              updatedHostban = [...state.hostBan, red];
+              updatedGuestban = [...state.guestBan, blue];
+            }
+          } else if (role === 'guest') {
+            if (guestInfo.myTeamSide === 'blue') {
+              updatedHostban = [...state.hostBan, blue];
+              updatedGuestban = [...state.guestBan, red];
+            } else if (guestInfo.myTeamSide === 'red') {
+              updatedHostban = [...state.hostBan, red];
+              updatedGuestban = [...state.guestBan, blue];
+            }
           }
 
           return { hostBan: updatedHostban, guestBan: updatedGuestban };
@@ -571,13 +615,26 @@ export const usePeerlessStore = create<PeerlessStore>()(
           return { guestBan: [] };
         }),
 
-      setTeamPeerless: (blue, red) => {
+      setTeamPeerless: () => {
         const socketState = useSocketStore.getState();
+
         if (!socketState) return;
         const message = {
           type: 'Peerless',
           roomId: socketState.roomId,
-          data: { blue, red },
+        };
+
+        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+          socketState.ws?.send(JSON.stringify(message));
+        }
+      },
+
+      clearTeamPeerless: () => {
+        const socketState = useSocketStore.getState();
+        if (!socketState) return;
+        const message = {
+          type: 'clearPeerless',
+          roomId: socketState.roomId,
         };
 
         if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {

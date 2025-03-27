@@ -8,33 +8,29 @@ type PropsType = {
 
 export default function PeerlessList({ side }: PropsType) {
   const { banpickMode } = useRulesStore();
-  const { myBan, yourBan } = usePeerlessStore();
+  const { hostBan, guestBan } = usePeerlessStore();
   const { hostInfo } = useRulesStore();
 
   const Mode = [
     {
-      Mode: 'tournament',
       TeamSide: 'blue',
       Side: 'left',
-      Ban: myBan,
+      Ban: hostBan,
     },
     {
-      Mode: 'tournament',
       TeamSide: 'red',
       Side: 'left',
-      Ban: yourBan,
+      Ban: guestBan,
     },
     {
-      Mode: 'tournament',
       TeamSide: 'blue',
       Side: 'right',
-      Ban: yourBan,
+      Ban: guestBan,
     },
     {
-      Mode: 'tournament',
       TeamSide: 'red',
       Side: 'right',
-      Ban: myBan,
+      Ban: hostBan,
     },
   ];
 
@@ -42,7 +38,7 @@ export default function PeerlessList({ side }: PropsType) {
     <div className="flex flex-col flex-[2]">
       {Mode.map(
         (mode) =>
-          banpickMode !== mode.Mode &&
+          banpickMode !== 'tournament' &&
           hostInfo.myTeamSide === mode.TeamSide &&
           side === mode.Side &&
           mode.Ban.map((ban, index) => <PeerlessImage key={index} ban={ban} />),

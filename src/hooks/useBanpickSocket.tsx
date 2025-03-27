@@ -7,9 +7,17 @@ import { InfoData, usePeerlessStore } from '@/store/banpick';
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
   useRulesStore();
-  const { setCurrentSelectedPick, setBanPickObject, setChangeChampionInfo, setCurrentLocation, setSelectedTeamIndex } =
-    useBanStore();
-  const { setTeamBan } = usePeerlessStore();
+  const {
+    setCurrentSelectedPick,
+    setBanPickObject,
+    setChangeChampionInfo,
+    setCurrentLocation,
+    setSelectedTeamIndex,
+    setClearBanPickObject,
+    setClearSelectTeamIndex,
+    setClearCurrentLocation,
+  } = useBanStore();
+  const { setTeamBan, setBlueBan, setRedBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
 
   //room id
   const { setRoomId, ws, setWs } = useSocketStore();
@@ -31,8 +39,16 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     nowSet,
     position,
     audienceCount,
+    setPeerlessSet,
   } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
+  const lineMapping: Record<string, number> = {
+    top: 0,
+    jungle: 1,
+    mid: 2,
+    ad: 3,
+    sup: 4,
+  };
 
   useEffect(() => {
     if (pathName !== '/' && !roomId && !searchParams?.get('roomId')) {
@@ -248,6 +264,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setCurrentSelectedPick(data.params.name, data.params.info);
           }
           if (data.type === 'champion') {
+            console.log('🔥champion', role);
             const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam, currentSelectedPick } =
               useBanStore.getState();
             let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
@@ -255,6 +272,21 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
             // 챔피언 정보를 바꿔준다.
             setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick);
+            // 피어리스 일 경우
+            if (banpickMode !== 'tournament') {
+              if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+                const selectedChampion = {
+                  name: currentSelectedPick[0].name,
+                  info: currentSelectedPick[0].info,
+                  line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+                };
+                if (selectedTeam[selectedTeamIndex].color === 'blue') {
+                  setBlueBan(selectedChampion);
+                } else {
+                  setRedBan(selectedChampion);
+                }
+              }
+            }
 
             index += 1;
 
@@ -280,8 +312,18 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
           }
           if (data.type === 'Peerless') {
-            console.log('🔥Peerless', data.data);
-            setTeamBan(data.data.blue, data.data.red);
+            const { blueBan, redBan } = usePeerlessStore.getState();
+            console.log('🔥Peerless', blueBan, redBan);
+            setTeamBan(blueBan, redBan);
+            setRedBanClear();
+            setBlueBanClear();
+          }
+          if (data.type === 'clearPeerless') {
+            setPeerlessSet();
+            setClearBanPickObject();
+            setClearSelectTeamIndex();
+            setClearCurrentLocation();
+            router.refresh();
           }
         };
 

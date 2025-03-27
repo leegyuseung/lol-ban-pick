@@ -267,9 +267,17 @@ export async function GET(req: NextRequest) {
           if (data.type === 'Peerless') {
             const roomsClient = clients.filter((client) => client.roomId === data.roomId);
             roomsClient.forEach((client) => {
-              client.ws.send(JSON.stringify({ type: 'Peerless', data: data.data }));
+              client.ws.send(JSON.stringify({ type: 'Peerless' }));
             });
           }
+
+          if (data.type === 'clearPeerless') {
+            const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+            roomsClient.forEach((client) => {
+              client.ws.send(JSON.stringify({ type: 'clearPeerless' }));
+            });
+          }
+
           //메인페이지에서 공유 팝업 닫기를 누를때!
           //userId에 할당된 room에 room번호만 삭제
           if (data.type === 'closeSharePopup') {
