@@ -280,7 +280,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
           }
           if (data.type === 'Peerless') {
-            console.log('🔥Peerless', data.data.blue, data.data.red);
+            console.log('🔥Peerless', data.data);
             setTeamBan(data.data.blue, data.data.red);
           }
         };

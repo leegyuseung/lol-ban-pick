@@ -130,6 +130,7 @@ export default function SelectChampions() {
 
   // 챔피언 선택 버튼 클릭시
   const onClickButton = useCallback(() => {
+    const { currentSelectedPick } = useBanStore.getState();
     if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide) return;
     SelectTeamChampion();
 
@@ -139,12 +140,16 @@ export default function SelectChampions() {
       line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
     };
 
-    // 피어리스용 픽데이터 추가
-    if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
-      if (selectedTeam[selectedTeamIndex].color === 'red') {
-        setRedPeerlessArray((prev) => [...prev, selectedChampion]);
-      } else {
-        setBluePeerlessArray((prev) => [...prev, selectedChampion]);
+    console.log('🔥selectedChampion', selectedChampion, role);
+
+    if (banpickMode !== 'tournament') {
+      // 피어리스용 픽데이터 추가
+      if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+        if (selectedTeam[selectedTeamIndex].color === 'red') {
+          setRedPeerlessArray((prev) => [...prev, selectedChampion]);
+        } else {
+          setBluePeerlessArray((prev) => [...prev, selectedChampion]);
+        }
       }
     }
   }, [SelectTeamChampion, selectedTeam, selectedTeamIndex]);
