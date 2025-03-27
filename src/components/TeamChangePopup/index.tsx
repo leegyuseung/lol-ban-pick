@@ -9,10 +9,16 @@ export default function TeamChangePopup({ onConfirm, onCancel }: TeamChangePopup
       <div className="bg-mainBlack p-6 rounded-lg w-[300px] text-center">
         <p className="text-lg font-semibold text-mainText">팀을 변경하시겠습니까?</p>
         <div className="mt-4 flex justify-center gap-4">
-          <button onClick={onConfirm} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+          <button
+            onClick={onConfirm}
+            className="cursor-pointer h-8 px-8 bg-mainGold font-medium text-white rounded-sm hover:bg-opacity-65"
+          >
             예
           </button>
-          <button onClick={onCancel} className="px-4 py-2 bg-gray-300 text-gray-900 rounded-md hover:bg-gray-400">
+          <button
+            onClick={onCancel}
+            className="cursor-pointer h-8 px-8 bg-gray-300 font-medium text-gray-900 rounded-sm hover:bg-opacity-65"
+          >
             아니오
           </button>
         </div>
