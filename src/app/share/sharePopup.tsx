@@ -115,7 +115,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
           }),
         );
       setPopup({
-        title: `공유하기 roomId${position === 'red' ? '블루팀 공유' : '레드팀 공유'}`,
+        title: `공유하기`,
         isOpen: true,
         content: <ShareItem roomId={randomId.current} position={position} myTeamSide={hostInfo.myTeamSide} />,
         btnList: [
@@ -141,7 +141,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
     if (unsubscribeIsOpenRef.current) {
       unsubscribeIsOpenRef.current();
     }
-    router.push('/socketTest');
+    router.push('/socketRoom');
   };
   return <></>;
 });
