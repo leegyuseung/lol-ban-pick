@@ -16,6 +16,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     setClearBanPickObject,
     setClearSelectTeamIndex,
     setClearCurrentLocation,
+    setHeaderSecond,
   } = useBanStore();
   const { setTeamBan, setBlueBan, setRedBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
 
@@ -118,7 +119,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
         // WebSocket 연결 파라미터
         const params = new URLSearchParams({
-          roomId: searchParams!.get('roomId') ? searchParams!.get('roomId') as string : roomId,
+          roomId: searchParams!.get('roomId') ? (searchParams!.get('roomId') as string) : roomId,
           userId: userId,
           position: searchParams!.get('position') ? (searchParams!.get('position') as string) : (position as string),
           host: String(searchParams!.get('position') ? false : true),
@@ -305,12 +306,27 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           }
           if (data.type === 'random') {
             const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam } = useBanStore.getState();
+            const { banpickMode } = useRulesStore.getState();
             let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
 
-            if (selectedTeam[selectedTeamIndex].banpick === 'ban') {
-              setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
-            } else {
-              setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
+            // 피어리스 일 경우
+            if (banpickMode !== 'tournament') {
+              if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+                const selectedChampion = {
+                  name: data.data.randomName,
+                  info: data.data.randomInfo,
+                  line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+                };
+                if (selectedTeam[selectedTeamIndex].color === 'blue') {
+                  setBlueBan(selectedChampion);
+                } else {
+                  setRedBan(selectedChampion);
+                }
+              }
+            }
+
+            setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
+            if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
               setChangeChampionInfo(data.data.randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
             }
 
@@ -318,6 +334,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setCurrentLocation(index); // 다음 위치를 저장한다
             setCurrentSelectedPick('', InfoData); // 초기화
             setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
+            setHeaderSecond('5');
           }
           if (data.type === 'Peerless') {
             const { blueBan, redBan } = usePeerlessStore.getState();

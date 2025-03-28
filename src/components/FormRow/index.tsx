@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../Button';
 import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
 import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
-import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore, useUserStore } from '@/store';
+import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
@@ -16,7 +16,7 @@ export default function Form() {
   const { ws, setRoomId, setWs } = useSocketStore();
   const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
-  const { setClearHostBan, setClearGuestBan } = usePeerlessStore();
+  const { setClearHostBan, setClearGuestBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
       blueTeamName: '',
@@ -41,6 +41,8 @@ export default function Form() {
     setClearPeerlessSet();
     setClearHostBan();
     setClearGuestBan();
+    setRedBanClear();
+    setBlueBanClear();
     if (ws) {
       setWs(null);
       setRoomId('');

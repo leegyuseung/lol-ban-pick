@@ -2,12 +2,12 @@
 import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
+import TeamChangePopup from '@/components/TeamChangePopup';
 import { useRulesStore, usePeerlessStore } from '@/store';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { ChampionInfoI, InfoType } from '@/types/types';
 import { useBanTeamStore, useBanStore } from '@/store';
-import TeamChangePopup from '@/components/TeamChangePopup';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);

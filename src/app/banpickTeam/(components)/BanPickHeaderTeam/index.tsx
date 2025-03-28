@@ -45,12 +45,10 @@ export default function BanPickHeader() {
         // 30초가 그냥 지나갈 경우 랜덤픽으로 넣어야한다
         if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide) {
           TeamRandomPick();
-        }
-
-        setTimeout(() => {
+        } else {
           secondRef.current = '5';
           setHeaderSecond('5');
-        }, 1000);
+        }
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
         setHeaderSecond(secondRef.current);
