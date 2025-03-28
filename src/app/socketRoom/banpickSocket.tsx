@@ -53,18 +53,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
     <>
       <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
         <h1 className="text-3xl font-bold text-center mb-8 text-yellow-400">대기방</h1>
-        {JSON.stringify({
-          userId,
-          banpickMode,
-          peopleMode,
-          timeUnlimited,
-          nowSet,
-          audienceCount,
-          position,
-          role,
-          hostInfo,
-          guestInfo,
-        })}
+
         <div className="grid grid-cols-3 gap-6 w-full max-w-4xl">
           {/* 블루팀 */}
           <div className="bg-blue-700 p-6 pt-3 rounded-lg shadow-lg border-2 border-blue-500">
