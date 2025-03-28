@@ -1,4 +1,4 @@
-import BanPickMain from './BanPickMain';
+import BanPickMain from './BanPickTeamMain';
 function Banpick() {
   return (
     <>

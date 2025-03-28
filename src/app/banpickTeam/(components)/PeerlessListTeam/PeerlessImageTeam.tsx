@@ -1,6 +1,6 @@
 import React from 'react';
-import Image from 'next/image';
 import { BanArray } from '@/store/banpick';
+import Image from 'next/image';
 
 interface PeerlessImageProps {
   ban: BanArray[];

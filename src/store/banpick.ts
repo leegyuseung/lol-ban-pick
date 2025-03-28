@@ -2,6 +2,8 @@ import championData from '../mock/champions.json';
 import { ChampionInfoI } from '@/types/types';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import { useSocketStore } from './socket';
+import { useRulesStore } from './rules';
 
 type Store = {
   championInfo: Record<string, ChampionInfoI>;
@@ -14,13 +16,26 @@ export type BanArray = {
   info: ChampionInfoI;
   line: number;
 };
+
 type PeerlessStore = {
-  myBan: BanArray[][];
-  yourBan: BanArray[][];
-  setMyBan: (array: BanArray[]) => void;
-  setYourBan: (array: BanArray[]) => void;
-  setClearMyBan: () => void;
-  setClearYourBan: () => void;
+  redBan: BanArray[];
+  blueBan: BanArray[];
+
+  setRedBan: (obj: BanArray) => void;
+  setBlueBan: (obj: BanArray) => void;
+
+  setRedBanClear: () => void;
+  setBlueBanClear: () => void;
+
+  hostBan: BanArray[][];
+  guestBan: BanArray[][];
+  setHostBan: (array: BanArray[]) => void;
+  setTeamBan: (blue: BanArray[], red: BanArray[]) => void;
+  setGuestBan: (array: BanArray[]) => void;
+  setClearHostBan: () => void;
+  setClearGuestBan: () => void;
+  setTeamPeerless: () => void;
+  clearTeamPeerless: () => void;
 };
 
 export type BanPickObjectType = {
@@ -266,6 +281,12 @@ interface BanI {
   setHeaderSecond: (second: string) => void;
 }
 
+interface TeamBanI {
+  SelectTeamImage: (name: string, info: ChampionInfoI) => void;
+  SelectTeamChampion: () => void;
+  TeamRandomPick: () => void;
+}
+
 // 챔피언 정보 불러오기
 export const useBanpickStore = create<Store>()(
   devtools(
@@ -325,6 +346,9 @@ export const useBanStore = create<BanI>()((set, get) => ({
       const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
         Object.entries(championInfo)
           .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
+          .sort(([, infoA], [, infoB]) =>
+            (infoA as ChampionInfoI).name.localeCompare((infoB as ChampionInfoI).name, 'ko-KR'),
+          )
           .map(([key, value]) => [
             key,
             {
@@ -397,7 +421,6 @@ export const useBanStore = create<BanI>()((set, get) => ({
     set((state) => {
       const updatedPick = [...state.currentSelectedPick];
       updatedPick[0] = { name, info };
-
       return { currentSelectedPick: updatedPick };
     }),
 
@@ -408,6 +431,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
       const selectedBanPick = state.banPickObject.find((obj) => obj.index === index);
       return selectedBanPick ? { currentLocation: selectedBanPick.location } : {};
     }),
+
   setClearCurrentLocation: () =>
     set(() => {
       return { currentLocation: 'blueBan1' };
@@ -432,6 +456,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
     set((state) => ({
       selectedTeamIndex: state.selectedTeamIndex + 1,
     })),
+
   setClearSelectTeamIndex: () =>
     set(() => {
       return { selectedTeamIndex: 0 };
@@ -485,14 +510,14 @@ export const useBanStore = create<BanI>()((set, get) => ({
     const randomIndex = Math.floor(Math.random() * availableChampions.length);
     const [randomName, randomInfo] = availableChampions[randomIndex];
 
-    if (selectedTeam[selectedTeamIndex].banpick == 'ban') {
+    if (selectedTeam[selectedTeamIndex].banpick === 'ban') {
       setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
     } else {
       setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
       setChangeChampionInfo(randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
     }
 
-    index++;
+    index += 1;
     setCurrentLocation(index); // 다음 위치를 저장한다
     setCurrentSelectedPick('', InfoData); // 초기화
     setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
@@ -508,37 +533,167 @@ export const useBanStore = create<BanI>()((set, get) => ({
 export const usePeerlessStore = create<PeerlessStore>()(
   persist(
     (set) => ({
-      myBan: [],
-      yourBan: [],
+      redBan: [],
+      blueBan: [],
 
-      setMyBan: (array) =>
+      setRedBan: (obj) =>
         set((state) => {
-          const updatedMyban = [...state.myBan, array];
-
-          return { myBan: updatedMyban };
+          return { redBan: [...state.redBan, obj] };
         }),
 
-      setYourBan: (array) =>
+      setBlueBan: (obj) =>
         set((state) => {
-          const updatedYourban = [...state.yourBan, array];
-
-          return { yourBan: updatedYourban };
+          return { blueBan: [...state.blueBan, obj] };
         }),
 
-      setClearMyBan: () =>
+      setRedBanClear: () =>
+        set(() => {
+          return { redBan: [] };
+        }),
+
+      setBlueBanClear: () =>
+        set(() => {
+          return { blueBan: [] };
+        }),
+
+      hostBan: [],
+      guestBan: [],
+
+      setHostBan: (array) =>
+        set((state) => {
+          const updatedHostban = [...state.hostBan, array];
+
+          return { hostBan: updatedHostban };
+        }),
+
+      setTeamBan: (blue, red) =>
+        set((state) => {
+          const { role, hostInfo, guestInfo } = useRulesStore.getState();
+          let updatedHostban: BanArray[][] = [];
+          let updatedGuestban: BanArray[][] = [];
+
+          if (role === 'host') {
+            if (hostInfo.myTeamSide === 'blue') {
+              updatedHostban = [...state.hostBan, blue];
+              updatedGuestban = [...state.guestBan, red];
+            } else if (hostInfo.myTeamSide === 'red') {
+              updatedHostban = [...state.hostBan, red];
+              updatedGuestban = [...state.guestBan, blue];
+            }
+          } else if (role === 'guest') {
+            if (guestInfo.myTeamSide === 'blue') {
+              updatedHostban = [...state.hostBan, red];
+              updatedGuestban = [...state.guestBan, blue];
+            } else if (guestInfo.myTeamSide === 'red') {
+              updatedHostban = [...state.hostBan, blue];
+              updatedGuestban = [...state.guestBan, red];
+            }
+          }
+
+          return { hostBan: updatedHostban, guestBan: updatedGuestban };
+        }),
+
+      setGuestBan: (array) =>
+        set((state) => {
+          const updatedGuestban = [...state.guestBan, array];
+
+          return { guestBan: updatedGuestban };
+        }),
+
+      setClearHostBan: () =>
         set(() => {
           localStorage.removeItem('peerless-store');
-          return { myBan: [] };
+          return { hostBan: [] };
         }),
 
-      setClearYourBan: () =>
+      setClearGuestBan: () =>
         set(() => {
           localStorage.removeItem('peerless-store');
-          return { yourBan: [] };
+          return { guestBan: [] };
         }),
+
+      setTeamPeerless: () => {
+        const socketState = useSocketStore.getState();
+
+        if (!socketState) return;
+        const message = {
+          type: 'Peerless',
+          roomId: socketState.roomId,
+        };
+
+        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+          socketState.ws?.send(JSON.stringify(message));
+        }
+      },
+
+      clearTeamPeerless: () => {
+        const socketState = useSocketStore.getState();
+        if (!socketState) return;
+        const message = {
+          type: 'clearPeerless',
+          roomId: socketState.roomId,
+        };
+
+        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+          socketState.ws?.send(JSON.stringify(message));
+        }
+      },
     }),
     {
       name: 'peerless-store',
     },
   ),
 );
+
+// Team Banpick Store
+export const useBanTeamStore = create<TeamBanI>()((set, get) => ({
+  // 챔피언을 선택했을 때
+  SelectTeamImage: (name: string, info: ChampionInfoI) => {
+    const socketState = useSocketStore.getState();
+    if (!socketState) return;
+    const message = {
+      type: 'image',
+      data: { name, info },
+      roomId: socketState.roomId,
+    };
+
+    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+      socketState.ws?.send(JSON.stringify(message));
+    }
+  },
+
+  // 챔피언을 선택하고 버튼을 클릭했을 때
+  SelectTeamChampion: () => {
+    const socketState = useSocketStore.getState();
+    if (!socketState) return;
+    const message = {
+      type: 'champion',
+      roomId: socketState.roomId,
+    };
+
+    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+      socketState.ws?.send(JSON.stringify(message));
+    }
+  },
+
+  // Random Pick
+  TeamRandomPick: () => {
+    const socketState = useSocketStore.getState();
+    if (!socketState) return;
+
+    const { championInfo } = useBanStore.getState();
+    const availableChampions = Object.entries(championInfo).filter(([_, info]) => info.status === '');
+    const randomIndex = Math.floor(Math.random() * availableChampions.length);
+    const [randomName, randomInfo] = availableChampions[randomIndex];
+
+    const message = {
+      type: 'random',
+      data: { randomName, randomInfo },
+      roomId: socketState.roomId,
+    };
+
+    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+      socketState.ws?.send(JSON.stringify(message));
+    }
+  },
+}));

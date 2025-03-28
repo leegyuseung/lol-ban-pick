@@ -5,37 +5,52 @@ import React, { useEffect, useState } from 'react';
 import Button from '../Button';
 import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
+import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
-import { useRulesStore, usePeerlessStore } from '@/store';
+import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
 export default function Form() {
   useImageLoaded();
-  const { setRules, setClearPeerlessSet } = useRulesStore();
-  const { setClearMyBan, setClearYourBan } = usePeerlessStore();
+  const { ws, setRoomId, setWs } = useSocketStore();
+  const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
+  const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
+  const { setClearHostBan, setClearGuestBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
-      myTeam: '',
-      yourTeam: '',
+      blueTeamName: '',
+      redTeamName: '',
       banpickMode: 'tournament',
       peopleMode: 'solo',
       timeUnlimited: 'true',
       myTeamSide: 'blue',
-      myImg: '',
-      yourImg: '',
+      yourTeamSide: 'red',
+      blueImg: '',
+      redImg: '',
       nowSet: 1,
     },
   });
 
+  // 전부 초기화
   useEffect(() => {
+    setChampionInfo(); // 챔피언 정보 초기화
+    setClearBanPickObject(); // 밴픽 객체 초기화
+    setClearSelectTeamIndex(); // 선택된 팀 인덱스 초기화
+    setClearCurrentLocation(); // 현재 위치 초기화
     setClearPeerlessSet();
-    setClearMyBan();
-    setClearYourBan();
+    setClearHostBan();
+    setClearGuestBan();
+    setRedBanClear();
+    setBlueBanClear();
+    if (ws) {
+      setWs(null);
+      setRoomId('');
+    }
   }, []);
 
-  const blueTeam = watch('myTeam') || '블루팀';
-  const redTeam = watch('yourTeam') || '레드팀';
+  const blueTeam = watch('blueTeamName') || '블루팀';
+  const redTeam = watch('redTeamName') || '레드팀';
   const router = useRouter();
   const selectedMode = watch('peopleMode');
   const [blueImage, setBlueImage] = useState('/images/t1.webp');
@@ -45,14 +60,41 @@ export default function Form() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeamColor, setSelectedTeamColor] = useState('');
 
+  //소켓 팝업 관련
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const onSubmit = async (data: FormsData) => {
     // 이미지 넣어주기
-    data.myImg = blueImage;
-    data.yourImg = redImage;
-    setRules(data);
-    router.push('/banpick');
+    data.blueImg = blueImage;
+    data.redImg = redImage;
+    setFormRules(data);
+    setHostRules({ ...data, status: '' });
+    if (data.peopleMode === 'team') {
+      openSharePopup();
+    } else {
+      router.push('/banpick');
+    }
   };
 
+  // useEffect(() => {
+  //   const handlePopState = () => {
+  //     console.log("뒤로 가기 버튼 클릭 감지!");
+  //   };
+  //   console.log(handlePopState)
+  //   window.addEventListener("popstate", handlePopState);
+
+  //   return () => {
+  //     window.removeEventListener("popstate", handlePopState);
+  //   };
+  // }, []);
+  const openSharePopup = () => {
+    setIsShareOpen(true);
+  };
+
+  const setSharePopup = (b: boolean) => {
+    // if(!b)ws?.close();
+    // setWs(null);
+    setIsShareOpen(b);
+  };
   const openPopup = (teamColor: string) => {
     setSelectedTeamColor(teamColor);
     setIsOpen(true);
@@ -65,6 +107,7 @@ export default function Form() {
   // 경로의 페이지를 미리 로드
   useEffect(() => {
     router.prefetch('/banpick');
+    router.prefetch('/banpickTeam');
   }, [router]);
 
   return (
@@ -72,19 +115,19 @@ export default function Form() {
       <span className="text-4xl font-bold pb-6">밴픽 시뮬레이터</span>
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
-        <div className="flex flex-col justify-center items-center gap-6">
+        <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('blue')}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{blueTeam}</label>
           <input
             className="p-3 bg-blue-700 rounded-md border-mainText placeholder-mainText w-full"
-            {...register('myTeam')}
+            {...register('blueTeamName')}
             placeholder="블루팀 이름을 입력해주세요."
           />
         </div>
 
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-10 w-[400px]">
           <div>
             {/* 밴픽 모드 */}
             <label className="text-lg font-semibold mb-2 block">밴픽 모드</label>
@@ -162,19 +205,21 @@ export default function Form() {
         </div>
 
         {/* 레드팀 */}
-        <div className="flex flex-col justify-center items-center gap-6">
+        <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('red')}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{redTeam}</label>
           <input
             className="p-3 bg-red-700 rounded-md border-mainText placeholder-mainText w-full"
-            {...register('yourTeam')}
+            {...register('redTeamName')}
             placeholder="레드팀 이름을 입력해주세요."
           />
         </div>
       </form>
 
+      {/* 공유하기 팝업 */}
+      {<SharePopupWrapper setSharePopup={setSharePopup} isShareOpen={isShareOpen} />}
       {/* 이미지 선택 팝업 */}
       {isOpen && (
         <TeamLogoPopup
