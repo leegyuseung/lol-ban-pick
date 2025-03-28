@@ -195,6 +195,11 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);
           }
+          if (data.type === 'readyCancel') {
+            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+            setHostRules(data.hostInfo);
+            setGuestRules(data.guestInfo);
+          }
           if (data.type === 'banpickStart') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
             router.push('/banpickTeam');

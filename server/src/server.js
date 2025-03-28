@@ -235,6 +235,21 @@ wss.on('connection', (ws, req) => {
         client.ws.send(JSON.stringify({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }));
       });
     }
+    
+    if (data.type === 'readyCancel') {
+      roomsClient.forEach((client) => {
+        if (data.role === 'host') {
+          client.hostInfo.status = 'join';
+        }
+        if (data.role === 'guest') {
+          client.guestInfo.status = 'join';
+        }
+        const { ws, ...sendInfo } = client;
+        console.log(client, sendInfo, 'client');
+        console.log({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }, 'result');
+        client.ws.send(JSON.stringify({ type: 'readyCancel', ...sendInfo, audienceCount: audienceClients.length }));
+      });
+    }
 
     if (data.type === 'banpickStart') {
       roomsClient.forEach((client) => {

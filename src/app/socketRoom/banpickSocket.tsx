@@ -20,6 +20,9 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const onReady = () => {
     ws?.send(JSON.stringify({ type: 'ready', role, roomId }));
   };
+  const onCancel = () => {
+    ws?.send(JSON.stringify({ type: 'readyCancel', role, roomId }));
+  };
   useEffect(() => {
     if (!searchParams?.get('roomId') && !roomId && role === 'host') {
       ws?.send(JSON.stringify({ type: 'noRoom' }));
@@ -87,12 +90,21 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
           <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
 
           {role === 'host' || role === 'guest' ? (
-            <button
-              className="cursor-pointer h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65"
+            (role === 'host' && isHostReady) || (role === 'guest' && isGuestReady) ? (
+              <button
+                className="cursor-pointer h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65"
+                onClick={onCancel}
+                >
+                준비취소하기
+              </button>
+            ) : (
+              <button
+              className="cursor-pointer h-8 px-8 text-mainText bg-gray-500 font-medium text-xs rounded-sm hover:bg-opacity-65"
               onClick={onReady}
-            >
-              준비하기
-            </button>
+              >
+                준비하기
+              </button>
+            )
           ) : (
             <></>
           )}
