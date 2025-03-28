@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Form() {
   useImageLoaded();
-  const { ws, setRoomId, setWs , } = useSocketStore();
+  const { ws, setRoomId, setWs } = useSocketStore();
   const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearHostBan, setClearGuestBan } = usePeerlessStore();
@@ -42,7 +42,7 @@ export default function Form() {
     setClearHostBan();
     setClearGuestBan();
     if (ws) {
-      setWs(null)
+      setWs(null);
       setRoomId('');
     }
   }, []);
@@ -65,7 +65,7 @@ export default function Form() {
     data.blueImg = blueImage;
     data.redImg = redImage;
     setFormRules(data);
-    setHostRules(data);
+    setHostRules({ ...data, status: '' });
     if (data.peopleMode === 'team') {
       openSharePopup();
     } else {

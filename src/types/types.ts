@@ -60,8 +60,8 @@ export interface RulesState extends RulesType {
   guestInfo: InfoType;
   setRules: (data: RulesType) => void;
   setFormRules: (data: FormsData) => void;
-  setHostRules: (data: FormsData & { status: 'join' | 'ready' }) => void;
-  setGuestRules: (data: FormsData & { status: 'join' | 'ready' }) => void;
+  setHostRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => void;
+  setGuestRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => void;
   setPeerlessSet: () => void;
   setClearPeerlessSet: () => void;
 }

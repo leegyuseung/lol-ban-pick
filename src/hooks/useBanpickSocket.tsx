@@ -118,9 +118,9 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
         // WebSocket 연결 파라미터
         const params = new URLSearchParams({
-          roomId: searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId,
+          roomId: searchParams!.get('roomId') ? searchParams!.get('roomId') as string : roomId,
           userId: userId,
-          position: searchParams!.get('position') ? searchParams!.get('position') : position,
+          position: searchParams!.get('position') ? (searchParams!.get('position') as string) : (position as string),
           host: String(searchParams!.get('position') ? false : true),
         });
 
