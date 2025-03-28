@@ -18,7 +18,6 @@ export default function PeerlessList({ side, teamSide }: PropsType) {
   const RedBanDataRef = useRef<BanArray[][]>([]);
 
   useEffect(() => {
-    console.log('🍎PeerlessListTeam', role);
     if (role === 'host') {
       InfoDataRef.current = hostInfo;
     } else if (role === 'guest') {
@@ -39,7 +38,6 @@ export default function PeerlessList({ side, teamSide }: PropsType) {
     // store 구독
     const unsubscribe = usePeerlessStore.subscribe((state) => {
       const { hostBan, guestBan } = state;
-      console.log('🍎PeerlessListTeam2', hostBan, guestBan);
 
       if (hostInfo.myTeamSide === 'blue') {
         BlueBanDataRef.current = hostBan;

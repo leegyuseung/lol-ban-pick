@@ -4,7 +4,7 @@ import { useBanStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 
 export default function BanPickHeader() {
-  const { hostInfo, banpickMode, timeUnlimited, nowSet, audienceCount } = useRulesStore();
+  const { hostInfo, banpickMode, timeUnlimited, nowSet } = useRulesStore();
   const { selectedTeam, selectedTeamIndex, RandomPick, headerSecond, setHeaderSecond } = useBanStore();
   const [currentColor, setCurrentColor] = useState('');
 
@@ -12,13 +12,11 @@ export default function BanPickHeader() {
   const secondRef = useRef(headerSecond);
 
   useEffect(() => {
-    console.log(timeUnlimited, '⭐️timeUnlimited');
     setHeaderSecond(timeUnlimited === 'true' ? '∞' : '30');
   }, [timeUnlimited]);
 
   // 시간
   useEffect(() => {
-    console.log(timeUnlimited, '⭐️timeUnlimited');
     if (timeUnlimited === 'true' || headerSecond === '') return;
 
     timerRef.current = setInterval(() => {

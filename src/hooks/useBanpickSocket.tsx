@@ -113,7 +113,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
         // WebSocket 서버 URL 가져오기
         const response = await fetch('/api/socket/io');
         const { wsUrl } = await response.json();
-        
+
         if (!response.ok) throw new Error('WebSocket server not ready');
 
         // WebSocket 연결 파라미터
@@ -121,7 +121,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           roomId: searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId,
           userId: userId,
           position: searchParams!.get('position') ? searchParams!.get('position') : position,
-          host: String(searchParams!.get('position') ? false : true)
+          host: String(searchParams!.get('position') ? false : true),
         });
 
         const _ws = new WebSocket(`${wsUrl}?${params.toString()}`);
@@ -141,7 +141,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
               _ws?.send(
                 JSON.stringify({
                   type: 'init',
-                  userId: localStorage.getItem("lol_ban_host_id") as string,
+                  userId: localStorage.getItem('lol_ban_host_id') as string,
                   roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                   banpickMode,
                   peopleMode,
@@ -271,9 +271,10 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setCurrentSelectedPick(data.params.name, data.params.info);
           }
           if (data.type === 'champion') {
-            console.log('🔥champion', role);
             const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam, currentSelectedPick } =
               useBanStore.getState();
+            const { banpickMode } = useRulesStore.getState();
+
             let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
             // 현재 밴픽 정보를 바꿔준다.
             setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
@@ -320,7 +321,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           }
           if (data.type === 'Peerless') {
             const { blueBan, redBan } = usePeerlessStore.getState();
-            console.log('🔥Peerless', blueBan, redBan);
             setTeamBan(blueBan, redBan);
             setRedBanClear();
             setBlueBanClear();

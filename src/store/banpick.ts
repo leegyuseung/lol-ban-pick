@@ -538,13 +538,11 @@ export const usePeerlessStore = create<PeerlessStore>()(
 
       setRedBan: (obj) =>
         set((state) => {
-          console.log('🔥redBan', obj);
           return { redBan: [...state.redBan, obj] };
         }),
 
       setBlueBan: (obj) =>
         set((state) => {
-          console.log('🔥blueBan', obj);
           return { blueBan: [...state.blueBan, obj] };
         }),
 
@@ -574,7 +572,6 @@ export const usePeerlessStore = create<PeerlessStore>()(
           let updatedHostban: BanArray[][] = [];
           let updatedGuestban: BanArray[][] = [];
 
-          console.log('🔥setTeamBan', blue, red, role);
           if (role === 'host') {
             if (hostInfo.myTeamSide === 'blue') {
               updatedHostban = [...state.hostBan, blue];
@@ -585,11 +582,11 @@ export const usePeerlessStore = create<PeerlessStore>()(
             }
           } else if (role === 'guest') {
             if (guestInfo.myTeamSide === 'blue') {
-              updatedHostban = [...state.hostBan, blue];
-              updatedGuestban = [...state.guestBan, red];
-            } else if (guestInfo.myTeamSide === 'red') {
               updatedHostban = [...state.hostBan, red];
               updatedGuestban = [...state.guestBan, blue];
+            } else if (guestInfo.myTeamSide === 'red') {
+              updatedHostban = [...state.hostBan, blue];
+              updatedGuestban = [...state.guestBan, red];
             }
           }
 
