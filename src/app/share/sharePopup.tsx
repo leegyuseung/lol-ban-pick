@@ -25,11 +25,11 @@ function ShareItem({
   return (
     <>
       <ShareUrl
-        url={`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketTest?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`}
+        url={`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketRoom?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`}
         role={position === 'red' ? '블루팀 공유' : '레드팀'}
       />
       <ShareUrl
-        url={`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketTest?roomId=${roomId}&position=audience`}
+        url={`http://${process.env.NEXT_PUBLIC_SITE_URL}:3000/socketRoom?roomId=${roomId}&position=audience`}
         role={'관전자'}
       />
     </>
