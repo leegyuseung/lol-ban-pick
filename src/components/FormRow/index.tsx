@@ -1,21 +1,22 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../Button';
 import useImageLoaded from '@/hooks/useImageLoaded';
 import TeamLogoPopup from '../TeamLogoPopup';
 import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
-import { useRulesStore, usePeerlessStore, useSocketStore } from '@/store';
+import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
 export default function Form() {
   useImageLoaded();
-  const { setWs, ws } = useSocketStore();
+  const { ws, setRoomId, setWs } = useSocketStore();
+  const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
-  const { setClearMyBan, setClearYourBan } = usePeerlessStore();
+  const { setClearHostBan, setClearGuestBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
   const { register, handleSubmit, watch } = useForm<FormsData>({
     defaultValues: {
       blueTeamName: '',
@@ -31,10 +32,21 @@ export default function Form() {
     },
   });
 
+  // 전부 초기화
   useEffect(() => {
+    setChampionInfo(); // 챔피언 정보 초기화
+    setClearBanPickObject(); // 밴픽 객체 초기화
+    setClearSelectTeamIndex(); // 선택된 팀 인덱스 초기화
+    setClearCurrentLocation(); // 현재 위치 초기화
     setClearPeerlessSet();
-    setClearMyBan();
-    setClearYourBan();
+    setClearHostBan();
+    setClearGuestBan();
+    setRedBanClear();
+    setBlueBanClear();
+    if (ws) {
+      setWs(null);
+      setRoomId('');
+    }
   }, []);
 
   const blueTeam = watch('blueTeamName') || '블루팀';
@@ -55,7 +67,7 @@ export default function Form() {
     data.blueImg = blueImage;
     data.redImg = redImage;
     setFormRules(data);
-    setHostRules(data);
+    setHostRules({ ...data, status: '' });
     if (data.peopleMode === 'team') {
       openSharePopup();
     } else {
@@ -63,15 +75,26 @@ export default function Form() {
     }
   };
 
+  // useEffect(() => {
+  //   const handlePopState = () => {
+  //     console.log("뒤로 가기 버튼 클릭 감지!");
+  //   };
+  //   console.log(handlePopState)
+  //   window.addEventListener("popstate", handlePopState);
+
+  //   return () => {
+  //     window.removeEventListener("popstate", handlePopState);
+  //   };
+  // }, []);
   const openSharePopup = () => {
     setIsShareOpen(true);
   };
 
-  const closeSharePopup = useCallback(() => {
-    ws?.close();
+  const setSharePopup = (b: boolean) => {
+    // if(!b)ws?.close();
     // setWs(null);
-    setIsShareOpen(false);
-  },[ws]);
+    setIsShareOpen(b);
+  };
   const openPopup = (teamColor: string) => {
     setSelectedTeamColor(teamColor);
     setIsOpen(true);
@@ -196,7 +219,7 @@ export default function Form() {
       </form>
 
       {/* 공유하기 팝업 */}
-      {<SharePopupWrapper closePopup={closeSharePopup} isOpen={isShareOpen} />}
+      {<SharePopupWrapper setSharePopup={setSharePopup} isShareOpen={isShareOpen} />}
       {/* 이미지 선택 팝업 */}
       {isOpen && (
         <TeamLogoPopup

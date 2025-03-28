@@ -11,14 +11,25 @@ type PopupState = {
 
   btnList: { func: () => void; text: string }[];
   setBtnList: (btnList: { func: () => void; text: string }[]) => void;
-  initPopupState:()=>void
+  setPopup: ({
+    isOpen,
+    title,
+    content,
+    btnList,
+  }: {
+    isOpen: boolean;
+    title: string;
+    content: string | ReactElement;
+    btnList: { func: () => void; text: string }[];
+  }) => void;
+  initPopupState: () => void;
 };
 
 export const usePopupStore = create<PopupState>((set, get) => ({
   isOpen: false,
-  setIsOpen: (isOpen) =>
+  setIsOpen: (_isOpen) =>
     set({
-      isOpen,
+      isOpen: _isOpen,
     }),
   title: '',
   setTitle: (title: string) =>
@@ -35,12 +46,30 @@ export const usePopupStore = create<PopupState>((set, get) => ({
     set({
       btnList: [...btnList],
     }),
-    initPopupState:()=>{
-      set({
-        isOpen:false,
-        title:"",
-        content:"",
-        btnList:[]
-      })
-    }
+  initPopupState: () => {
+    set({
+      isOpen: false,
+      title: '',
+      content: '',
+      btnList: [],
+    });
+  },
+  setPopup: ({
+    isOpen,
+    title,
+    content,
+    btnList,
+  }: {
+    isOpen: boolean;
+    title: string;
+    content: string | ReactElement;
+    btnList: { func: () => void; text: string }[];
+  }) => {
+    set({
+      isOpen,
+      title,
+      content,
+      btnList,
+    });
+  },
 }));

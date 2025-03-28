@@ -2,13 +2,24 @@ import { useEffect, useRef } from 'react';
 import { useBanStore, usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { InfoData } from '@/store/banpick';
+import { InfoData, usePeerlessStore } from '@/store/banpick';
 
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
-    useRulesStore();
-  const { setCurrentSelectedPick, setBanPickObject, setChangeChampionInfo, setCurrentLocation, setSelectedTeamIndex } =
-    useBanStore();
+  useRulesStore();
+  const {
+    setCurrentSelectedPick,
+    setBanPickObject,
+    setChangeChampionInfo,
+    setCurrentLocation,
+    setSelectedTeamIndex,
+    setClearBanPickObject,
+    setClearSelectTeamIndex,
+    setClearCurrentLocation,
+    setHeaderSecond,
+  } = useBanStore();
+  const { setTeamBan, setBlueBan, setRedBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
+
   //room id
   const { setRoomId, ws, setWs } = useSocketStore();
   //user id
@@ -29,13 +40,18 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     nowSet,
     position,
     audienceCount,
+    setPeerlessSet,
   } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
+  const lineMapping: Record<string, number> = {
+    top: 0,
+    jungle: 1,
+    mid: 2,
+    ad: 3,
+    sup: 4,
+  };
 
   useEffect(() => {
-    if (pathName === '/') {
-      setWs(null);
-    }
     if (pathName !== '/' && !roomId && !searchParams?.get('roomId')) {
       console.log(`📩 새 메시지: noRoom`);
       setIsOpen(true);
@@ -72,10 +88,10 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     // WebSocket이 연결되지 않으면 새로 연결 시도
     if (socketRef.current) return;
     if (ws && !searchParams?.get(roomId)) return;
-    if (!socketRef.current) {
+    if (!socketRef.current && !ws) {
       console.log(_userId, 'userid');
       const userId = _userId;
-      setUserId(userId);
+      setUserId(_userId);
       //host 는 postion 을 던져주지 않음
       const positionValue = (searchParams!.get('position') as 'blue' | 'red' | 'audience') ?? position;
 
@@ -93,18 +109,24 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             ? 'audience'
             : 'guest',
       });
-      if (roomId) setRoomId(roomId);
       const connectWebSocket = async () => {
-        //파람으로 (공유 url)로 roomId get
         if (searchParams!.get('roomId')) setRoomId(searchParams!.get('roomId') as string);
-        const response = await fetch(
-          `/api/socket/io?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&position=${searchParams!.get('position') ? searchParams!.get('position') : position}&host=${searchParams!.get('position') ? false : true}`,
-        ); // WebSocket 서버 확인 요청
+        // WebSocket 서버 URL 가져오기
+        const response = await fetch('/api/socket/io');
+        const { wsUrl } = await response.json();
+
         if (!response.ok) throw new Error('WebSocket server not ready');
-        const _ws = new WebSocket(
-          `ws://${process.env.NEXT_PUBLIC_SITE_URL}:3001?roomId=${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}&userId=${userId}&position=${searchParams!.get('position') ? searchParams!.get('position') : position}&host=${searchParams!.get('position') ? false : true}`,
-        );
-        setWs(_ws); // WebSocket 서버 주소로 변경
+
+        // WebSocket 연결 파라미터
+        const params = new URLSearchParams({
+          roomId: searchParams!.get('roomId') ? (searchParams!.get('roomId') as string) : roomId,
+          userId: userId,
+          position: searchParams!.get('position') ? (searchParams!.get('position') as string) : (position as string),
+          host: String(searchParams!.get('position') ? false : true),
+        });
+
+        const _ws = new WebSocket(`${wsUrl}?${params.toString()}`);
+        setWs(_ws);
 
         _ws.onopen = () => {
           console.log(
@@ -116,10 +138,11 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             //host일때 (sharePop.tsx에서 메인 페이지에서 가장 먼저 세팅됨)
             console.log(hostInfo, 'hostInfo');
             if (pathName === '/') {
+              //초기 화면 소켓 실행
               _ws?.send(
                 JSON.stringify({
                   type: 'init',
-                  userId: userId,
+                  userId: localStorage.getItem('lol_ban_host_id') as string,
                   roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                   banpickMode,
                   peopleMode,
@@ -134,6 +157,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             }
           } else {
             //이후에 접속된 guest나 관중
+
             _ws?.send(
               JSON.stringify({
                 type: 'init',
@@ -149,7 +173,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             _ws?.send(
               JSON.stringify({
                 type: 'join',
-                roomId,
+                roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
                 userId,
                 role:
                   (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience' ? 'audience' : 'guest',
@@ -173,7 +197,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           }
           if (data.type === 'banpickStart') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
-            router.push('/banpick');
+            router.push('/banpickTeam');
           }
           if (data.type === 'on') {
             console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
@@ -250,11 +274,28 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           if (data.type === 'champion') {
             const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam, currentSelectedPick } =
               useBanStore.getState();
+            const { banpickMode } = useRulesStore.getState();
+
             let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
             // 현재 밴픽 정보를 바꿔준다.
             setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
             // 챔피언 정보를 바꿔준다.
             setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick);
+            // 피어리스 일 경우
+            if (banpickMode !== 'tournament') {
+              if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+                const selectedChampion = {
+                  name: currentSelectedPick[0].name,
+                  info: currentSelectedPick[0].info,
+                  line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+                };
+                if (selectedTeam[selectedTeamIndex].color === 'blue') {
+                  setBlueBan(selectedChampion);
+                } else {
+                  setRedBan(selectedChampion);
+                }
+              }
+            }
 
             index += 1;
 
@@ -265,12 +306,27 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           }
           if (data.type === 'random') {
             const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam } = useBanStore.getState();
+            const { banpickMode } = useRulesStore.getState();
             let index = banPickObject.find((value) => value.location === currentLocation)?.index as number;
 
-            if (selectedTeam[selectedTeamIndex].banpick === 'ban') {
-              setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
-            } else {
-              setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
+            // 피어리스 일 경우
+            if (banpickMode !== 'tournament') {
+              if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+                const selectedChampion = {
+                  name: data.data.randomName,
+                  info: data.data.randomInfo,
+                  line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+                };
+                if (selectedTeam[selectedTeamIndex].color === 'blue') {
+                  setBlueBan(selectedChampion);
+                } else {
+                  setRedBan(selectedChampion);
+                }
+              }
+            }
+
+            setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
+            if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
               setChangeChampionInfo(data.data.randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
             }
 
@@ -278,6 +334,20 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setCurrentLocation(index); // 다음 위치를 저장한다
             setCurrentSelectedPick('', InfoData); // 초기화
             setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
+            setHeaderSecond('5');
+          }
+          if (data.type === 'Peerless') {
+            const { blueBan, redBan } = usePeerlessStore.getState();
+            setTeamBan(blueBan, redBan);
+            setRedBanClear();
+            setBlueBanClear();
+          }
+          if (data.type === 'clearPeerless') {
+            setPeerlessSet();
+            setClearBanPickObject();
+            setClearSelectTeamIndex();
+            setClearCurrentLocation();
+            router.refresh();
           }
         };
 
@@ -292,7 +362,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     return () => {
       if (ws) {
         console.log(ws);
-        ws!.onclose();
+        ws!.close();
       }
     };
   };

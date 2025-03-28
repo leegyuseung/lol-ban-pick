@@ -3,6 +3,7 @@ import { ChampionInfoI } from '@/types/types';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { useSocketStore } from './socket';
+import { useRulesStore } from './rules';
 
 type Store = {
   championInfo: Record<string, ChampionInfoI>;
@@ -17,12 +18,24 @@ export type BanArray = {
 };
 
 type PeerlessStore = {
-  myBan: BanArray[][];
-  yourBan: BanArray[][];
-  setMyBan: (array: BanArray[]) => void;
-  setYourBan: (array: BanArray[]) => void;
-  setClearMyBan: () => void;
-  setClearYourBan: () => void;
+  redBan: BanArray[];
+  blueBan: BanArray[];
+
+  setRedBan: (obj: BanArray) => void;
+  setBlueBan: (obj: BanArray) => void;
+
+  setRedBanClear: () => void;
+  setBlueBanClear: () => void;
+
+  hostBan: BanArray[][];
+  guestBan: BanArray[][];
+  setHostBan: (array: BanArray[]) => void;
+  setTeamBan: (blue: BanArray[], red: BanArray[]) => void;
+  setGuestBan: (array: BanArray[]) => void;
+  setClearHostBan: () => void;
+  setClearGuestBan: () => void;
+  setTeamPeerless: () => void;
+  clearTeamPeerless: () => void;
 };
 
 export type BanPickObjectType = {
@@ -520,34 +533,111 @@ export const useBanStore = create<BanI>()((set, get) => ({
 export const usePeerlessStore = create<PeerlessStore>()(
   persist(
     (set) => ({
-      myBan: [],
-      yourBan: [],
+      redBan: [],
+      blueBan: [],
 
-      setMyBan: (array) =>
+      setRedBan: (obj) =>
         set((state) => {
-          const updatedMyban = [...state.myBan, array];
-
-          return { myBan: updatedMyban };
+          return { redBan: [...state.redBan, obj] };
         }),
 
-      setYourBan: (array) =>
+      setBlueBan: (obj) =>
         set((state) => {
-          const updatedYourban = [...state.yourBan, array];
-
-          return { yourBan: updatedYourban };
+          return { blueBan: [...state.blueBan, obj] };
         }),
 
-      setClearMyBan: () =>
+      setRedBanClear: () =>
+        set(() => {
+          return { redBan: [] };
+        }),
+
+      setBlueBanClear: () =>
+        set(() => {
+          return { blueBan: [] };
+        }),
+
+      hostBan: [],
+      guestBan: [],
+
+      setHostBan: (array) =>
+        set((state) => {
+          const updatedHostban = [...state.hostBan, array];
+
+          return { hostBan: updatedHostban };
+        }),
+
+      setTeamBan: (blue, red) =>
+        set((state) => {
+          const { role, hostInfo, guestInfo } = useRulesStore.getState();
+          let updatedHostban: BanArray[][] = [];
+          let updatedGuestban: BanArray[][] = [];
+
+          if (role === 'host') {
+            if (hostInfo.myTeamSide === 'blue') {
+              updatedHostban = [...state.hostBan, blue];
+              updatedGuestban = [...state.guestBan, red];
+            } else if (hostInfo.myTeamSide === 'red') {
+              updatedHostban = [...state.hostBan, red];
+              updatedGuestban = [...state.guestBan, blue];
+            }
+          } else if (role === 'guest') {
+            if (guestInfo.myTeamSide === 'blue') {
+              updatedHostban = [...state.hostBan, red];
+              updatedGuestban = [...state.guestBan, blue];
+            } else if (guestInfo.myTeamSide === 'red') {
+              updatedHostban = [...state.hostBan, blue];
+              updatedGuestban = [...state.guestBan, red];
+            }
+          }
+
+          return { hostBan: updatedHostban, guestBan: updatedGuestban };
+        }),
+
+      setGuestBan: (array) =>
+        set((state) => {
+          const updatedGuestban = [...state.guestBan, array];
+
+          return { guestBan: updatedGuestban };
+        }),
+
+      setClearHostBan: () =>
         set(() => {
           localStorage.removeItem('peerless-store');
-          return { myBan: [] };
+          return { hostBan: [] };
         }),
 
-      setClearYourBan: () =>
+      setClearGuestBan: () =>
         set(() => {
           localStorage.removeItem('peerless-store');
-          return { yourBan: [] };
+          return { guestBan: [] };
         }),
+
+      setTeamPeerless: () => {
+        const socketState = useSocketStore.getState();
+
+        if (!socketState) return;
+        const message = {
+          type: 'Peerless',
+          roomId: socketState.roomId,
+        };
+
+        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+          socketState.ws?.send(JSON.stringify(message));
+        }
+      },
+
+      clearTeamPeerless: () => {
+        const socketState = useSocketStore.getState();
+        if (!socketState) return;
+        const message = {
+          type: 'clearPeerless',
+          roomId: socketState.roomId,
+        };
+
+        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+          socketState.ws?.send(JSON.stringify(message));
+        }
+      },
     }),
     {
       name: 'peerless-store',

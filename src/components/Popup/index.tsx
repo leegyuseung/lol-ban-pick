@@ -12,6 +12,7 @@ function PopupComp() {
     initPopupState();
   }, [pathName, initPopupState]); // pathName이 변경될 때마다 실행
 
+
   return (
     <>
       {isOpen ? (

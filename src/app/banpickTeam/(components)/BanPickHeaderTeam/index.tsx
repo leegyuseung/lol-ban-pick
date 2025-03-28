@@ -45,9 +45,10 @@ export default function BanPickHeader() {
         // 30초가 그냥 지나갈 경우 랜덤픽으로 넣어야한다
         if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide) {
           TeamRandomPick();
+        } else {
+          secondRef.current = '5';
+          setHeaderSecond('5');
         }
-        secondRef.current = '5';
-        setHeaderSecond('5');
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
         setHeaderSecond(secondRef.current);
@@ -64,7 +65,7 @@ export default function BanPickHeader() {
     if (!selectedTeam[selectedTeamIndex]) return;
 
     if (selectedTeam[selectedTeamIndex].color === '') {
-      setTimeout(() => setHeaderSecond(''), 0);
+      setHeaderSecond('');
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
     } else if (selectedTeam[selectedTeamIndex].color === 'blue' || selectedTeam[selectedTeamIndex].color === 'red') {
       if (timeUnlimited !== 'true') {
