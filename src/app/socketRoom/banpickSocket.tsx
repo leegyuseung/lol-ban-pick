@@ -6,6 +6,7 @@ import { useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
+import Image from 'next/image';
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,6 +51,17 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
     return teamSide.myTeam;
   }, [guestInfo, hostInfo]);
+
+  const blueTeamImg = useMemo(() => {
+    const teamSide = hostInfo.myTeamSide === 'blue' ? hostInfo : guestInfo;
+
+    return teamSide.myImg;
+  }, [guestInfo, hostInfo]);
+  const redTeamImg = useMemo(() => {
+    const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
+
+    return teamSide.myImg;
+  }, [guestInfo, hostInfo]);
   const isHostReady = useMemo(() => hostInfo.status === 'ready', [hostInfo]);
   const isGuestReady = useMemo(() => guestInfo.status === 'ready', [guestInfo]);
   return (
@@ -66,6 +78,9 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               className={`${isHostReady ? 'bg-yellow-500' : 'bg-gray-500'} text-white w-[30%] text-[12px] rounded-[5px] text-center`}
             >
               {isHostReady ? '준비 완료' : '준비 중'}
+            </div>
+            <div className="relative w-full h-[200px]" >
+              <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueTeamImg} alt="logo" fill priority />
             </div>
             <h2 className="text-xl font-semibold">
               {blueTeamName} ({blueCount}/1)
@@ -86,6 +101,9 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               className={`${isGuestReady ? 'bg-yellow-500' : 'bg-gray-500'} text-white w-[30%] text-[12px] rounded-[5px] text-center`}
             >
               {isGuestReady ? '준비 완료' : '준비 중'}
+            </div>
+            <div className="relative w-full h-[200px]" >
+              <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redTeamImg} alt="logo" fill priority />
             </div>
             <h2 className="text-xl font-semibold">
               {redTeamName} ({redCount}/1)
