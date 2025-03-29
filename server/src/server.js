@@ -235,7 +235,7 @@ wss.on('connection', (ws, req) => {
         client.ws.send(JSON.stringify({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }));
       });
     }
-    
+
     if (data.type === 'readyCancel') {
       roomsClient.forEach((client) => {
         if (data.role === 'host') {
@@ -292,6 +292,12 @@ wss.on('connection', (ws, req) => {
       });
     }
 
+    if (data.type === 'teamChange') {
+      const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+      roomsClient.forEach((client) => {
+        client.ws.send(JSON.stringify({ type: 'teamChange' }));
+      });
+    }
     //메인페이지에서 공유 팝업 닫기를 누를때!
     //userId에 할당된 room에 room번호만 삭제
     if (data.type === 'closeSharePopup') {

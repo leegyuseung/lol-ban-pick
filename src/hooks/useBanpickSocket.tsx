@@ -41,6 +41,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     position,
     audienceCount,
     setPeerlessSet,
+    setChangeTeam,
   } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   const lineMapping: Record<string, number> = {
@@ -353,6 +354,9 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setClearSelectTeamIndex();
             setClearCurrentLocation();
             router.refresh();
+          }
+          if (data.type === 'teamChange') {
+            setChangeTeam();
           }
         };
 

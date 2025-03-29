@@ -36,6 +36,7 @@ type PeerlessStore = {
   setClearGuestBan: () => void;
   setTeamPeerless: () => void;
   clearTeamPeerless: () => void;
+  setTeamChange: () => void;
 };
 
 export type BanPickObjectType = {
@@ -631,6 +632,19 @@ export const usePeerlessStore = create<PeerlessStore>()(
         if (!socketState) return;
         const message = {
           type: 'clearPeerless',
+          roomId: socketState.roomId,
+        };
+
+        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
+          socketState.ws?.send(JSON.stringify(message));
+        }
+      },
+
+      setTeamChange: () => {
+        const socketState = useSocketStore.getState();
+        if (!socketState) return;
+        const message = {
+          type: 'teamChange',
           roomId: socketState.roomId,
         };
 

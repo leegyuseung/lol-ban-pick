@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { InfoType } from '@/types/types';
 
 export default function BanPickHeader() {
-  const { hostInfo, banpickMode, timeUnlimited, nowSet, role, guestInfo } = useRulesStore();
+  const { banpickMode, timeUnlimited, nowSet, role } = useRulesStore();
   const { selectedTeam, selectedTeamIndex, headerSecond, setHeaderSecond } = useBanStore();
   const { TeamRandomPick } = useBanTeamStore();
   const [currentColor, setCurrentColor] = useState('');
@@ -14,8 +14,10 @@ export default function BanPickHeader() {
   const secondRef = useRef(headerSecond);
   const InfoDataRef = useRef<InfoType>();
 
-  // InfoData 세팅
   useEffect(() => {
+    const initialState = useRulesStore.getState();
+    const { hostInfo, guestInfo, role } = initialState;
+
     if (role === 'host') {
       InfoDataRef.current = hostInfo;
     } else if (role === 'guest') {
@@ -30,7 +32,29 @@ export default function BanPickHeader() {
         yourImg: '',
       };
     }
-  }, [role, hostInfo, guestInfo]);
+
+    const unsubscribe = useRulesStore.subscribe((state) => {
+      const { hostInfo, guestInfo, role } = state;
+      console.log('🍎unsubscribe', hostInfo, guestInfo, role);
+      if (role === 'host') {
+        InfoDataRef.current = hostInfo;
+      } else if (role === 'guest') {
+        InfoDataRef.current = guestInfo;
+      } else if (role === 'audience') {
+        InfoDataRef.current = {
+          myTeam: '',
+          yourTeam: '',
+          myTeamSide: 'audience',
+          yourTeamSide: 'audience',
+          myImg: '',
+          yourImg: '',
+        };
+      }
+    });
+
+    // cleanup 함수
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     setHeaderSecond(timeUnlimited === 'true' ? '∞' : '5');

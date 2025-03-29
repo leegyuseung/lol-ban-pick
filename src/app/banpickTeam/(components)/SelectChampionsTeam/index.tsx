@@ -24,8 +24,7 @@ export default function SelectChampions() {
   } = useBanStore();
   const { SelectTeamImage, SelectTeamChampion } = useBanTeamStore();
   const { banpickMode, nowSet, role, hostInfo, guestInfo } = useRulesStore();
-  const { hostBan, guestBan } = usePeerlessStore();
-  const { setTeamPeerless, clearTeamPeerless } = usePeerlessStore();
+  const { hostBan, guestBan, setTeamPeerless, clearTeamPeerless, setTeamChange } = usePeerlessStore();
 
   const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
@@ -124,6 +123,7 @@ export default function SelectChampions() {
     const isConfirmed = await openConfirm();
     if (isConfirmed) {
       // 여기에서 팀변경을 해줘야한다
+      setTeamChange();
     }
 
     // 피어리스 밴픽 추가
