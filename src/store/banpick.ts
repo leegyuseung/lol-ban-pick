@@ -572,7 +572,7 @@ export const usePeerlessStore = create<PeerlessStore>()(
           let updatedHostban: BanArray[][] = [];
           let updatedGuestban: BanArray[][] = [];
 
-          if (role === 'host') {
+          if (role === 'host' || role === 'audience') {
             if (hostInfo.myTeamSide === 'blue') {
               updatedHostban = [...state.hostBan, blue];
               updatedGuestban = [...state.guestBan, red];
