@@ -59,8 +59,12 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
         <div className="grid grid-cols-3 gap-6 w-full max-w-4xl">
           {/* 블루팀 */}
-          <div className="bg-blue-700 p-6 pt-3 rounded-lg shadow-lg border-2 border-blue-500">
-            <div className="bg-yellow-500 text-white w-[30%] text-[12px] rounded-[5px] text-center">
+          <div
+            className={`${isHostReady ? 'bg-blue-700' : 'bg-blue-500'} p-6 pt-3 rounded-lg shadow-lg border-2 border-blue-500`}
+          >
+            <div
+              className={`${isHostReady ? 'bg-yellow-500' : 'bg-gray-500'} text-white w-[30%] text-[12px] rounded-[5px] text-center`}
+            >
               {isHostReady ? '준비 완료' : '준비 중'}
             </div>
             <h2 className="text-xl font-semibold">
@@ -75,8 +79,12 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
           </div>
 
           {/* 레드팀 */}
-          <div className="bg-red-700 p-6 pt-3 rounded-lg shadow-lg border-2 border-red-500">
-            <div className="bg-yellow-500 text-white w-[30%] text-[12px] rounded-[5px] text-center">
+          <div
+            className={`${isGuestReady ? 'bg-red-700' : 'bg-red-500'} p-6 pt-3 rounded-lg shadow-lg border-2 border-red-500`}
+          >
+            <div
+              className={`${isGuestReady ? 'bg-yellow-500' : 'bg-gray-500'} text-white w-[30%] text-[12px] rounded-[5px] text-center`}
+            >
               {isGuestReady ? '준비 완료' : '준비 중'}
             </div>
             <h2 className="text-xl font-semibold">
@@ -88,35 +96,36 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
-
-          {role === 'host' || role === 'guest' ? (
-            (role === 'host' && isHostReady) || (role === 'guest' && isGuestReady) ? (
-              <button
-                className="cursor-pointer h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65"
-                onClick={onCancel}
+          <div className="flex w-[300px] justify-evenly">
+            {role === 'host' || role === 'guest' ? (
+              (role === 'host' && isHostReady) || (role === 'guest' && isGuestReady) ? (
+                <button
+                  className="cursor-pointer h-8 px-8 text-mainText bg-orange-700 font-medium text-xs rounded-sm hover:bg-opacity-65"
+                  onClick={onCancel}
                 >
-                준비취소하기
-              </button>
+                  준비취소하기
+                </button>
+              ) : (
+                <button
+                  className="cursor-pointer h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65"
+                  onClick={onReady}
+                >
+                  준비하기
+                </button>
+              )
             ) : (
+              <></>
+            )}
+            {role === 'host' ? (
               <button
-              className="cursor-pointer h-8 px-8 text-mainText bg-gray-500 font-medium text-xs rounded-sm hover:bg-opacity-65"
-              onClick={onReady}
+                className={`${!isHostReady || !isGuestReady ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
+                onClick={goEnter}
+                disabled={!isHostReady || !isGuestReady}
               >
-                준비하기
+                시작하기
               </button>
-            )
-          ) : (
-            <></>
-          )}
-          {role === 'host' ? (
-            <button
-              className={`${!isHostReady || !isGuestReady ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
-              onClick={goEnter}
-              disabled={!isHostReady || !isGuestReady}
-            >
-              시작하기
-            </button>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </>
