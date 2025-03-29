@@ -12,7 +12,6 @@ function PopupComp() {
     initPopupState();
   }, [pathName, initPopupState]); // pathName이 변경될 때마다 실행
 
-
   return (
     <>
       {isOpen ? (
@@ -27,7 +26,7 @@ function PopupComp() {
             </button> */}
 
             {/* 타이틀 */}
-            {title ? <h2 className="text-white text-xl font-semibold">{title}</h2> : null}
+            {title ? <h2 className="text-mainText text-xl font-semibold">{title}</h2> : null}
 
             {/* 모달 내용 */}
             <div className="flex flex-col items-center w-full gap-5 mt-4">
@@ -39,7 +38,7 @@ function PopupComp() {
                   <button
                     key={btn.text}
                     onClick={btn.func}
-                    className="w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainGold hover:bg-mainGold hover:text-black transition"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
                   >
                     {btn.text}
                   </button>

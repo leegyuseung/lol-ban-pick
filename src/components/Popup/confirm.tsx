@@ -46,7 +46,7 @@ function ConfirmPopup({
                 <button
                   key={btn.text}
                   onClick={btn.func}
-                  className="w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainGold hover:bg-mainGold hover:text-black transition"
+                  className="w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
                 >
                   확인
                 </button>

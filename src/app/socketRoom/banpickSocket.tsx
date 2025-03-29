@@ -79,8 +79,15 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             >
               {isHostReady ? '준비 완료' : '준비 중'}
             </div>
-            <div className="relative w-full h-[200px]" >
-              <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueTeamImg} alt="logo" fill priority />
+            <div className="relative w-full h-[200px]">
+              <Image
+                className="object-contain"
+                sizes="w-[200px] h-[200px]"
+                src={blueTeamImg}
+                alt="logo"
+                fill
+                priority
+              />
             </div>
             <h2 className="text-xl font-semibold">
               {blueTeamName} ({blueCount}/1)
@@ -102,7 +109,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             >
               {isGuestReady ? '준비 완료' : '준비 중'}
             </div>
-            <div className="relative w-full h-[200px]" >
+            <div className="relative w-full h-[200px]">
               <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redTeamImg} alt="logo" fill priority />
             </div>
             <h2 className="text-xl font-semibold">
@@ -114,7 +121,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
-          <div className="flex w-[300px] justify-evenly">
+          <div className="flex w-[300px] justify-evenly mt-5">
             {role === 'host' || role === 'guest' ? (
               (role === 'host' && isHostReady) || (role === 'guest' && isGuestReady) ? (
                 <button
