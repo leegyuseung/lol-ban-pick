@@ -75,17 +75,6 @@ export default function Form() {
     }
   };
 
-  // useEffect(() => {
-  //   const handlePopState = () => {
-  //     console.log("뒤로 가기 버튼 클릭 감지!");
-  //   };
-  //   console.log(handlePopState)
-  //   window.addEventListener("popstate", handlePopState);
-
-  //   return () => {
-  //     window.removeEventListener("popstate", handlePopState);
-  //   };
-  // }, []);
   const openSharePopup = () => {
     setIsShareOpen(true);
   };
@@ -127,7 +116,7 @@ export default function Form() {
           />
         </div>
 
-        <div className="flex flex-col gap-10 w-[400px]">
+        <div className="flex flex-col gap-10 w-[500px] ">
           <div>
             {/* 밴픽 모드 */}
             <label className="text-lg font-semibold mb-2 block">밴픽 모드</label>

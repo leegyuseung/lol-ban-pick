@@ -3,15 +3,24 @@ import React, { useEffect, useLayoutEffect } from 'react';
 import { usePopupStore } from '@/store';
 import { usePathname } from 'next/navigation';
 
-function PopupComp() {
-  const { btnList, isOpen, initPopupState, title, content } = usePopupStore();
-  const pathName = usePathname();
-
-  // pathName이 변경될 때 initPopupState를 호출하도록 useEffect를 사용
-  useLayoutEffect(() => {
-    initPopupState();
-  }, [pathName, initPopupState]); // pathName이 변경될 때마다 실행
-
+function ConfirmPopup({
+  title = '확인',
+  content = '확인되었습니다',
+  isOpen = false,
+  setIsOpen,
+  btn = {
+    text: '확인',
+    func: () => {
+      setIsOpen(false);
+    },
+  },
+}: {
+  title?: string;
+  content: string;
+  isOpen: boolean;
+  setIsOpen: (newV: boolean) => void;
+  btn?: { text: string; func: () => void };
+}) {
   return (
     <>
       {isOpen ? (
@@ -26,7 +35,7 @@ function PopupComp() {
             </button> */}
 
             {/* 타이틀 */}
-            {title ? <h2 className="text-mainText text-xl font-semibold">{title}</h2> : null}
+            {/* {title ? <h2 className="text-white text-xl font-semibold">확인+{isOpen + 'isOpen'}</h2> : null} */}
 
             {/* 모달 내용 */}
             <div className="flex flex-col items-center w-full gap-5 mt-4">
@@ -34,22 +43,22 @@ function PopupComp() {
 
               {/* 버튼 리스트 */}
               <div className="w-full flex gap-4 justify-center">
-                {btnList.map((btn) => (
-                  <button
-                    key={btn.text}
-                    onClick={btn.func}
-                    className="w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
-                  >
-                    {btn.text}
-                  </button>
-                ))}
+                <button
+                  key={btn.text}
+                  onClick={btn.func}
+                  className="w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
+                >
+                  확인
+                </button>
               </div>
             </div>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <></>
+      )}
     </>
   );
 }
 
-export default PopupComp;
+export default ConfirmPopup;

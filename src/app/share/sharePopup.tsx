@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
 import ShareUrl from '@/components/Share/ShareUrl';
+import ConfirmPopup from '@/components/Popup/confirm';
 interface PropType {
   setSharePopup: (b: boolean) => void;
   userId: string;
@@ -117,7 +118,11 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
       setPopup({
         title: `공유하기`,
         isOpen: true,
-        content: <ShareItem roomId={randomId.current} position={position} myTeamSide={hostInfo.myTeamSide} />,
+        content: isShareOpen ? (
+          <ShareItem roomId={randomId.current} position={position} myTeamSide={hostInfo.myTeamSide} />
+        ) : (
+          <></>
+        ),
         btnList: [
           { text: '대기방 이동', func: goBanpick },
           {

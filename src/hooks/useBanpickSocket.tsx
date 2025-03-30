@@ -41,6 +41,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     position,
     audienceCount,
     setPeerlessSet,
+    setChangeTeam,
   } = useRulesStore();
   const socketRef = useRef<WebSocket | null>(null);
   const lineMapping: Record<string, number> = {
@@ -53,7 +54,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
   useEffect(() => {
     if (pathName !== '/' && !roomId && !searchParams?.get('roomId')) {
-      console.log(`📩 새 메시지: noRoom`);
       setIsOpen(true);
       setContent('공유된 게임이 없습니다.');
       setBtnList([
@@ -89,7 +89,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     if (socketRef.current) return;
     if (ws && !searchParams?.get(roomId)) return;
     if (!socketRef.current && !ws) {
-      console.log(_userId, 'userid');
       const userId = _userId;
       setUserId(_userId);
       //host 는 postion 을 던져주지 않음
@@ -129,14 +128,8 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
         setWs(_ws);
 
         _ws.onopen = () => {
-          console.log(
-            '✅ WebSocket connected' +
-              `userId${userId}roomId` +
-              `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
-          );
           if (!searchParams!.get('position')) {
             //host일때 (sharePop.tsx에서 메인 페이지에서 가장 먼저 세팅됨)
-            console.log(hostInfo, 'hostInfo');
             if (pathName === '/') {
               //초기 화면 소켓 실행
               _ws?.send(
@@ -187,30 +180,25 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           // 메시지 타입에 따라 알림을 띄움
           // 페이지 별로 이벤트 추가 필요
 
-          if (data.type === 'init') {
-            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
-          }
           if (data.type === 'ready') {
-            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
+            setHostRules(data.hostInfo);
+            setGuestRules(data.guestInfo);
+          }
+          if (data.type === 'readyCancel') {
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);
           }
           if (data.type === 'banpickStart') {
-            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
             router.push('/banpickTeam');
           }
-          if (data.type === 'on') {
-            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
-          }
+
           if (data.type === 'join') {
-            console.log(`📩 새 메시지: ${JSON.stringify(data)}`);
             setRules(data);
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);
           }
 
           if (data.type === 'closeByHost') {
-            console.log(`📩 새 메시지: 종료`);
             setIsOpen(true);
             setContent('게임 주최자가 게임을 종료했습니다.');
             setBtnList([
@@ -224,13 +212,11 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             ]);
           }
           if (data.type === 'closeByGuest') {
-            console.log(data, 'closeByGuest');
             setRules(data);
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);
           }
           if (data.type === 'closeByAudience') {
-            console.log(`📩 closeByAudience`, data);
             setRules({
               banpickMode,
               peopleMode,
@@ -255,7 +241,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             ]);
           }
           if (data.type === 'noRoom') {
-            console.log(`📩 새 메시지: noRoom`);
             setIsOpen(true);
             setContent('공유된 게임이 없습니다.');
             setBtnList([
@@ -348,6 +333,9 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
             setClearSelectTeamIndex();
             setClearCurrentLocation();
             router.refresh();
+          }
+          if (data.type === 'teamChange') {
+            setChangeTeam();
           }
         };
 

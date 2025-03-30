@@ -14,6 +14,7 @@ export const useRulesStore = create<RulesState>()(
       blueTeamName: '블루팀',
       redTeamName: '레드팀',
       audienceCount: 0,
+
       hostInfo: {
         myTeam: '',
         yourTeam: '',
@@ -21,6 +22,7 @@ export const useRulesStore = create<RulesState>()(
         yourTeamSide: 'red',
         myImg: '',
         yourImg: '',
+        status: '',
       },
 
       guestInfo: {
@@ -30,6 +32,7 @@ export const useRulesStore = create<RulesState>()(
         yourTeamSide: 'blue',
         myImg: '',
         yourImg: '',
+        status: '',
       },
 
       setRules: (data: RulesType) => {
@@ -53,7 +56,6 @@ export const useRulesStore = create<RulesState>()(
         }),
 
       setHostRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => {
-        console.log(data,"setH")
         set((state) => ({
           ...state,
           hostInfo: {
@@ -73,7 +75,6 @@ export const useRulesStore = create<RulesState>()(
         }));
       },
       setGuestRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => {
-        console.log(data,"setG")
         set((state) => ({
           ...state,
           guestInfo: {
@@ -91,6 +92,19 @@ export const useRulesStore = create<RulesState>()(
             status: data.status,
           },
         }));
+      },
+
+      setChangeTeam: () => {
+        const { guestInfo, hostInfo } = useRulesStore.getState();
+        const hostTeamSide = hostInfo.myTeamSide;
+        const guestTeamSide = guestInfo.myTeamSide;
+
+        set(() => {
+          return {
+            hostInfo: { ...hostInfo, myTeamSide: guestTeamSide },
+            guestInfo: { ...guestInfo, myTeamSide: hostTeamSide },
+          };
+        });
       },
 
       setPeerlessSet: () =>

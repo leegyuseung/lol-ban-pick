@@ -236,6 +236,21 @@ wss.on('connection', (ws, req) => {
       });
     }
 
+    if (data.type === 'readyCancel') {
+      roomsClient.forEach((client) => {
+        if (data.role === 'host') {
+          client.hostInfo.status = 'join';
+        }
+        if (data.role === 'guest') {
+          client.guestInfo.status = 'join';
+        }
+        const { ws, ...sendInfo } = client;
+        console.log(client, sendInfo, 'client');
+        console.log({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }, 'result');
+        client.ws.send(JSON.stringify({ type: 'readyCancel', ...sendInfo, audienceCount: audienceClients.length }));
+      });
+    }
+
     if (data.type === 'banpickStart') {
       roomsClient.forEach((client) => {
         const { ws, ...sendInfo } = client;
@@ -277,6 +292,12 @@ wss.on('connection', (ws, req) => {
       });
     }
 
+    if (data.type === 'teamChange') {
+      const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+      roomsClient.forEach((client) => {
+        client.ws.send(JSON.stringify({ type: 'teamChange' }));
+      });
+    }
     //메인페이지에서 공유 팝업 닫기를 누를때!
     //userId에 할당된 room에 room번호만 삭제
     if (data.type === 'closeSharePopup') {
