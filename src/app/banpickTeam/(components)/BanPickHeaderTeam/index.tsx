@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { InfoType } from '@/types/types';
 
 export default function BanPickHeader() {
-  const { banpickMode, timeUnlimited, nowSet, role } = useRulesStore();
+  const { banpickMode, timeUnlimited, nowSet } = useRulesStore();
   const { selectedTeam, selectedTeamIndex, headerSecond, setHeaderSecond } = useBanStore();
   const { TeamRandomPick } = useBanTeamStore();
   const [currentColor, setCurrentColor] = useState('');
@@ -35,19 +35,18 @@ export default function BanPickHeader() {
 
     const unsubscribe = useRulesStore.subscribe((state) => {
       const { hostInfo, guestInfo, role } = state;
-      console.log('🍎unsubscribe', hostInfo, guestInfo, role);
       if (role === 'host') {
         InfoDataRef.current = hostInfo;
       } else if (role === 'guest') {
         InfoDataRef.current = guestInfo;
       } else if (role === 'audience') {
         InfoDataRef.current = {
-          myTeam: '',
-          yourTeam: '',
+          myTeam: hostInfo.myTeam,
+          yourTeam: hostInfo.yourTeam,
           myTeamSide: 'audience',
           yourTeamSide: 'audience',
-          myImg: '',
-          yourImg: '',
+          myImg: hostInfo.myImg,
+          yourImg: hostInfo.yourImg,
         };
       }
     });

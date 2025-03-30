@@ -24,11 +24,9 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     }),
   emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, params: any): void => {
     const rulesState = useRulesStore.getState(); // rules 상태 가져오기
-    console.log(rulesState);
     if (!rulesState) return;
     func(); // 함수 실행
     const state = get();
-    console.log(state);
     state.ws?.send(JSON.stringify({ type: 'emit', rule: rulesState, params, roomId: state.roomId }));
     // }
   },

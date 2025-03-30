@@ -1,22 +1,18 @@
 //소켓 연결 페이지
 'use client';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-
-import { useRulesStore, useSocketStore, useUserStore } from '@/store';
+import React, { useEffect, useMemo } from 'react';
+import { useRulesStore, useSocketStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
 import Image from 'next/image';
+
 function BanpickSocket({ userId: _userId }: { userId: string }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   //room id
-  const { roomId, setRoomId } = useSocketStore();
+  const { roomId } = useSocketStore();
   //user id
-  const { userId, setUserId } = useUserStore();
-  const { ws, setWs, emitFunc } = useSocketStore();
-  const { banpickMode, peopleMode, timeUnlimited, nowSet, audienceCount, position, role, hostInfo, guestInfo } =
-    useRulesStore();
+  const { ws } = useSocketStore();
+  const { audienceCount, role, hostInfo, guestInfo } = useRulesStore();
   const { setSocket } = useBanpickSocket({ userId: _userId, roomId });
   const onReady = () => {
     ws?.send(JSON.stringify({ type: 'ready', role, roomId }));

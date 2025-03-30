@@ -119,15 +119,15 @@ export default function SelectChampions() {
 
   // 다음 세트 버튼 클릭시
   const onNextSet = async () => {
+    // 피어리스 밴픽 추가
+    setTeamPeerless();
+
     // 팀 변경 메시지 팝업
     const isConfirmed = await openConfirm();
     if (isConfirmed) {
       // 여기에서 팀변경을 해줘야한다
       setTeamChange();
     }
-
-    // 피어리스 밴픽 추가
-    setTeamPeerless();
 
     // 리스트들 초기화를 해줘야한다.
     clearTeamPeerless();

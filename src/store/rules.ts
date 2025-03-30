@@ -56,7 +56,6 @@ export const useRulesStore = create<RulesState>()(
         }),
 
       setHostRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => {
-        console.log(data, 'setH');
         set((state) => ({
           ...state,
           hostInfo: {
@@ -76,7 +75,6 @@ export const useRulesStore = create<RulesState>()(
         }));
       },
       setGuestRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => {
-        console.log(data, 'setG');
         set((state) => ({
           ...state,
           guestInfo: {

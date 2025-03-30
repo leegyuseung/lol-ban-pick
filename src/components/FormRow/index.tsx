@@ -75,17 +75,6 @@ export default function Form() {
     }
   };
 
-  // useEffect(() => {
-  //   const handlePopState = () => {
-  //     console.log("뒤로 가기 버튼 클릭 감지!");
-  //   };
-  //   console.log(handlePopState)
-  //   window.addEventListener("popstate", handlePopState);
-
-  //   return () => {
-  //     window.removeEventListener("popstate", handlePopState);
-  //   };
-  // }, []);
   const openSharePopup = () => {
     setIsShareOpen(true);
   };

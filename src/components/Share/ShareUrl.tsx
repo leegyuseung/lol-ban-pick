@@ -1,7 +1,8 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import { FaCopy } from 'react-icons/fa6';
 import { FaCheck } from 'react-icons/fa';
 import ConfirmPopup from '../Popup/confirm';
+
 function ShareUrl({ url, role }: { url: string; role: string }) {
   const [isCopyed, setIsCopyed] = useState(false);
   const [showConfirmPopup, setIsShowConfirmPopup] = useState(false);
@@ -11,7 +12,6 @@ function ShareUrl({ url, role }: { url: string; role: string }) {
     handleShowPopup(true);
   };
   const handleShowPopup = (isShow: boolean) => {
-    console.log(isShow, '????');
     setIsShowConfirmPopup(isShow); // 직접 새로운 값 설정
   };
   return (
