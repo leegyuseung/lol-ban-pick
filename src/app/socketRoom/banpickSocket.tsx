@@ -51,12 +51,12 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const blueTeamImg = useMemo(() => {
     const teamSide = hostInfo.myTeamSide === 'blue' ? hostInfo : guestInfo;
 
-    return teamSide.myImg;
+    return teamSide.myImg ? teamSide.myImg : '/images/t1.webp';
   }, [guestInfo, hostInfo]);
   const redTeamImg = useMemo(() => {
     const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
 
-    return teamSide.myImg;
+    return teamSide.myImg ? teamSide.myImg : '/images/hanwha.webp';
   }, [guestInfo, hostInfo]);
   const isHostReady = useMemo(() => hostInfo.status === 'ready', [hostInfo]);
   const isGuestReady = useMemo(() => guestInfo.status === 'ready', [guestInfo]);
