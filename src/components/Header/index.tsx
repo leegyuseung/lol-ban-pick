@@ -8,7 +8,7 @@ export default function Header() {
       <div className="flex items-center justify-between px-20 h-16 bg-mainBlack">
         {/* 로고 */}
         <Link href="/" className="">
-          <Image src="/images/riot2.png" alt="logo" width={40} height={40} />
+          <Image src="/metapick.png" alt="logo" width={64} height={64} />
         </Link>
 
         {/* 네비게이션 */}
