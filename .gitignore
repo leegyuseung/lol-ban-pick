@@ -37,3 +37,81 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# frontend
+
+# dependencies
+frontend/node_modules
+frontend/.pnp
+frontend/.next
+frontend/.pnp.js
+frontend/.yarn/install-state.gz
+frontend/.yarn/*
+frontend/.pnp.*
+frontend/*.lock
+frontend/package-lock.json
+# testing
+frontend/coverage
+# next.js
+frontend/next/
+frontend/out/
+frontend/
+# production
+frontend/build
+# misc
+frontend/.DS_Store
+frontend/*.pem
+frontend/
+# debug
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/
+# local env files
+frontend/.env*.local
+frontend/
+# vercel
+frontend/.vercel
+frontend/
+frontend/# typescript
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+
+#backend
+# dependencies
+backend/node_modules
+backend/.pnp
+backend/.pnp.js
+backend/.yarn/install-state.gz
+backend/.yarn/*
+backend/.pnp.*
+backend/*.lock
+backend/package-lock.json
+# testing
+backend/coverage
+# next.js
+backend/next/
+backend/out/
+backend/
+# production
+backend/build
+# misc
+backend/.DS_Store
+backend/*.pem
+backend/
+# debug
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+backend/
+# local env files
+backend/.env*.local
+backend/
+# vercel
+backend/.vercel
+backend/
+backend/# typescript
+backend/*.tsbuildinfo
+backend/next-env.d.ts
