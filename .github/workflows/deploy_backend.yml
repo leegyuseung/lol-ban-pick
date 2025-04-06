@@ -1,0 +1,26 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때 배포 실행
+    paths:
+      - 'backend/**'  # 'backend' 디렉토리 내의 파일이 변경될 때만 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        run: |
+          chmod +x ./backend/deploy_backend.sh
+          ./backend/deploy_backend.sh
