@@ -45,6 +45,7 @@ next-env.d.ts
 frontend/node_modules
 frontend/.pnp
 frontend/.next
+frontend/.next/*
 frontend/.pnp.js
 frontend/.yarn/install-state.gz
 frontend/.yarn/*
