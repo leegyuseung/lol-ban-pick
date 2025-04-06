@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Allow: /
-
-# Host
-Host: https://metapick.vercel.app
-
-# Sitemaps
-Sitemap: https://metapick.vercel.app/sitemap.xml

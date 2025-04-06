@@ -1,0 +1,8 @@
+{
+  "/banpick/page": "app/banpick/page.js",
+  "/page": "app/page.js",
+  "/api/banpick/[type]/route": "app/api/banpick/[type]/route.js",
+  "/api/socket/io/route": "app/api/socket/io/route.js",
+  "/socketRoom/page": "app/socketRoom/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
+}
