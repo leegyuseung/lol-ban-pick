@@ -13,7 +13,7 @@ export default [
   {
     rules: {
       'react/react-in-jsx-scope': 'off',
-      'no-console': 'warn', // console.log 사용 시 경고
+      'no-console': 'error', // console.log 사용 시 경고
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // 사용하지 않는 변수에 경고
       'react/prop-types': 'off', // TypeScript를 사용하는 경우 prop-types 필요 없음
       '@typescript-eslint/no-unused-vars': 'warn', // TypeScript에서 사용되지 않는 변수에 경고
