@@ -1,8 +1,10 @@
 {
   "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
+    "**/frontend/.yarn": true,
+    "**/frontend/.pnp.*": true,
+    "**/frontend/.next/*": true
   },
+  "search.useIgnoreFiles": false,
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
