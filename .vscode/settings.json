@@ -2,11 +2,17 @@
   "search.exclude": {
     "**/frontend/.yarn": true,
     "**/frontend/.pnp.*": true,
-    "**/frontend/.next/*": true
+    "**/frontend/.next/*": true,
+    "**/.yarn": true,
+    "**/.pnp.*": true
   },
   "search.useIgnoreFiles": false,
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs"
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
+  
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }
