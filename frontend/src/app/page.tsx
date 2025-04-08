@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'MetaPick - 롤 밴픽 시뮬레이터',
     description: '리그오브레전드의 밴픽을 자유롭게 시뮬레이션할 수 있는 MetaPick!',
     images: ['/favicon.png'],
-    url: 'https://metapick.vercel.app',
+    url: process.env.NEXT_PUBLIC_URL,
   },
 };
 

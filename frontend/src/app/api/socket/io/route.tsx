@@ -22,7 +22,7 @@ const globalForWs = global as unknown as { wss?: WebSocketServer; clients: (Clie
 export async function GET() {
   try {
     // WebSocket 서버 URL
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL;
     
     return NextResponse.json({ 
       wsUrl 
