@@ -20,4 +20,8 @@
     "typescript": "4.4.3"
   },
   "packageManager": "yarn@4.7.0"
+  "devDependencies": {
+    "@yarnpkg/sdks": "^3.2.1",
+    "prettier": "^3.5.3"
+  }
 }
