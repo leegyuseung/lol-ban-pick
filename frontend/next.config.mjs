@@ -8,6 +8,10 @@ const nextConfig = {
         hostname: 'localhost',
       },
       {
+        protocol: 'http',
+        hostname: '43.200.250.245:3000',
+      },
+      {
         protocol: 'https',
         hostname: 'ddragon.leagueoflegends.com',
       },

@@ -10,7 +10,8 @@ export const metadata: Metadata = {
     title: 'MetaPick - 대기방',
     description: '팀모드 대기방입니다.',
     images: ['/favicon.png'],
-    url: 'https://metapick.vercel.app',
+    url: process.env.NEXT_PUBLIC_URL
+    
   },
 };
 

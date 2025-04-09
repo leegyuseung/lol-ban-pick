@@ -57,24 +57,19 @@ frontend/coverage
 # next.js
 frontend/next/
 frontend/out/
-frontend/
 # production
 frontend/build
 # misc
 frontend/.DS_Store
 frontend/*.pem
-frontend/
 # debug
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
-frontend/
 # local env files
 frontend/.env*.local
-frontend/
 # vercel
 frontend/.vercel
-frontend/
 frontend/# typescript
 frontend/*.tsbuildinfo
 frontend/next-env.d.ts
@@ -95,24 +90,19 @@ backend/coverage
 # next.js
 backend/next/
 backend/out/
-backend/
 # production
 backend/build
 # misc
 backend/.DS_Store
 backend/*.pem
-backend/
 # debug
 backend/npm-debug.log*
 backend/yarn-debug.log*
 backend/yarn-error.log*
-backend/
 # local env files
 backend/.env*.local
-backend/
 # vercel
 backend/.vercel
-backend/
 backend/# typescript
 backend/*.tsbuildinfo
 backend/next-env.d.ts
