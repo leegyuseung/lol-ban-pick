@@ -1,22 +1,23 @@
 import express from 'express';
 import { WebSocketServer } from 'ws';
 import cors from 'cors';
-
+import { config } from 'dotenv';
 const app = express();
-
+config({ path: './.env.production' });
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: process.env.CLIENT_URL,
   }),
 );
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 // 클라이언트 관리
+
 let clients = [];
 
 const server = app.listen(PORT, () => {
-  console.log(`🚀 WebSocket Server is running on port ${PORT}`);
+  console.log(`🚀 WebSocket Server is running on port ${PORT}` + process.env.CLIENT_URL);
 });
 
 const wss = new WebSocketServer({ server });

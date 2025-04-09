@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://metapick.vercel.app
+Host: http://43.200.250.245:3000
 
 # Sitemaps
-Sitemap: https://metapick.vercel.app/sitemap.xml
+Sitemap: http://43.200.250.245:3000/sitemap.xml
