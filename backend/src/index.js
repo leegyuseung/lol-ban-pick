@@ -12,6 +12,10 @@ app.use(
 
 const PORT = process.env.PORT;
 
+// 여기서 기본 라우트 설정!
+app.get('/', (req, res) => {
+  res.send('Backend is running');
+});
 // 클라이언트 관리
 
 let clients = [];
