@@ -37,7 +37,7 @@ export default function TeamLogoPopup({
               <div className="relative w-[80px] h-[80px]" key={index}>
                 <Image
                   src={imageUrl}
-                  alt={`${ImageList[index]}`}
+                  alt={imageUrl}
                   fill
                   sizes="w-[80px] h-[80px]"
                   priority
