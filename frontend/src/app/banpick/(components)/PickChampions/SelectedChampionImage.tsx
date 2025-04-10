@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { BanPickObjectType, currentSelectedPickType } from '@/store/banpick';
+import ImageComp from '@/components/Image';
 
 interface SelectedChampionImageProps {
   banPickObject: BanPickObjectType;
@@ -24,7 +25,7 @@ export default function SelectedChampionImage({
         (currentLocation === banPickObject[index].location && currentSelectedPick[0].name !== '')) &&
         side === location && (
           <>
-            <Image
+            <ImageComp
               src={
                 banPickObject[index].use
                   ? `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${banPickObject[index]?.name}_0.jpg`
@@ -32,9 +33,6 @@ export default function SelectedChampionImage({
                     ? `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${currentSelectedPick[0]?.name}_0.jpg`
                     : ``
               }
-              fill
-              sizes="h-10"
-              style={{ objectFit: 'cover', objectPosition: 'top' }}
               className="scale-[100%]"
               alt=""
             />
