@@ -16,6 +16,6 @@ COPY frontend ./frontend
 RUN yarn install
 
 # frontend 빌드
-RUN yarn workspace frontend build
+RUN yarn build
 
 # 포트는 런타임에 정의하므로 생략 가능

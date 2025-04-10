@@ -32,11 +32,16 @@ export default function SelectedChampionImage({
                     ? `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${currentSelectedPick[0]?.name}_0.jpg`
                     : ``
               }
+                          
+              placeholder="blur" 
+              blurDataURL={'/images/default_champ.png'}  // 사전 생성된 저해상도 이미지
+              loading="eager" // 바로 로드
               fill
               sizes="h-10"
               style={{ objectFit: 'cover', objectPosition: 'top' }}
               className="scale-[100%]"
               alt=""
+              priority={true} // 즉시 로드
             />
             <span className="relative m-2 text-lg">
               {banPickObject[index].use
