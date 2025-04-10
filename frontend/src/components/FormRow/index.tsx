@@ -54,7 +54,7 @@ export default function Form() {
   const router = useRouter();
   const selectedMode = watch('peopleMode');
   const [blueImage, setBlueImage] = useState('/images/t1.webp');
-  const [redImage, setRedImage] = useState('/images/hanwha.webp');
+  const [redImage, setRedImage] = useState('/images/geng.webp');
 
   // 팝업관련
   const [isOpen, setIsOpen] = useState(false);
