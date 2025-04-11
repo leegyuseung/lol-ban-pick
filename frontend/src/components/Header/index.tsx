@@ -8,7 +8,7 @@ export default function Header() {
       <script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3412811676948831"
-        crossorigin="anonymous"
+        crossOrigin="anonymous"
       ></script>
       <div className="flex items-center justify-between px-20 h-16 bg-mainBlack">
         {/* 로고 */}
