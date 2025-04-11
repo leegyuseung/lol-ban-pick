@@ -34,7 +34,7 @@ export default function TeamLogoPopup({
           {Array.from({ length: ImageList.length }).map((_, index) => {
             const imageUrl = `/images/${ImageList[index]}.webp`;
             return (
-              <div className="relative w-[80px] h-[80px]" key={index}>
+              <div className="relative w-[80px] h-[80px]" key={imageUrl}>
                 <Image
                   placeholder="blur"
                   blurDataURL={'/images/default_champ.png'} // 로딩 전 보여줄 낮은 품질의 이미지
