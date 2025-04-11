@@ -1,21 +1,13 @@
 FROM node:21
 
-# Corepack 활성화 (yarn 4 사용)
+WORKDIR /app
 RUN corepack enable
 
-WORKDIR /app
-
-# 루트 설정 복사
 COPY package.json yarn.lock .yarnrc.yml ./
-
-# 전체 workspace 복사
 COPY backend ./backend
-COPY frontend ./frontend
 
-# 의존성 설치
-RUN yarn install
+RUN yarn workspaces focus backend --production
 
-# frontend 빌드
-RUN yarn build
+EXPOSE 3001
 
-# 포트는 런타임에 정의하므로 생략 가능
+CMD ["yarn", "workspace", "backend", "start"]
