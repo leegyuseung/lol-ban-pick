@@ -4,8 +4,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: yarn workspace frontend start
+      dockerfile: Dockerfile.frontend
     ports:
       - "3000:3000"
     restart: always
@@ -19,8 +18,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: yarn workspace backend start
+      dockerfile: Dockerfile.backend
     ports:
       - "3001:3001"
     restart: always

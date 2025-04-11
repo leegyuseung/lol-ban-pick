@@ -213,6 +213,7 @@ export default function SelectChampions() {
             key={idx}
           >
             <ImageComp
+              key={name}
               alt={name}
               className="border border-mainGold"
               width={60}

@@ -54,7 +54,7 @@ export default function Form() {
   const router = useRouter();
   const selectedMode = watch('peopleMode');
   const [blueImage, setBlueImage] = useState('/images/t1.webp');
-  const [redImage, setRedImage] = useState('/images/hanwha.webp');
+  const [redImage, setRedImage] = useState('/images/geng.webp');
 
   // 팝업관련
   const [isOpen, setIsOpen] = useState(false);
@@ -210,16 +210,18 @@ export default function Form() {
       {/* 공유하기 팝업 */}
       {<SharePopupWrapper setSharePopup={setSharePopup} isShareOpen={isShareOpen} />}
       {/* 이미지 선택 팝업 */}
-      {isOpen && (
-        <TeamLogoPopup
-          closePopup={closePopup}
-          setBlueImage={setBlueImage}
-          setRedImage={setRedImage}
-          blueImage={blueImage}
-          redImage={redImage}
-          selectedTeamColor={selectedTeamColor}
-        />
-      )}
+      {
+        <div className={`${isOpen ? '' : 'hidden'}`}>
+          <TeamLogoPopup
+            closePopup={closePopup}
+            setBlueImage={setBlueImage}
+            setRedImage={setRedImage}
+            blueImage={blueImage}
+            redImage={redImage}
+            selectedTeamColor={selectedTeamColor}
+          />
+        </div>
+      }
     </div>
   );
 }
