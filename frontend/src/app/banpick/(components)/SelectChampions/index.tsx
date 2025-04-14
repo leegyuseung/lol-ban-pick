@@ -100,6 +100,8 @@ export default function SelectChampions() {
   const onClick = useCallback(
     (pickName: string, info: ChampionInfoI) => {
       if (pickName === '') return;
+      const preloadImg_0 = new Image();
+      preloadImg_0.src = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${pickName}_0.jpg`
       setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
     },
     [setCurrentSelectedPick],
