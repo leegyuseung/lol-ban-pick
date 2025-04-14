@@ -13,6 +13,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: '52.79.193.184',
+      },
+      {
+        protocol: 'https',
         hostname: 'ddragon.leagueoflegends.com',
       },
     ],
