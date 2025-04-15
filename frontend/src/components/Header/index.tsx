@@ -15,10 +15,6 @@ export default function Header() {
         <Link href="/" className="">
           <Image src="/metapick.png" alt="logo" width={64} height={64} />
         </Link>
-        <Link href="/" className="">
-          <p>지워야함</p>
-          <Image src="/metapick.png" alt="logo" width={64} height={64} unoptimized />
-        </Link>
 
         {/* 네비게이션 */}
         {/* TODO : 선택된 NavItem 표시하기 */}
