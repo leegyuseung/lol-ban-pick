@@ -210,7 +210,7 @@ export default function SelectChampions() {
         {Object.entries(filteredChampions).map(([name, info], idx) => (
           <div
             className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} hover:opacity-50 ${info.status != '' || name === currentSelectedPick[0].name ? 'opacity-20' : ''}`}
-            key={idx}
+            key={name}
           >
             <ImageComp
               key={name}
