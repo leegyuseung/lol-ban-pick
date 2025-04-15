@@ -10,6 +10,7 @@ interface PropType {
   onError?: ReactEventHandler<HTMLImageElement> | undefined;
   className?: string | undefined;
   onClick?: ReactEventHandler<HTMLImageElement> | undefined;
+  onMouseOver?: ReactEventHandler<HTMLImageElement> | undefined;
 }
 const myLoader = () => {
   return `/images/default_champ.png`;
@@ -23,6 +24,7 @@ function ImageComp({
   onError,
   onClick,
   className = '',
+  onMouseOver
 }: PropType) {
   const [imageSrc, setImageSrc] = useState<string>(src);
   useEffect(() => setImageSrc(src), [src]);
@@ -34,6 +36,7 @@ function ImageComp({
         height={height}
         alt={alt}
         placeholder="blur" 
+        onMouseOver={onMouseOver}
         blurDataURL={'/images/default_champ.png'} // 로딩 전 보여줄 낮은 품질의 이미지
         onLoad={onLoad}
         onError={(e) => {

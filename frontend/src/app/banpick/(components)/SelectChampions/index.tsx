@@ -47,6 +47,7 @@ export default function SelectChampions() {
   const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 블루팀 배열
   const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 레드팀 배열
   const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
+  const [hoverImg, setHoverImg] = useState('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Garen_0.jpg');
 
   const router = useRouter();
 
@@ -97,15 +98,10 @@ export default function SelectChampions() {
   );
 
   // Image 클릭시
-  const onClick = useCallback(
-    (pickName: string, info: ChampionInfoI) => {
-      if (pickName === '') return;
-      const preloadImg_0 = new Image();
-      preloadImg_0.src = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${pickName}_0.jpg`
-      setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
-    },
-    [setCurrentSelectedPick],
-  );
+  const onClick = (pickName: string, info: ChampionInfoI) => {
+    if (pickName === '') return;
+    setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
+  };
 
   // 챔피언 선택 버튼 클릭시
   const onClickButton = useCallback(() => {
@@ -179,7 +175,12 @@ export default function SelectChampions() {
     setClearHostBan,
     setClearGuestBan,
   ]);
-
+  const preloadImg = useCallback(
+    (name: string) => {
+      setHoverImg((_) => `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${name}_0.jpg`);
+    },
+    [hoverImg],
+  );
   return (
     <div className="flex flex-col gap-3 w-[508px]">
       <div className="flex items-center justify-between">
@@ -220,6 +221,7 @@ export default function SelectChampions() {
               className="border border-mainGold"
               width={60}
               height={60}
+              onMouseOver={(e) => preloadImg(name)}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
               onClick={headerSecond !== '' ? () => onClick(name, info) : undefined}
             />
@@ -228,6 +230,10 @@ export default function SelectChampions() {
             {name === currentSelectedPick[0].name && <FaCheck className="absolute text-6xl text-blue-500" />}
           </div>
         ))}
+      </div>
+      {/* 이미지를 미리 캐싱해두어서 픽했을때 버벅 거림을 방지 */}
+      <div className="invisible w-0 h-0 absolute">
+        <ImageComp className="border border-mainGold" width={60} height={60} src={hoverImg} />
       </div>
       <div className="relative flex justify-center">
         {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
