@@ -1,6 +1,19 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
+
 export default function Loading() {
-  return (
-    <div className="flex items-center justify-center h-screen bg-gray-900">
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900">
       <div className="flex flex-col items-center space-y-6">
         {/* 블루 팀 로딩 애니메이션 */}
         <div className="flex space-x-2">
@@ -29,6 +42,7 @@ export default function Loading() {
           ))}
         </div>
       </div>
-    </div>
-  );
+    </div>,
+    document.body
+  )
 }
