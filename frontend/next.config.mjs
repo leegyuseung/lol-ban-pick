@@ -8,8 +8,12 @@ const nextConfig = {
         hostname: 'localhost',
       },
       {
-        protocol: 'http',
-        hostname: '43.200.250.245:3000',
+        protocol: 'https',
+        hostname: 'metapick.site',
+      },
+      {
+        protocol: 'https',
+        hostname: '52.79.193.184',
       },
       {
         protocol: 'https',
