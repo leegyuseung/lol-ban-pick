@@ -8,7 +8,6 @@ import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { ChampionInfoI } from '@/types/types';
 import { BanArray, InfoData } from '@/store/banpick';
 import { useRouter } from 'next/navigation';
-import { ImageSuspenseWrapper } from '@/components/SuspenseImageArea/ImageSuspenseWrapper';
 import Loading from '@/components/Loading';
 
 const lineMapping: Record<string, number> = {
