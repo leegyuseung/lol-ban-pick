@@ -42,17 +42,6 @@ services:
     networks:
       - app-net
 
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - frontend
-      - backend
-      - uptime-kuma
-
 volumes:
   uptime-kuma:
 
