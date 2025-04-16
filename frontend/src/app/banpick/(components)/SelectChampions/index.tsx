@@ -183,7 +183,7 @@ export default function SelectChampions() {
     },
     [hoverImg],
   );
-  const imgLoadF = (e) => {
+  const imgLoadF = () => {
     if (!isNaN(loadImgCnt.current)) {
       loadImgCnt.current++;
       if (loadImgCnt.current == Object.entries(filteredChampions).length) {
