@@ -3,11 +3,12 @@ import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
 import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, Suspense, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { ChampionInfoI } from '@/types/types';
 import { BanArray, InfoData } from '@/store/banpick';
 import { useRouter } from 'next/navigation';
+import Loading from '@/components/Loading';
 
 const lineMapping: Record<string, number> = {
   top: 0,
@@ -47,7 +48,9 @@ export default function SelectChampions() {
   const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 블루팀 배열
   const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 레드팀 배열
   const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
-
+  const [hoverImg, setHoverImg] = useState('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Garen_0.jpg');
+  const loadImgCnt = useRef(0);
+  const [isLoadImg, setIsLoadImg] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -97,13 +100,10 @@ export default function SelectChampions() {
   );
 
   // Image 클릭시
-  const onClick = useCallback(
-    (pickName: string, info: ChampionInfoI) => {
-      if (pickName === '') return;
-      setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
-    },
-    [setCurrentSelectedPick],
-  );
+  const onClick = (pickName: string, info: ChampionInfoI) => {
+    if (pickName === '') return;
+    setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
+  };
 
   // 챔피언 선택 버튼 클릭시
   const onClickButton = useCallback(() => {
@@ -177,9 +177,26 @@ export default function SelectChampions() {
     setClearHostBan,
     setClearGuestBan,
   ]);
+  const preloadImg = useCallback(
+    (name: string) => {
+      setHoverImg((_) => `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${name}_0.jpg`);
+    },
+    [hoverImg],
+  );
+  const imgLoadF = () => {
+    if (!isNaN(loadImgCnt.current)) {
+      loadImgCnt.current++;
+      if (loadImgCnt.current == Object.entries(filteredChampions).length) {
+        setIsLoadImg(true);
+      }
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-3 w-[508px]">
+      {/* 이미지 로드 될때 loading 해제 */}
+      {!isLoadImg ? <><Loading/></> : <></>}
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
           {filterOptions.map((type) => (
@@ -213,11 +230,14 @@ export default function SelectChampions() {
             key={name}
           >
             <ImageComp
+              onLoad={imgLoadF}
+              onError={imgLoadF}
               key={name}
               alt={name}
               className="border border-mainGold"
               width={60}
               height={60}
+              onMouseOver={(e) => preloadImg(name)}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
               onClick={headerSecond !== '' ? () => onClick(name, info) : undefined}
             />
@@ -226,6 +246,10 @@ export default function SelectChampions() {
             {name === currentSelectedPick[0].name && <FaCheck className="absolute text-6xl text-blue-500" />}
           </div>
         ))}
+      </div>
+      {/* 이미지를 미리 캐싱해두어서 픽했을때 버벅 거림을 방지 */}
+      <div className="invisible w-0 h-0 absolute">
+        <ImageComp className="border border-mainGold" width={60} height={60} src={hoverImg} />
       </div>
       <div className="relative flex justify-center">
         {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
