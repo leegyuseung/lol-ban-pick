@@ -196,7 +196,7 @@ export default function SelectChampions() {
   return (
     <div className="flex flex-col gap-3 w-[508px]">
       {/* 이미지 로드 될때 loading 해제 */}
-      {!isLoadImg ? <><Loading/></> : <></>}
+      {/* {!isLoadImg ? <><Loading/></> : <></>} */}
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
           {filterOptions.map((type) => (
