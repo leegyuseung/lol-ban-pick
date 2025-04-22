@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -28,7 +26,6 @@ services:
       - uptime-kuma:/app/data
     restart: always
     depends_on:
-      - frontend
       - backend
     networks:
       - app-net
