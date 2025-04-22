@@ -13,6 +13,11 @@ services:
       - CLIENT_URL=https://metapick.site
     networks:
       - app-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   uptime-kuma:
     image: louislam/uptime-kuma
@@ -27,6 +32,11 @@ services:
       - backend
     networks:
       - app-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   uptime-kuma:
