@@ -1,7 +1,7 @@
 //공유하는 컴포넌트
 
 'use client';
-import React, { SyntheticEvent, useEffect, useRef } from 'react';
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 
 import { useSocketStore, useRulesStore, usePopupStore, useUserStore } from '@/store';
 import Link from 'next/link';
@@ -23,15 +23,41 @@ function ShareItem({
   myTeamSide: string;
   position: string | undefined;
 }) {
+  const { ws, setShareUrl, shareUrl } = useSocketStore();
+  const [_shareUrl, _setShareUrl] = useState({
+    yourTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`,
+    audienceTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=audience`,
+  });
+  const [copyedText, setCopyedText] = useState('');
+  const [showConfirmPopup, setIsShowConfirmPopup] = useState(false);
+  const copyText = (e: SyntheticEvent, url: string) => {
+    navigator.clipboard.writeText(url);
+    handleShowPopup(true);
+    setCopyedText(url);
+  };
+
+  const handleShowPopup = (isShow: boolean) => {
+    setIsShowConfirmPopup(isShow); // 직접 새로운 값 설정
+  };
   return (
     <>
       <ShareUrl
         url={`${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`}
         role={position === 'red' ? '블루팀 공유' : '레드팀'}
+        copyText={copyText}
+        isCopyed={_shareUrl.yourTeamUrl === copyedText}
       />
       <ShareUrl
         url={`${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=audience`}
         role={'관전자'}
+        copyText={copyText}
+        isCopyed={_shareUrl.audienceTeamUrl === copyedText}
+      />
+
+      <ConfirmPopup
+        isOpen={showConfirmPopup}
+        setIsOpen={setIsShowConfirmPopup}
+        content={'클립보드에 복사되었습니다.'}
       />
     </>
   );
@@ -40,7 +66,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   //랜덤
   const randomId = useRef<string>(Math.random().toString(36).substr(2, 20));
   const router = useRouter();
-  const { ws } = useSocketStore();
+  const { ws, setShareUrl, shareUrl } = useSocketStore();
   const { roomId, setRoomId } = useSocketStore();
   const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet, role } = useRulesStore();
   const { setBtnList, setIsOpen, setTitle, setContent, setPopup, isOpen } = usePopupStore();
@@ -115,6 +141,10 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
             position,
           }),
         );
+      setShareUrl({
+        yourTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${randomId.current}&position=${hostInfo.myTeamSide === 'red' ? 'blue' : 'red'}`,
+        audienceTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${randomId.current}&position=audience`,
+      });
       setPopup({
         title: `공유하기`,
         isOpen: true,

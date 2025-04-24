@@ -8,6 +8,11 @@ type SocketState = {
   ws: WebSocket | null;
   setWs: (ws: any) => void;
   emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
+  shareUrl: {
+    yourTeamUrl: string;
+    audienceTeamUrl: string;
+  };
+  setShareUrl: (arg: { yourTeamUrl: string; audienceTeamUrl: string }) => void;
 };
 
 export const useSocketStore = create<SocketState>((set, get) => ({
@@ -30,4 +35,15 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     state.ws?.send(JSON.stringify({ type: 'emit', rule: rulesState, params, roomId: state.roomId }));
     // }
   },
+  shareUrl: {
+    yourTeamUrl: '',
+    audienceTeamUrl: '',
+  },
+  setShareUrl: ({ yourTeamUrl, audienceTeamUrl }: { yourTeamUrl: string; audienceTeamUrl: string }) =>
+    set({
+      shareUrl: {
+        yourTeamUrl,
+        audienceTeamUrl,
+      },
+    }),
 }));

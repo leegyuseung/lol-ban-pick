@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
-import React, { ReactEventHandler, useEffect, useState } from 'react';
+import { DebouncedFuncLeading, throttle } from 'lodash';
+import React, { ReactEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 interface PropType {
   src: string;
   width?: number | `${number}` | undefined;
@@ -12,6 +13,7 @@ interface PropType {
   onClick?: ReactEventHandler<HTMLImageElement> | undefined;
   priority?: boolean;
   onMouseOver?: ReactEventHandler<HTMLImageElement> | undefined;
+  throttlingTime?: number;
 }
 const myLoader = () => {
   return `/images/default_champ.png`;
@@ -27,9 +29,27 @@ function ImageComp({
   priority = true,
   className = '',
   onMouseOver,
+  throttlingTime = 0,
 }: PropType) {
   const [imageSrc, setImageSrc] = useState<string>(src);
   useEffect(() => setImageSrc(src), [src]);
+  const throttledRef = useRef<DebouncedFuncLeading<ReactEventHandler<HTMLImageElement>>>(null)
+ // ✅ 처음 한 번만 throttle 함수 생성
+ useEffect(() => {
+  if (onClick) {
+    throttledRef.current = throttle(onClick, throttlingTime);
+  } else {
+    throttledRef.current = onClick
+  }
+}, [onClick, throttlingTime]);
+
+// ✅ 클릭할 때는 ref에 있는 throttled 함수만 실행
+const handleClick = (e: React.MouseEvent<HTMLImageElement>) => {
+  console.log(throttledRef)
+  throttledRef.current?.(e);
+}
+    
+
   return (
     <>
       <Image
@@ -46,7 +66,7 @@ function ImageComp({
           setImageSrc('/images/default_champ.png');
           if (onError) onError(e);
         }}
-        onClick={onClick}
+        onClick={handleClick}
         className={className}
         priority={true} // 즉시 로드
       />

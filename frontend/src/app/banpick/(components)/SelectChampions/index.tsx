@@ -9,6 +9,7 @@ import { ChampionInfoI } from '@/types/types';
 import { BanArray, InfoData } from '@/store/banpick';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/Loading';
+import { throttle } from 'lodash';
 
 const lineMapping: Record<string, number> = {
   top: 0,
@@ -192,11 +193,19 @@ export default function SelectChampions() {
     }
   };
 
+  // 부모 컴포넌트
+  const handleClick = useCallback(
+    throttle((name, info) => {
+      headerSecond !== '' ? () => onClick(name, info) : undefined
+      // 실제 처리 로직
+    }, 1500), // 1초 동안은 다른 클릭 무시
+    [],
+  );
 
   return (
     <div className="flex flex-col gap-3 w-[508px]">
       {/* 이미지 로드 될때 loading 해제 */}
-      {/* {!isLoadImg ? <><Loading/></> : <></>} */}
+      {!isLoadImg ? <><Loading/></> : <></>}
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
           {filterOptions.map((type) => (
@@ -239,7 +248,7 @@ export default function SelectChampions() {
               height={60}
               onMouseOver={(e) => preloadImg(name)}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
-              onClick={headerSecond !== '' ? () => onClick(name, info) : undefined}
+              onClick={headerSecond !== '' ? () => handleClick(name, info) : undefined}
             />
             <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
             {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}
