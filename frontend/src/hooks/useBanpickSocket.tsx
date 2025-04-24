@@ -179,7 +179,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
           // 메시지 타입에 따라 알림을 띄움
           // 페이지 별로 이벤트 추가 필요
-
+          console.log("소켓에서 받은 데이터===>",JSON.stringify(data))
           if (data.type === 'ready') {
             setHostRules(data.hostInfo);
             setGuestRules(data.guestInfo);

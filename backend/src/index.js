@@ -54,7 +54,7 @@ wss.on('connection', (ws, req) => {
 
   ws.on('message', (message) => {
     const data = JSON.parse(message.toString());
-    console.log('📩 Received message:', data, clients);
+    console.log('📩 Received message:', data);
 
     const roomsClient = clients.filter((client) => client.roomId === data.roomId);
     const audienceClients = clients.filter(
@@ -69,10 +69,8 @@ wss.on('connection', (ws, req) => {
     let hostRules = clients.find((client) => client.roomId === data.roomId && client.host);
 
     console.log(`🔍 Room ${data.roomId} status:
-      - Total clients: ${roomsClient.length}
-      - Audience count: ${audienceClients.length}
-      - Has guest: ${!!guestInfoClient}
-      - Has host: ${!!hostInfoClient}
+      - guest: ${guestInfoClient}
+      - host: ${hostInfoClient}
     `);
 
     if (data.type === 'init') {
@@ -100,20 +98,15 @@ wss.on('connection', (ws, req) => {
           });
 
           hostRules = clients.find((client) => client.roomId === data.roomId && client.host);
-          console.log('👑 Host rules updated:', hostRules);
         }
         const roomsClient = clients.filter((client) => client.roomId === data.roomId);
-        console.log(roomsClient, 'roomsClient');
         roomsClient.forEach((client) => {
           if (client.host) {
             const { type, ...hostInfo } = data;
             hostInfo.hostInfo.status = '';
-            console.log('Host info before update:', JSON.stringify(client.hostInfo, null, 2));
             Object.assign(client, hostInfo);
-            console.log('Host info after update:', JSON.stringify(client.hostInfo, null, 2));
           }
 
-          console.log('Setting guest info based on host info:', JSON.stringify(data.hostInfo, null, 2));
           client.guestInfo = {
             myTeam: data.hostInfo.yourTeam,
             yourTeam: data.hostInfo.myTeam,
@@ -124,30 +117,23 @@ wss.on('connection', (ws, req) => {
             host: false,
             status: '',
           };
-          console.log('Updated guest info:', JSON.stringify(client.guestInfo, null, 2));
         });
       }
     }
 
     if (data.type === 'join') {
       console.log('🚪 Processing join request');
-      console.log('Join data:', clients, JSON.stringify(data, null, 2));
 
       const guestClients = clients.filter(
         (client) => !client.host && client.roomId === data.roomId && client.role === 'guest',
       );
 
       if (data.host) {
-        console.log('👑 Host joining');
         roomsClient.forEach((client) => {
           client.hostInfo.status = 'join';
-          console.log('Updated host status:', JSON.stringify(client.hostInfo, null, 2));
         });
       } else if (hostRules) {
-        console.log('Current host rules:', JSON.stringify(hostRules, null, 2));
-
         if (guestClients.length > 1) {
-          console.log('⚠️ Room is full');
           guestClients[1].ws.send(
             JSON.stringify({
               type: 'overCount',
@@ -157,10 +143,8 @@ wss.on('connection', (ws, req) => {
         }
 
         if (data.role === 'guest') {
-          console.log('👥 Guest joining');
           roomsClient.forEach((client) => {
             client.guestInfo.status = 'join';
-            console.log('Updated guest status:', JSON.stringify(client.guestInfo, null, 2));
           });
         }
 
@@ -170,10 +154,8 @@ wss.on('connection', (ws, req) => {
           client.timeUnlimited = hostRules.timeUnlimited;
           client.nowSet = hostRules.nowSet;
 
-          console.log('Copying host info:', JSON.stringify(hostRules.hostInfo, null, 2));
           client.hostInfo = { ...hostRules.hostInfo };
 
-          console.log('Setting guest info based on host info:', JSON.stringify(hostRules.hostInfo, null, 2));
           client.guestInfo = {
             myTeam: hostRules.hostInfo.yourTeam,
             yourTeam: hostRules.hostInfo.myTeam,
@@ -184,7 +166,6 @@ wss.on('connection', (ws, req) => {
             host: false,
             status: client.guestInfo.status,
           };
-          console.log('Updated guest info:', JSON.stringify(client.guestInfo, null, 2));
         });
       } else {
         console.log('❌ No host rules found');
@@ -197,11 +178,9 @@ wss.on('connection', (ws, req) => {
       if (guestInfoClient || hostInfoClient) {
         roomsClient.forEach((client) => {
           if (guestInfoClient) {
-            console.log('Syncing guest info:', JSON.stringify(guestInfoClient.guestInfo, null, 2));
             client.guestInfo = { ...guestInfoClient.guestInfo };
           }
           if (hostInfoClient) {
-            console.log('Syncing host info:', JSON.stringify(hostInfoClient.hostInfo, null, 2));
             client.hostInfo = { ...hostInfoClient.hostInfo };
           }
         });
@@ -210,7 +189,6 @@ wss.on('connection', (ws, req) => {
 
       roomsClient.forEach((client) => {
         const { ws, ...sendInfo } = client;
-        console.log('Sending join response:', JSON.stringify(sendInfo, null, 2));
         client.ws.send(
           JSON.stringify({
             type: 'join',
@@ -219,7 +197,6 @@ wss.on('connection', (ws, req) => {
           }),
         );
       });
-      console.log('📢 Join status broadcasted to room');
     }
     if (data.type === 'emit') {
       roomsClient.forEach((client) => {
@@ -235,8 +212,6 @@ wss.on('connection', (ws, req) => {
           client.guestInfo.status = 'ready';
         }
         const { ws, ...sendInfo } = client;
-        console.log(client, sendInfo, 'client');
-        console.log({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }, 'result');
         client.ws.send(JSON.stringify({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }));
       });
     }
@@ -250,8 +225,6 @@ wss.on('connection', (ws, req) => {
           client.guestInfo.status = 'join';
         }
         const { ws, ...sendInfo } = client;
-        console.log(client, sendInfo, 'client');
-        console.log({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }, 'result');
         client.ws.send(JSON.stringify({ type: 'readyCancel', ...sendInfo, audienceCount: audienceClients.length }));
       });
     }
@@ -306,16 +279,6 @@ wss.on('connection', (ws, req) => {
     //메인페이지에서 공유 팝업 닫기를 누를때!
     //userId에 할당된 room에 room번호만 삭제
     if (data.type === 'closeSharePopup') {
-      console.log(
-        clients,
-        clients
-          .filter((client) => client.roomId === data.roomId && !client.host)
-          .forEach((client) => {
-            client.ws.send(JSON.stringify({ type: 'noRoom' }));
-          }),
-        data.roomId,
-        'closeSharePopup',
-      );
       clients = clients.filter((client) => client.roomId !== data.roomId || (client.userId == userId && client.host));
       //나온 팝업에 의해 공유된 페이지 종료
       clients
@@ -323,7 +286,6 @@ wss.on('connection', (ws, req) => {
         .forEach((client) => {
           client.ws.send(JSON.stringify({ type: 'noRoom' }));
         });
-      console.log(clients, data.userId, data.roomId, 'closeSharePopup2');
       // clients.filter((client) => client.roomId !== data.roomId || client.host).forEach(client=>{
       //   client.roomId
       // })
@@ -332,9 +294,15 @@ wss.on('connection', (ws, req) => {
       });
     }
   });
-
+  ws.on('error', (err) => {
+    console.error(`❗ WebSocket error - roomId: ${roomId}, userId: ${userId}, clients:${clients}`);
+    console.log(`❗ WebSocket error - roomId: ${roomId}, userId: ${userId}, clients:${clients}`);
+    console.error(err); // 어떤 에러인지 콘솔에 출력
+  });
   ws.on('close', () => {
-    console.log(`❌ Client disconnecting - roomId: ${roomId}, userId: ${userId}`);
+    console.log(
+      `❌ Client disconnecting - roomId: ${roomId}, userId: ${userId},${clients.map((e) => ({ roomId: e.roomId, userId: e.userId }))}`,
+    );
     if (host) {
       console.log('👑 Host disconnected, closing room');
       clients.forEach((client) => {
