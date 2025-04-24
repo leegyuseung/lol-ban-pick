@@ -238,6 +238,7 @@ export default function SelectChampions() {
               width={60}
               height={60}
               onMouseOver={(e) => preloadImg(name)}
+              throttlingTime={1000}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
               onClick={headerSecond !== '' ? () => onClick(name, info) : undefined}
             />
