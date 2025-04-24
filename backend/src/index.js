@@ -217,7 +217,7 @@ wss.on('connection', (ws, req) => {
           client.guestInfo.status = 'ready';
         }
         const { ws, ...sendInfo } = client;
-        console.log(client, sendInfo, 'ready');
+        console.log(client,host, sendInfo, 'ready');
         client.ws.send(JSON.stringify({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }));
       });
     }
@@ -231,8 +231,6 @@ wss.on('connection', (ws, req) => {
           client.guestInfo.status = 'join';
         }
         const { ws, ...sendInfo } = client;
-        console.log(client, sendInfo, 'client');
-        console.log({ type: 'ready', ...sendInfo, audienceCount: audienceClients.length }, 'result');
         client.ws.send(JSON.stringify({ type: 'readyCancel', ...sendInfo, audienceCount: audienceClients.length }));
       });
     }
@@ -302,7 +300,11 @@ wss.on('connection', (ws, req) => {
       });
     }
   });
-
+  ws.on('error', (err) => {
+    console.error(`❗ WebSocket error - roomId: ${roomId}, userId: ${userId}, clients:${clients}`);
+    console.log(`❗ WebSocket error - roomId: ${roomId}, userId: ${userId}, clients:${clients}`);
+    console.error(err); // 어떤 에러인지 콘솔에 출력
+  });
   ws.on('close', () => {
     console.log(`❌ Client disconnecting - roomId: ${roomId}, userId: ${userId}`);
     if (host) {
