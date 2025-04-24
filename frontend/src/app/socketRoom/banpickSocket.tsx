@@ -1,18 +1,31 @@
 //소켓 연결 페이지
 'use client';
-import React, { useEffect, useMemo } from 'react';
+import React, { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { useRulesStore, useSocketStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
 import Image from 'next/image';
+import ConfirmPopup from '@/components/Popup/confirm';
+import { FaCheck, FaCopy } from 'react-icons/fa6';
 
 function BanpickSocket({ userId: _userId }: { userId: string }) {
+  const [copyedText, setCopyedText] = useState('');
+  const [showConfirmPopup, setIsShowConfirmPopup] = useState(false);
+  const copyText = (url: string) => {
+    navigator.clipboard.writeText(url);
+    handleShowPopup(true);
+    setCopyedText(url);
+  };
+
+  const handleShowPopup = (isShow: boolean) => {
+    setIsShowConfirmPopup(isShow); // 직접 새로운 값 설정
+  };
   const searchParams = useSearchParams();
   //room id
-  const { roomId } = useSocketStore();
+  const { roomId, shareUrl } = useSocketStore();
   //user id
   const { ws } = useSocketStore();
-  const { audienceCount, role, hostInfo, guestInfo } = useRulesStore();
+  const { audienceCount, role, hostInfo, guestInfo, position } = useRulesStore();
   const { setSocket } = useBanpickSocket({ userId: _userId, roomId });
   const onReady = () => {
     ws?.send(JSON.stringify({ type: 'ready', role, roomId }));
@@ -86,12 +99,30 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               />
             </div>
             <h2 className="text-xl font-semibold">
+              {role === 'host' ? (
+                position === 'red' ? (
+                  <i className="w-[20px] h-[20px]" onClick={() => copyText(shareUrl.yourTeamUrl)}>
+                    {shareUrl.yourTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
+                  </i>
+                ) : (
+                  <i className="w-[20px] h-[20px]"></i>
+                )
+              ) : (
+                <></>
+              )}
               {blueTeamName} ({blueCount}/1)
             </h2>
             <p className="mt-2 text-sm text-gray-300">플레이어 1</p>
           </div>
           {/* 관전자 */}
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg border-2 border-gray-600">
+            {role === 'host' ? (
+              <i className="w-5 h-5" onClick={() => copyText(shareUrl.audienceTeamUrl)}>
+                {shareUrl.audienceTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
+              </i>
+            ) : (
+              <></>
+            )}
             <h2 className="text-xl font-semibold">관전자 (무제한)</h2>
             <p className="mt-2 text-sm text-gray-300">현재 접속자: {audienceCount}명</p>
           </div>
@@ -109,6 +140,17 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redTeamImg} alt="logo" fill priority />
             </div>
             <h2 className="text-xl font-semibold">
+              {role === 'host' ? (
+                position === 'blue' ? (
+                  <i className="w-5 h-5" onClick={() => copyText(shareUrl.yourTeamUrl)}>
+                    {shareUrl.yourTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
+                  </i>
+                ) : (
+                  <i className="w-5 h-5"></i>
+                )
+              ) : (
+                <></>
+              )}
               {redTeamName} ({redCount}/1)
             </h2>
             <p className="mt-2 text-sm text-gray-300">플레이어 2</p>
@@ -149,6 +191,11 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
           </div>
         </div>
       </div>
+      <ConfirmPopup
+        isOpen={showConfirmPopup}
+        setIsOpen={setIsShowConfirmPopup}
+        content={'클립보드에 복사되었습니다.'}
+      />
     </>
   );
 }
