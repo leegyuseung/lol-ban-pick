@@ -1,6 +1,6 @@
 //소켓 연결 페이지
 'use client';
-import React, { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRulesStore, useSocketStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';

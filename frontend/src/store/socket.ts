@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { useRulesStore } from './rules';
-import { RulesState } from '@/types/types';
 
 type SocketState = {
   roomId: string;
