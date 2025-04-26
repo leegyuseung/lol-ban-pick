@@ -1,4 +1,4 @@
-import championData from '../mock/champions.json';
+import championData from '../data/champions.json';
 import { ChampionInfoI } from '@/types/types';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';

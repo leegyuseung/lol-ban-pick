@@ -1,5 +1,5 @@
-import PopupComp from '@/components/Popup';
 import './globals.css';
+import PopupComp from '@/components/Popup';
 import ClientLayout from '@/layout/ClientLayout';
 
 export default function RootLayout({

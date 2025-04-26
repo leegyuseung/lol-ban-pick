@@ -98,7 +98,7 @@ export default function Form() {
   }, [router]);
 
   return (
-    <div className="flex flex-col items-center p-7">
+    <div className="flex flex-col justify-center items-center p-7 mt-20">
       <span className="text-4xl font-bold pb-6">밴픽 시뮬레이터</span>
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}

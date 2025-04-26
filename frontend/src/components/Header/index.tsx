@@ -1,10 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import NavItem from './NavItem';
+import { navigations } from '@/constants';
+
+const Nav = [
+  { url: navigations.SIMULATION, name: '시뮬레이터' },
+  { url: navigations.INFORMATION, name: '정보' },
+];
 
 export default function Header() {
   return (
-    <header>
+    <header className="h-16">
       <div className="flex items-center justify-between px-20 h-16 bg-mainBlack">
         {/* 로고 */}
         <Link href="/" className="">
@@ -13,8 +19,9 @@ export default function Header() {
 
         {/* 네비게이션 */}
         <nav className="flex space-x-6">
-          <NavItem href={'/'} text={'시뮬레이터'} />
-          <NavItem href={'/about'} text={'정보'} />
+          {Nav.map((nav, index) => (
+            <NavItem key={index} href={nav.url} text={nav.name} />
+          ))}
         </nav>
       </div>
     </header>
