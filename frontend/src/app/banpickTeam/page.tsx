@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'MetaPick - 팀 모드',
     description: '팀모드 밴픽을 사용중입니다.',
-    images: ['/favicon.png'],
+    images: ['/metapick.png'],
     url: process.env.NEXT_PUBLIC_URL,
   },
 };
