@@ -299,9 +299,10 @@ wss.on('connection', (ws, req) => {
     console.log(`❗ WebSocket error - roomId: ${roomId}, userId: ${userId}, clients:${clients}`);
     console.error(err); // 어떤 에러인지 콘솔에 출력
   });
-  ws.on('close', () => {
+  ws.on('close', (e) => {
     console.log(
       `❌ Client disconnecting - roomId: ${roomId}, userId: ${userId},${clients.map((e) => ({ roomId: e.roomId, userId: e.userId }))}`,
+      'error' + JSON.stringify(e),
     );
     if (host) {
       console.log('👑 Host disconnected, closing room');

@@ -53,7 +53,7 @@ export default function SelectChampions() {
   const loadImgCnt = useRef(0);
   const [isLoadImg, setIsLoadImg] = useState(false);
   const router = useRouter();
-
+  const headerSecondRef = useRef(headerSecond);
   useEffect(() => {
     setChampionInfo();
   }, []);
@@ -192,16 +192,21 @@ export default function SelectChampions() {
       }
     }
   };
-
-  // 부모 컴포넌트
-  const handleClick = useCallback(
+  useEffect(() => {
+    headerSecondRef.current = headerSecond;
+  }, [headerSecond]);
+  const throttledClick = useRef(
     throttle((name, info) => {
-      headerSecond !== '' ? () => onClick(name, info) : undefined
-      // 실제 처리 로직
-    }, 1500), // 1초 동안은 다른 클릭 무시
-    [],
-  );
-
+      console.log("header", headerSecondRef.current);
+      if (headerSecondRef.current !== '') {
+        console.log('✅ throttle 발동!');
+        onClick(name, info);
+      }
+    }, 700)
+  ).current;
+  const handleClick = (name:string, info:any) => {
+    throttledClick(name, info);
+  };
   return (
     <div className="flex flex-col gap-3 w-[508px]">
       {/* 이미지 로드 될때 loading 해제 */}
@@ -248,7 +253,7 @@ export default function SelectChampions() {
               height={60}
               onMouseOver={(e) => preloadImg(name)}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
-              onClick={headerSecond !== '' ? () => handleClick(name, info) : undefined}
+              onClick={()=>handleClick(name, info)}
             />
             <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
             {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}

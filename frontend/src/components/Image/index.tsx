@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { DebouncedFuncLeading, throttle } from 'lodash';
+import { MutableRefObject } from 'react';
 import React, { ReactEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 interface PropType {
   src: string;
@@ -33,22 +34,21 @@ function ImageComp({
 }: PropType) {
   const [imageSrc, setImageSrc] = useState<string>(src);
   useEffect(() => setImageSrc(src), [src]);
-  const throttledRef = useRef<DebouncedFuncLeading<ReactEventHandler<HTMLImageElement>>>(null)
- // ✅ 처음 한 번만 throttle 함수 생성
- useEffect(() => {
-  if (onClick) {
-    throttledRef.current = throttle(onClick, throttlingTime);
-  } else {
-    throttledRef.current = onClick
-  }
-}, [onClick, throttlingTime]);
+  const throttledRef = useRef<((...args: any[]) => void) | null>(null);
+  // ✅ 처음 한 번만 throttle 함수 생성
+  useEffect(() => {
+    if (onClick) {
+      throttledRef.current = throttle(onClick, throttlingTime);
+    } else {
+      throttledRef.current = null;
+    }
+  }, [onClick, throttlingTime]);
 
-// ✅ 클릭할 때는 ref에 있는 throttled 함수만 실행
-const handleClick = (e: React.MouseEvent<HTMLImageElement>) => {
-  console.log(throttledRef)
-  throttledRef.current?.(e);
-}
-    
+  // ✅ 클릭할 때는 ref에 있는 throttled 함수만 실행
+  const handleClick = (e: React.MouseEvent<HTMLImageElement>) => {
+    console.log(throttledRef);
+    throttledRef.current?.(e);
+  };
 
   return (
     <>
