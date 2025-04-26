@@ -1,0 +1,25 @@
+{
+  "developers": [
+    {
+      "name": "이준우",
+      "role": "Backend Developer",
+      "img": "https://avatars.githubusercontent.com/u/93643579?v=4",
+      "email": "junwoo1357@gmail.com",
+      "github": "https://github.com/great-rain"
+    },
+    {
+      "name": "강동우",
+      "role": "Frontend Developer",
+      "img": "https://avatars.githubusercontent.com/u/71428194?v=4",
+      "email": "dnehdrkd123@naver.com",
+      "github": "https://github.com/bluke127"
+    },
+    {
+      "name": "이규승",
+      "role": "Frontend Developer",
+      "img": "https://avatars.githubusercontent.com/u/97220100?v=4",
+      "email": "gyus0421@gmail.com",
+      "github": "https://github.com/leegyuseung"
+    }
+  ]
+}

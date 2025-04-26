@@ -4,7 +4,6 @@
 import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 
 import { useSocketStore, useRulesStore, usePopupStore, useUserStore } from '@/store';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
 import ShareUrl from '@/components/Share/ShareUrl';
@@ -23,7 +22,6 @@ function ShareItem({
   myTeamSide: string;
   position: string | undefined;
 }) {
-  const { ws, setShareUrl, shareUrl } = useSocketStore();
   const [_shareUrl, _setShareUrl] = useState({
     yourTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`,
     audienceTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=audience`,
