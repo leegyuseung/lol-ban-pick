@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface PropType {
   text: string;
@@ -6,9 +7,13 @@ interface PropType {
 }
 
 export default function NavItem({ text, href }: PropType) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
   return (
-    <Link href={href} className="font-medium hover:text-gray-400">
+    <Link href={href} className={`relative font-medium group ${isActive ? 'text-mainText' : 'text-gray-400'}`}>
       {text}
+      <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-red-500 transition-all duration-300 group-hover:w-full"></span>
     </Link>
   );
 }

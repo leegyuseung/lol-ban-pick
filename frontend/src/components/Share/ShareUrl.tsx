@@ -1,7 +1,6 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent } from 'react';
 import { FaCopy } from 'react-icons/fa6';
 import { FaCheck } from 'react-icons/fa';
-import ConfirmPopup from '../Popup/confirm';
 
 function ShareUrl({
   url,
@@ -14,7 +13,6 @@ function ShareUrl({
   copyText: (e: SyntheticEvent, url: string) => void;
   isCopyed: boolean;
 }) {
-  const [showConfirmPopup, setIsShowConfirmPopup] = useState(false);
   return (
     <div className="pb-3">
       <div className="w-full text-mainText text-left pb-2">{role} 공유하기</div>
@@ -25,7 +23,6 @@ function ShareUrl({
         <i className="w-5 h-5">{isCopyed ? <FaCheck /> : <FaCopy />}</i>
         {url}
       </div>
-
     </div>
   );
 }
