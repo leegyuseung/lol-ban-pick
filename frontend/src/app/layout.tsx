@@ -1,5 +1,6 @@
 import PopupComp from '@/components/Popup';
 import './globals.css';
+import ClientLayout from '@/layout/ClientLayout';
 
 export default function RootLayout({
   children,
@@ -16,7 +17,7 @@ export default function RootLayout({
         ></script>
       </head>
       <body>
-        {children}
+        <ClientLayout>{children}</ClientLayout>
         <PopupComp />
       </body>
     </html>
