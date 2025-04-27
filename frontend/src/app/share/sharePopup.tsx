@@ -64,13 +64,13 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   //랜덤
   const randomId = useRef<string>(Math.random().toString(36).substr(2, 20));
   const router = useRouter();
-  const { ws, setShareUrl, shareUrl } = useSocketStore();
+  const { socket, setShareUrl, shareUrl } = useSocketStore();
   const { roomId, setRoomId } = useSocketStore();
   const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet, role } = useRulesStore();
   const { setBtnList, setIsOpen, setTitle, setContent, setPopup, isOpen } = usePopupStore();
   const { userId: userIdStore } = useUserStore();
   const pathName = usePathname();
-  const { setSocket } = useBanpickSocket({
+  const { setSocketFunc } = useBanpickSocket({
     userId: localStorage.getItem('lol_ban_host_id') as string,
     roomId: randomId.current,
   });
@@ -78,7 +78,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   const unsubscribeWsRef = useRef<(() => void) | null>(null);
   useEffect(() => {
     unsubscribeWsRef.current = useSocketStore.subscribe((state) => {
-      console.log('WebSocket 상태 변경됨::', state.ws);
+      console.log('WebSocket 상태 변경됨::', state.socket);
       userId = userIdStore;
       //host시에는 고유한 userId를 계속 사용해야하기때문에 localstorage에 저장
       //guest는 새창이 나올때마다 새로운 id부여
@@ -93,19 +93,16 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
 
     unsubscribeIsOpenRef.current = usePopupStore.subscribe((state) => {
       console.log('Popup 상태 변경됨:', state.isOpen);
-      const { ws, roomId } = useSocketStore.getState(); // 최신 상태 가져오기
-      if (ws && ws.readyState === WebSocket.OPEN) {
+      const { socket, roomId } = useSocketStore.getState(); // 최신 상태 가져오기
+      if (socket && socket.connected) {
         if (!state.isOpen) {
           if (pathName != '/') {
             return;
           }
-          ws.send(
-            JSON.stringify({
-              type: 'closeSharePopup',
-              roomId,
-              userId: localStorage.getItem('lol_ban_host_id') as string,
-            }),
-          );
+          socket.emit('closeSharePopup', {
+            roomId,
+            userId: localStorage.getItem('lol_ban_host_id') as string,
+          });
           // randomId.current = Math.random().toString(36).substr(2, 20);
         }
       }
@@ -121,10 +118,10 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
     if (isShareOpen) {
       setRoomId(randomId.current);
       //가장 처음 소켓 세팅
-      if (!ws) setSocket();
-      //팝업 닫고 다시 실행 시나 ws가 세팅 되어있을때
-      if (ws)
-        ws.send(
+      if (!socket) setSocketFunc();
+      //팝업 닫고 다시 실행 시나 socket가 세팅 되어있을때
+      if (socket)
+        socket.send(
           JSON.stringify({
             type: 'init',
             userId,

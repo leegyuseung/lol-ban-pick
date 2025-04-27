@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { useRulesStore } from './rules';
+import { Socket } from 'socket.io-client';
 
 type SocketState = {
   roomId: string;
   setRoomId: (roomId: string) => void;
-  ws: WebSocket | null;
-  setWs: (ws: any) => void;
+  socket: Socket | null;
+  setSocket: (socket: any) => void;
   emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
   shareUrl: {
     yourTeamUrl: string;
@@ -21,17 +22,17 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       roomId: roomId,
     }),
 
-  ws: null,
-  setWs: (ws?: WebSocket | null) =>
+  socket: null,
+  setSocket: (socket?: WebSocket | null) =>
     set({
-      ws,
+      socket,
     }),
   emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, params: any): void => {
     const rulesState = useRulesStore.getState(); // rules 상태 가져오기
     if (!rulesState) return;
     func(); // 함수 실행
     const state = get();
-    state.ws?.send(JSON.stringify({ type: 'emit', rule: rulesState, params, roomId: state.roomId }));
+    state.socket?.send(JSON.stringify({ type: 'emit', rule: rulesState, params, roomId: state.roomId }));
     // }
   },
   shareUrl: {

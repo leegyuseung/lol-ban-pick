@@ -24,23 +24,24 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   //room id
   const { roomId, shareUrl } = useSocketStore();
   //user id
-  const { ws } = useSocketStore();
+  const { socket } = useSocketStore();
   const { audienceCount, role, hostInfo, guestInfo, position } = useRulesStore();
-  const { setSocket } = useBanpickSocket({ userId: _userId, roomId });
+  const { setSocketFunc } = useBanpickSocket({ userId: _userId, roomId });
   const onReady = () => {
-    ws?.send(JSON.stringify({ type: 'ready', role, roomId }));
+    socket?.emit('ready', { role, roomId });
   };
   const onCancel = () => {
-    ws?.send(JSON.stringify({ type: 'readyCancel', role, roomId }));
+    socket?.emit('readyCancel', { role, roomId });
   };
   useEffect(() => {
+    debugger
     if (!searchParams?.get('roomId') && !roomId && role === 'host') {
-      ws?.send(JSON.stringify({ type: 'noRoom' }));
+      socket?.emit('noRoom');
     }
-    setSocket();
+    setSocketFunc();
   }, [role]);
   const goEnter = () => {
-    ws?.send(JSON.stringify({ type: 'banpickStart', roomId }));
+    socket?.emit('banpickStart', { roomId });
   };
   const redCount = useMemo(() => {
     const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;

@@ -11,7 +11,7 @@ import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
 export default function Form() {
-  const { ws, setRoomId, setWs } = useSocketStore();
+  const { socket, setRoomId, setSocket } = useSocketStore();
   const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearHostBan, setClearGuestBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
@@ -41,8 +41,8 @@ export default function Form() {
     setClearGuestBan();
     setRedBanClear();
     setBlueBanClear();
-    if (ws) {
-      setWs(null);
+    if (socket) {
+      setSocket(null);
       setRoomId('');
     }
   }, []);
@@ -78,8 +78,8 @@ export default function Form() {
   };
 
   const setSharePopup = (b: boolean) => {
-    // if(!b)ws?.close();
-    // setWs(null);
+    // if(!b)socket?.close();
+    // setSocket(null);
     setIsShareOpen(b);
   };
   const openPopup = (teamColor: string) => {

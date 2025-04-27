@@ -622,8 +622,8 @@ export const usePeerlessStore = create<PeerlessStore>()(
           roomId: socketState.roomId,
         };
 
-        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-          socketState.ws?.send(JSON.stringify(message));
+        if (socketState.socket && socketState.socket.connected) {
+          socketState.socket?.send(JSON.stringify(message));
         }
       },
 
@@ -635,8 +635,8 @@ export const usePeerlessStore = create<PeerlessStore>()(
           roomId: socketState.roomId,
         };
 
-        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-          socketState.ws?.send(JSON.stringify(message));
+        if (socketState.socket && socketState.socket.connected) {
+          socketState.socket?.send(JSON.stringify(message));
         }
       },
 
@@ -648,8 +648,8 @@ export const usePeerlessStore = create<PeerlessStore>()(
           roomId: socketState.roomId,
         };
 
-        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-          socketState.ws?.send(JSON.stringify(message));
+        if (socketState.socket && socketState.socket.connected) {
+          socketState.socket?.send(JSON.stringify(message));
         }
       },
     }),
@@ -671,8 +671,8 @@ export const useBanTeamStore = create<TeamBanI>()((set, get) => ({
       roomId: socketState.roomId,
     };
 
-    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-      socketState.ws?.send(JSON.stringify(message));
+    if (socketState.socket && socketState.socket.connected) {
+      socketState.socket?.send(JSON.stringify(message));
     }
   },
 
@@ -685,8 +685,8 @@ export const useBanTeamStore = create<TeamBanI>()((set, get) => ({
       roomId: socketState.roomId,
     };
 
-    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-      socketState.ws?.send(JSON.stringify(message));
+    if (socketState.socket && socketState.socket.connected) {
+      socketState.socket?.send(JSON.stringify(message));
     }
   },
 
@@ -706,8 +706,8 @@ export const useBanTeamStore = create<TeamBanI>()((set, get) => ({
       roomId: socketState.roomId,
     };
 
-    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-      socketState.ws?.send(JSON.stringify(message));
+    if (socketState.socket && socketState.socket.connected) {
+      socketState.socket?.send(JSON.stringify(message));
     }
   },
 }));
