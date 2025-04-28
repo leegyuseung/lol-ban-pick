@@ -23,7 +23,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     }),
 
   socket: null,
-  setSocket: (socket?: WebSocket | null) =>
+  setSocket: (socket?: Socket | null) =>
     set({
       socket,
     }),
