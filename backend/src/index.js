@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
   let userId = '';
   let position = '';
   let host = '';
+  let role = '';
 
   console.log(`📝 Connection details - roomId: ${roomId}, userId: ${userId}, position: ${position}, host: ${host}`);
 
@@ -61,6 +62,7 @@ io.on('connection', (socket) => {
     userId = data.userId;
     position = data.position;
     host = data.host;
+    role = data.role;
     delete data.type;
     console.log('Initial data:', data);
     const target = clients.find((w) => w.userId === data.userId);
@@ -82,17 +84,18 @@ io.on('connection', (socket) => {
       clients.push(initInfo);
     }
 
+    const hostClient = clients.filter((client) => client.roomId === data.roomId && client.host);
     const roomsClient = clients.filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.guestInfo = {
-        myTeam: client.hostInfo.yourTeam,
-        yourTeam: client.hostInfo.myTeam,
-        myTeamSide: client.hostInfo.myTeamSide === 'blue' ? 'red' : 'blue',
-        yourTeamSide: client.hostInfo.myTeamSide === 'blue' ? 'blue' : 'red',
-        myImg: client.hostInfo.yourImg,
-        yourImg: client.hostInfo.myImg,
+        myTeam: hostClient.yourTeam,
+        yourTeam: hostClient.myTeam,
+        myTeamSide: hostClient.myTeamSide === 'blue' ? 'red' : 'blue',
+        yourTeamSide: hostClient.myTeamSide === 'blue' ? 'blue' : 'red',
+        myImg: hostClient.yourImg,
+        yourImg: hostClient.myImg,
         host: false,
-        status: client.status,
+        role: 'guest',
       };
     });
   });
@@ -103,6 +106,7 @@ io.on('connection', (socket) => {
     userId = data.userId;
     position = data.position;
     host = data.host;
+    role = data.role;
     const roomsClient = clients.filter((client) => client.roomId === data.roomId);
     const guestClients = clients.filter(
       (client) => !client.host && client.roomId === data.roomId && client.role === 'guest',
@@ -144,20 +148,17 @@ io.on('connection', (socket) => {
       roomsClient.forEach((client) => {
         client.hostInfo.status = 'join';
       });
-      console.log('여기야1');
+      console.log('part1');
     } else if (hostRules) {
       if (guestClients.length > 1) {
         guestClients[1].socket.emit('overCount');
-        console.log('여기야2');
+        console.log('part2');
         return;
       }
 
       if (data.role === 'guest') {
-        roomsClient.forEach((client) => {
-          client.guestInfo.status = 'join';
-        });
         console.log(
-          '여기야3',
+          'part3',
           roomsClient.map((v) => ({
             userId: v.userId,
             roomId: v.roomId,
@@ -175,7 +176,7 @@ io.on('connection', (socket) => {
         );
       }
 
-      console.log('여기c', guestInfoClient);
+      console.log('part4', guestClients);
       roomsClient.forEach((client) => {
         client.banpickMode = hostRules.banpickMode;
         client.peopleMode = hostRules.peopleMode;
@@ -183,7 +184,7 @@ io.on('connection', (socket) => {
         client.nowSet = hostRules.nowSet;
 
         client.hostInfo = { ...hostRules.hostInfo };
-        console.log('여기c', guestInfoClient.guestInfo);
+        console.log('part5', guestClients.guestInfo);
         client.guestInfo = {
           myTeam: hostRules.hostInfo.yourTeam,
           yourTeam: hostRules.hostInfo.myTeam,
@@ -192,11 +193,12 @@ io.on('connection', (socket) => {
           myImg: hostRules.hostInfo.yourImg,
           yourImg: hostRules.hostInfo.myImg,
           host: false,
-          status: guestInfoClient.guestInfo.status,
+          status: 'join',
+          role: data.role,
         };
       });
       console.log(
-        '여기야3_1',
+        'part6',
         roomsClient.map((v) => ({
           userId: v.userId,
           roomId: v.roomId,
@@ -222,17 +224,6 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // if (guestInfoClient || hostInfoClient) {
-    //   roomsClient.forEach((client) => {
-    //     if (guestInfoClient) {
-    //       client.guestInfo = { ...guestInfoClient.guestInfo };
-    //     }
-    //     if (hostInfoClient) {
-    //       client.hostInfo = { ...hostInfoClient.hostInfo };
-    //     }
-    //   });
-    //   console.log('🔄 Room info synchronized');
-    // }
 
     roomsClient.forEach((client) => {
       const { socket, ...sendInfo } = client;
@@ -243,7 +234,7 @@ io.on('connection', (socket) => {
     });
 
     console.log(
-      '여기야4',
+      'part7',
       roomsClient.map((v) => ({
         userId: v.userId,
         roomId: v.roomId,
@@ -382,6 +373,33 @@ io.on('connection', (socket) => {
       '??' + data.roomId,
     );
   });
+  socket.on('closeByHost', (data) => {
+    const target = clients.find((c) => c.userId === data.userId);
+    console.log(
+      'closeByHost',
+      clients.map((v) => ({
+        userId: v.userId,
+        roomId: v.roomId,
+        hostInfo: v.hostInfo,
+        guestInfo: v.guestInfo,
+        role: v.role,
+      })),
+    );
+    // userId에 해당하는 host는 남기고 roomId 제거
+    // 나머지 비호스트에게 noRoom 전송
+    if (target) {
+      clients
+        .filter((client) => client.roomId === target.roomId && !client.host)
+        .forEach((client) => {
+          client.socket.emit('noRoom');
+        });
+        clients = clients.filter((client) => client.roomId !== target.roomId);
+    }
+
+    console.log(target,
+      '??' + data.roomId,
+    );
+  });
 
   // 소켓 연결 끊어졌을 때
   socket.on('disconnect', (reason) => {
@@ -400,8 +418,8 @@ io.on('connection', (socket) => {
         });
       clients = clients.filter((client) => client.roomId !== roomId);
     } else {
-      if (position !== 'audience' && !host) {
-        console.log('👥 Guest disconnected');
+      if (role !== 'audience' && !host) {
+        console.log('👥 Guest disconnected',userId,position);
         const audienceClients = clients.filter(
           (client) => !client.host && client.roomId === roomId && client.role === 'audience',
         );
@@ -423,7 +441,7 @@ io.on('connection', (socket) => {
           });
 
         clients = clients.filter((client) => client.userId !== userId);
-      } else if (position === 'audience') {
+      } else if (role === 'audience') {
         console.log('👀 Audience member disconnected');
         clients = clients.filter((client) => client.userId !== userId);
 

@@ -34,7 +34,6 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
     socket?.emit('readyCancel', { role, roomId });
   };
   useEffect(() => {
-    debugger
     if (!searchParams?.get('roomId') && !roomId && role === 'host') {
       socket?.emit('noRoom');
     }

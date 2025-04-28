@@ -164,7 +164,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     });
 
     socket.on('join', (data) => {
-      debugger
       setRules(data);
       setHostRules(data.hostInfo);
       setGuestRules(data.guestInfo);
@@ -231,7 +230,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     });
 
     socket.on('noRoom', () => {
-      debugger
       setIsOpen(true);
       setContent('공유된 게임이 없습니다.');
       setBtnList([

@@ -42,6 +42,9 @@ export default function Form() {
     setRedBanClear();
     setBlueBanClear();
     if (socket) {
+      socket.emit('closeByHost', {
+        userId: localStorage.getItem('lol_ban_host_id') as string,
+      });
       setSocket(null);
       setRoomId('');
     }
