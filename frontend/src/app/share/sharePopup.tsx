@@ -64,7 +64,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   //랜덤
   const randomId = useRef<string>(Math.random().toString(36).substr(2, 20));
   const router = useRouter();
-  const { socket, setShareUrl, shareUrl } = useSocketStore();
+  const { socket, setShareUrl, setSocket } = useSocketStore();
   const { roomId, setRoomId } = useSocketStore();
   const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet, role } = useRulesStore();
   const { setBtnList, setIsOpen, setTitle, setContent, setPopup, isOpen } = usePopupStore();
@@ -103,6 +103,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
             roomId,
             userId: localStorage.getItem('lol_ban_host_id') as string,
           });
+          setSocket(null);
           // randomId.current = Math.random().toString(36).substr(2, 20);
         }
       }

@@ -16,7 +16,7 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 4000;
 
-let clients = []; // 기존 clients 배열 유지
+const clients = new Map();
 
 app.get('/', (req, res) => {
   res.send('Backend is running');
@@ -44,7 +44,7 @@ io.on('connection', (socket) => {
     delete data.type;
     console.log('Initial data:', data);
 
-    const target = clients.find((w) => w.userId === data.userId);
+    const target = clients.get(data.userId); // ✅ Map은 get(userId)로 찾는다
     let initInfo;
     //관중아닐때. hostinfo나 guestinfo를 설정하지 않는다. 덮어쓰여지는 경우가 있음
     if (role !== 'audience') {
@@ -63,29 +63,7 @@ io.on('connection', (socket) => {
       };
     }
 
-    console.log(
-      '장담컨데 진짜 최초',
-      clients
-        .filter((client) => client.roomId === data.roomId)
-        .map((v) => ({
-          userId: v.userId,
-          roomId: v.roomId,
-          role: v.role,
-          guestInfo: v.guestInfo,
-          hostInfo: v.hostInfo,
-        })),
-    );
-    //동일한 방번호가 있을때는 덮어쓰움
-    if (target) {
-      clients = clients.map((w) => {
-        if (w.userId === data.userId) {
-          w = { ...w, ...initInfo };
-        }
-        return w;
-      });
-    } else {
-      clients.push(initInfo);
-    }
+    clients.set(data.userId, initInfo);
   });
 
   socket.on('join', (data) => {
@@ -97,7 +75,7 @@ io.on('connection', (socket) => {
     position = data.position;
     host = data.host;
     role = data.role;
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
 
     const guestClients = roomsClient.filter((client) => !client.host && client.role === 'guest');
     const audienceClients = roomsClient.filter((client) => !client.host && client.role === 'audience');
@@ -116,7 +94,7 @@ io.on('connection', (socket) => {
         guestClients[1].socket.emit('overCount');
         return;
       }
-      
+
       if (data.role === 'guest') {
         roomsClient.forEach((client) => {
           client.guestInfo.status = 'join';
@@ -134,7 +112,7 @@ io.on('connection', (socket) => {
       });
       roomsClient.forEach((client) => {
         client.guestInfo = {
-          status: guestItem?.guestInfo.status??"",
+          status: guestItem?.guestInfo.status ?? '',
           myTeam: hostRules.hostInfo.yourTeam,
           yourTeam: hostRules.hostInfo.myTeam,
           myTeamSide: hostRules.hostInfo.myTeamSide === 'blue' ? 'red' : 'blue',
@@ -160,12 +138,10 @@ io.on('connection', (socket) => {
         audienceCount: audienceClients.length,
       });
     });
-
   });
-
   socket.on('emit', (data) => {
     const { roomId, params } = data;
-    const roomsClient = clients.filter((client) => client.roomId === roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === roomId);
 
     roomsClient.forEach((client) => {
       client.socket.emit('on', { params });
@@ -174,10 +150,8 @@ io.on('connection', (socket) => {
 
   socket.on('ready', (data) => {
     const { roomId, role } = data;
-    const roomsClient = clients.filter((client) => client.roomId === roomId);
-    const audienceClients = clients.filter(
-      (client) => !client.host && client.roomId === roomId && client.role === 'audience',
-    );
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === roomId);
+    const audienceClients = roomsClient.filter((client) => !client.host && client.role === 'audience');
 
     roomsClient.forEach((client) => {
       if (role === 'host') {
@@ -196,10 +170,8 @@ io.on('connection', (socket) => {
 
   socket.on('readyCancel', (data) => {
     const { roomId, role } = data;
-    const roomsClient = clients.filter((client) => client.roomId === roomId);
-    const audienceClients = clients.filter(
-      (client) => !client.host && client.roomId === roomId && client.role === 'audience',
-    );
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === roomId);
+    const audienceClients = roomsClient.filter((client) => !client.host && client.role === 'audience');
 
     roomsClient.forEach((client) => {
       if (role === 'host') {
@@ -216,49 +188,49 @@ io.on('connection', (socket) => {
     });
   });
   socket.on('banpickStart', (data) => {
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('banpickStart');
     });
   });
 
   socket.on('image', (data) => {
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('image', { params: data.data });
     });
   });
 
   socket.on('champion', (data) => {
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('champion');
     });
   });
 
   socket.on('random', (data) => {
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('random', { data: data.data });
     });
   });
 
   socket.on('Peerless', (data) => {
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('Peerless');
     });
   });
 
   socket.on('clearPeerless', (data) => {
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('clearPeerless');
     });
   });
 
   socket.on('teamChange', (data) => {
-    const roomsClient = clients.filter((client) => client.roomId === data.roomId);
+    const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('teamChange');
     });
@@ -267,7 +239,7 @@ io.on('connection', (socket) => {
   socket.on('closeSharePopup', (data) => {
     console.log(
       'closeSharePopup',
-      clients.map((v) => ({
+      Array.from(clients.values()).map((v) => ({
         userId: v.userId,
         roomId: v.roomId,
         hostInfo: v.hostInfo,
@@ -275,27 +247,33 @@ io.on('connection', (socket) => {
         role: v.role,
       })),
     );
+
     // userId에 해당하는 host는 남기고 roomId 제거
     // 나머지 비호스트에게 noRoom 전송
-    clients
+    Array.from(clients.values())
       .filter((client) => client.roomId === data.roomId && !client.host)
       .forEach((client) => {
         client.socket.emit('noRoom');
       });
-    clients = clients.filter(
-      (client) => client.roomId !== data.roomId || (client.userId === data.userId && client.host),
-    );
+
+    for (const [key, client] of clients.entries()) {
+      if (client.roomId === data.roomId && !(client.userId === data.userId && client.host)) {
+        clients.delete(key);
+      }
+    }
 
     console.log(
-      clients.filter((client) => client.roomId === data.roomId && !client.host),
+      Array.from(clients.values()).filter((client) => client.roomId === data.roomId && !client.host),
       '??' + data.roomId,
     );
   });
+
   socket.on('closeByHost', (data) => {
-    const target = clients.find((c) => c.userId === data.userId);
+    const target = Array.from(clients.values()).find((c) => c.userId === data.userId);
+
     console.log(
       'closeByHost',
-      clients.map((v) => ({
+      Array.from(clients.values()).map((v) => ({
         userId: v.userId,
         roomId: v.roomId,
         hostInfo: v.hostInfo,
@@ -303,52 +281,60 @@ io.on('connection', (socket) => {
         role: v.role,
       })),
     );
-    // userId에 해당하는 host는 남기고 roomId 제거
-    // 나머지 비호스트에게 noRoom 전송
+
     if (target) {
-      clients
+      Array.from(clients.values())
         .filter((client) => client.roomId === target.roomId && !client.host)
         .forEach((client) => {
           client.socket.emit('noRoom');
         });
+
+      for (const [key, client] of clients.entries()) {
+        if (client.roomId === target.roomId) {
+          clients.delete(key);
+        }
+      }
     }
-    clients = clients.filter((client) => client.roomId !== target.roomId);
 
     console.log(target, '??' + data.roomId);
   });
-
   // 소켓 연결 끊어졌을 때
   socket.on('disconnect', (reason) => {
     console.log(
-      `❌ Client disconnecting - roomId: ${roomId}, userId: ${userId}, ${clients.map((e) => ({ roomId: e.roomId, userId: e.userId }))}`,
+      `❌ Client disconnecting - roomId: ${roomId}, userId: ${userId},`,
+      Array.from(clients.values()).map((e) => ({ roomId: e.roomId, userId: e.userId })),
       'reason:',
       reason,
     );
 
     if (host) {
       console.log('👑 Host disconnected, closing room');
-      clients
+      Array.from(clients.values())
         .filter((client) => client.roomId === roomId)
         .forEach((client) => {
           client.socket.emit('closeByHost');
         });
-      clients = clients.filter((client) => client.roomId !== roomId);
+
+      for (const [key, client] of clients.entries()) {
+        if (client.roomId === roomId) {
+          clients.delete(key);
+        }
+      }
     } else {
       if (role !== 'audience' && !host) {
         console.log('👥 Guest disconnected', userId, position);
-        const audienceClients = clients.filter(
+
+        const audienceClients = Array.from(clients.values()).filter(
           (client) => !client.host && client.roomId === roomId && client.role === 'audience',
         );
 
-        console.log('👥 Guest disconnected1', userId, position);
-        clients
+        Array.from(clients.values())
           .filter((client) => client.roomId === roomId)
           .forEach((client) => {
             client.guestInfo.status = '';
           });
 
-        console.log('👥 Guest disconnected2', userId, position);
-        clients
+        Array.from(clients.values())
           .filter((client) => client.roomId === roomId)
           .forEach((client) => {
             const { socket, ...sendInfo } = client;
@@ -358,18 +344,25 @@ io.on('connection', (socket) => {
             });
           });
 
-        console.log('👥 Guest disconnected3', userId, position);
-        clients = clients.filter((client) => client.userId !== userId);
-        console.log('👥 Guest disconnected4', userId, position);
+        for (const [key, client] of clients.entries()) {
+          if (client.userId === userId) {
+            clients.delete(key);
+          }
+        }
       } else if (role === 'audience') {
         console.log('👀 Audience member disconnected');
-        clients = clients.filter((client) => client.userId !== userId);
 
-        const audienceCount = clients.filter(
-          (client) => client.roomId === roomId && client.position === 'audience',
+        for (const [key, client] of clients.entries()) {
+          if (client.userId === userId) {
+            clients.delete(key);
+          }
+        }
+
+        const audienceCount = Array.from(clients.values()).filter(
+          (client) => client.roomId === roomId && client.role === 'audience',
         ).length;
 
-        clients
+        Array.from(clients.values())
           .filter((client) => client.roomId === roomId)
           .forEach((client) => {
             client.socket.emit('closeByAudience', { audienceCount });
