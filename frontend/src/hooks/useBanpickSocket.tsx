@@ -271,8 +271,17 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
         };
 
-        if (selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE) setBlueBan(selectedChampion);
-        else setRedBan(selectedChampion);
+        if (
+          selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK &&
+          selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE
+        ) {
+          setBlueBan(selectedChampion);
+        } else if (
+          selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK &&
+          selectedTeam[selectedTeamIndex].color === teamcolorOptions.RED
+        ) {
+          setRedBan(selectedChampion);
+        }
       }
       index += 1;
       setCurrentLocation(index);
@@ -284,14 +293,25 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam } = useBanStore.getState();
       const { banpickMode } = useRulesStore.getState();
       let index = banPickObject.find((v) => v.location === currentLocation)?.index as number;
+
       if (banpickMode !== banPickModeOptions.TNM) {
         const selectedChampion = {
           name: data.data.randomName,
           info: data.data.newRandomInfo,
           line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
         };
-        if (selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE) setBlueBan(selectedChampion);
-        else setRedBan(selectedChampion);
+
+        if (
+          selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK &&
+          selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE
+        ) {
+          setBlueBan(selectedChampion);
+        } else if (
+          selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK &&
+          selectedTeam[selectedTeamIndex].color === teamcolorOptions.RED
+        ) {
+          setRedBan(selectedChampion);
+        }
       }
       setBanPickObject(index, data.data.randomName, data.data.newRandomInfo, true); // 랜덤 챔피언을 선택해준다
       if (selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK) {
