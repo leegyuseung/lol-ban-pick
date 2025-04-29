@@ -2,7 +2,7 @@
 import PeerlessImage from './PeerlessImageTeam';
 import { useEffect, useRef } from 'react';
 import { usePeerlessStore, useRulesStore } from '@/store';
-import { BanArray } from '@/store/banpick';
+import { BanObjectType } from '@/types';
 
 type PropsType = {
   side: string;
@@ -11,8 +11,8 @@ type PropsType = {
 
 export default function PeerlessList({ side, teamSide }: PropsType) {
   const { banpickMode } = useRulesStore();
-  const BlueBanDataRef = useRef<BanArray[][]>([]);
-  const RedBanDataRef = useRef<BanArray[][]>([]);
+  const BlueBanDataRef = useRef<BanObjectType[][]>([]);
+  const RedBanDataRef = useRef<BanObjectType[][]>([]);
 
   useEffect(() => {
     // 초기 상태 설정

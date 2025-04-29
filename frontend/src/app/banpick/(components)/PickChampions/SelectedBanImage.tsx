@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { BanPickObjectType, currentSelectedPickType } from '@/store/banpick';
+import { currentSelectedPickType, BanPickObjectType } from '@/types';
 
 interface SelectedChampionImageProps {
   banPickObject: BanPickObjectType;

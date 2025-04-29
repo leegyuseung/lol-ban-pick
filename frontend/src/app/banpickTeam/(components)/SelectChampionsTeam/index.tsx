@@ -6,8 +6,9 @@ import TeamChangePopup from '@/components/TeamChangePopup';
 import { useRulesStore, usePeerlessStore } from '@/store';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
-import { ChampionInfoI, InfoType } from '@/types/types';
 import { useBanTeamStore, useBanStore } from '@/store';
+import { filterOptions, roleOptions, teamSideOptions } from '@/constants';
+import { ChampionInfoType, InfoType } from '@/types';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
@@ -25,27 +26,24 @@ export default function SelectChampions() {
   const { SelectTeamImage, SelectTeamChampion } = useBanTeamStore();
   const { banpickMode, nowSet, role, hostInfo, guestInfo } = useRulesStore();
   const { hostBan, guestBan, setTeamPeerless, clearTeamPeerless, setTeamChange } = usePeerlessStore();
-
   const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
   const [showPopup, setShowPopup] = useState(false); // 팀 변경 팝업 상태
   const [resolveFn, setResolveFn] = useState<((value: boolean) => void) | null>(null); // 팀 변경 팝업 확인 함수
-
-  const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
   const InfoDataRef = useRef<InfoType>();
 
   // InfoData 세팅
   useEffect(() => {
-    if (role === 'host') {
+    if (role === roleOptions.HOST) {
       InfoDataRef.current = hostInfo;
-    } else if (role === 'guest') {
+    } else if (role === roleOptions.GUEST) {
       InfoDataRef.current = guestInfo;
-    } else if (role === 'audience') {
+    } else if (role === roleOptions.AUD) {
       InfoDataRef.current = {
         myTeam: '',
         yourTeam: '',
-        myTeamSide: 'audience',
-        yourTeamSide: 'audience',
+        myTeamSide: teamSideOptions.AUD,
+        yourTeamSide: teamSideOptions.AUD,
         myImg: '',
         yourImg: '',
       };
@@ -104,7 +102,7 @@ export default function SelectChampions() {
 
   // Image 클릭시
   const onClick = useCallback(
-    (pickName: string, info: ChampionInfoI) => {
+    (pickName: string, info: ChampionInfoType) => {
       if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || pickName === '') return;
       SelectTeamImage(pickName, info); // 선택한 챔피언 정보를 저장
     },

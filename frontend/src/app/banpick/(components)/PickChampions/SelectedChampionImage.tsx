@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { BanPickObjectType, currentSelectedPickType } from '@/store/banpick';
+import { currentSelectedPickType, BanPickObjectType } from '@/types';
 
 interface SelectedChampionImageProps {
   banPickObject: BanPickObjectType;
@@ -32,9 +32,8 @@ export default function SelectedChampionImage({
                     ? `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${currentSelectedPick[0]?.name}_0.jpg`
                     : ``
               }
-                          
-              placeholder="blur" 
-              blurDataURL={'/images/default_champ.png'}  // 사전 생성된 저해상도 이미지
+              placeholder="blur"
+              blurDataURL={'/images/default_champ.png'} // 사전 생성된 저해상도 이미지
               loading="eager" // 바로 로드
               fill
               sizes="h-10"

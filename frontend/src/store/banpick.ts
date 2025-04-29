@@ -1,310 +1,28 @@
-import championData from '../data/champions.json';
-import { ChampionInfoI } from '@/types/types';
+import championData from '@/data/champions.json';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { useSocketStore } from './socket';
-import { useRulesStore } from './rules';
-
-type Store = {
-  championInfo: Record<string, ChampionInfoI>;
-  setChampionInfo: () => Promise<void>;
-  setChangeChampionInfo: (name: string, banPick: string) => void;
-};
-
-export type BanArray = {
-  name: string;
-  info: ChampionInfoI;
-  line: number;
-};
-
-type PeerlessStore = {
-  redBan: BanArray[];
-  blueBan: BanArray[];
-
-  setRedBan: (obj: BanArray) => void;
-  setBlueBan: (obj: BanArray) => void;
-
-  setRedBanClear: () => void;
-  setBlueBanClear: () => void;
-
-  hostBan: BanArray[][];
-  guestBan: BanArray[][];
-  setHostBan: (array: BanArray[]) => void;
-  setTeamBan: (blue: BanArray[], red: BanArray[]) => void;
-  setGuestBan: (array: BanArray[]) => void;
-  setClearHostBan: () => void;
-  setClearGuestBan: () => void;
-  setTeamPeerless: () => void;
-  clearTeamPeerless: () => void;
-  setTeamChange: () => void;
-};
-
-export type BanPickObjectType = {
-  index: number;
-  location: string;
-  name: string;
-  info: ChampionInfoI;
-  use: boolean;
-  random: boolean;
-  status: string;
-}[];
-
-export type currentSelectedPickType = {
-  name: string;
-  info: ChampionInfoI;
-}[];
-
-export const InfoData = {
-  blurb: '',
-  id: '',
-  key: '',
-  name: '',
-  partype: '',
-  tags: [],
-  title: '',
-  version: '',
-  status: '',
-  line: [],
-};
-
-const InitializeBanPickObject = [
-  {
-    index: 0,
-    location: 'blueBan1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 1,
-    location: 'redBan1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 2,
-    location: 'blueBan2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 3,
-    location: 'redBan2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 4,
-    location: 'blueBan3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 5,
-    location: 'redBan3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 6,
-    location: 'bluePick1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 7,
-    location: 'redPick1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 8,
-    location: 'redPick2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 9,
-    location: 'bluePick2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 10,
-    location: 'bluePick3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 11,
-    location: 'redPick3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 12,
-    location: 'redBan4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 13,
-    location: 'blueBan4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 14,
-    location: 'redBan5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 15,
-    location: 'blueBan5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 16,
-    location: 'redPick4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 17,
-    location: 'bluePick4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 18,
-    location: 'bluePick5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 19,
-    location: 'redPick5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-];
-
-interface BanI {
-  championInfo: Record<string, ChampionInfoI>;
-  setChampionInfo: () => Promise<void>;
-  setChangeChampionInfo: (name: string, banPick: string) => void;
-  setChangeChampionPeerInfo: (myBan: BanArray[][], yourBan: BanArray[][]) => void;
-
-  currentSelectedPick: currentSelectedPickType;
-  setCurrentSelectedPick: (name: string, info: ChampionInfoI) => void;
-
-  banPickObject: BanPickObjectType;
-  setBanPickObject: (index: number, name: string, info: ChampionInfoI, ran: boolean) => void;
-  setClearBanPickObject: () => void;
-
-  currentLocation: string;
-  setCurrentLocation: (index: number) => void;
-  setClearCurrentLocation: () => void;
-
-  selectedTeam: {
-    color: string;
-    banpick: string;
-    line: string;
-  }[];
-  selectedTeamIndex: number;
-  setSelectedTeamIndex: () => void;
-  setClearSelectTeamIndex: () => void;
-
-  RandomPick: () => void;
-
-  headerSecond: string;
-  setHeaderSecond: (second: string) => void;
-}
-
-interface TeamBanI {
-  SelectTeamImage: (name: string, info: ChampionInfoI) => void;
-  SelectTeamChampion: () => void;
-  TeamRandomPick: () => void;
-}
+import { useSocketStore } from '@/store/socket';
+import { useRulesStore } from '@/store/rules';
+import { InitailizeInfoData, InitializeBanPickObject } from '@/constants';
+import { BanObjectType, ChampionInfoType, PeerlessStoreType, ChampionStoreType, BanI, TeamBanI } from '@/types';
 
 // 챔피언 정보 불러오기
-export const useBanpickStore = create<Store>()(
+export const useChampionStore = create<ChampionStoreType>()(
   devtools(
     (set) => ({
-      championInfo: {} as Record<string, ChampionInfoI>,
+      championInfo: {} as Record<string, ChampionInfoType>,
       setChampionInfo: async () => {
         try {
           const response = await fetch('/api/banpick/name');
           const { championInfo } = await response.json();
 
-          const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
+          const updatedChampionInfo: Record<string, ChampionInfoType> = Object.fromEntries(
             Object.entries(championInfo)
               .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
               .map(([key, value]) => [
                 key,
                 {
-                  ...(value as ChampionInfoI),
+                  ...(value as ChampionInfoType),
                   status: '',
                   line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
                 },
@@ -338,22 +56,22 @@ export const useBanpickStore = create<Store>()(
 
 // BanPick에서 사용
 export const useBanStore = create<BanI>()((set, get) => ({
-  championInfo: {} as Record<string, ChampionInfoI>,
+  championInfo: {} as Record<string, ChampionInfoType>,
   setChampionInfo: async () => {
     try {
       const response = await fetch('/api/banpick/name');
       const { championInfo } = await response.json();
 
-      const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
+      const updatedChampionInfo: Record<string, ChampionInfoType> = Object.fromEntries(
         Object.entries(championInfo)
           .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
           .sort(([, infoA], [, infoB]) =>
-            (infoA as ChampionInfoI).name.localeCompare((infoB as ChampionInfoI).name, 'ko-KR'),
+            (infoA as ChampionInfoType).name.localeCompare((infoB as ChampionInfoType).name, 'ko-KR'),
           )
           .map(([key, value]) => [
             key,
             {
-              ...(value as ChampionInfoI),
+              ...(value as ChampionInfoType),
               status: '',
               line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
             },
@@ -414,7 +132,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
   currentSelectedPick: [
     {
       name: '',
-      info: InfoData,
+      info: InitailizeInfoData,
     },
   ],
 
@@ -520,7 +238,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
 
     index += 1;
     setCurrentLocation(index); // 다음 위치를 저장한다
-    setCurrentSelectedPick('', InfoData); // 초기화
+    setCurrentSelectedPick('', InitailizeInfoData); // 초기화
     setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
   },
 
@@ -531,7 +249,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
     })),
 }));
 
-export const usePeerlessStore = create<PeerlessStore>()(
+export const usePeerlessStore = create<PeerlessStoreType>()(
   persist(
     (set) => ({
       redBan: [],
@@ -570,8 +288,8 @@ export const usePeerlessStore = create<PeerlessStore>()(
       setTeamBan: (blue, red) =>
         set((state) => {
           const { role, hostInfo, guestInfo } = useRulesStore.getState();
-          let updatedHostban: BanArray[][] = [];
-          let updatedGuestban: BanArray[][] = [];
+          let updatedHostban: BanObjectType[][] = [];
+          let updatedGuestban: BanObjectType[][] = [];
 
           if (role === 'host' || role === 'audience') {
             if (hostInfo.myTeamSide === 'blue') {
@@ -662,7 +380,7 @@ export const usePeerlessStore = create<PeerlessStore>()(
 // Team Banpick Store
 export const useBanTeamStore = create<TeamBanI>()((set, get) => ({
   // 챔피언을 선택했을 때
-  SelectTeamImage: (name: string, info: ChampionInfoI) => {
+  SelectTeamImage: (name: string, info: ChampionInfoType) => {
     const socketState = useSocketStore.getState();
     if (!socketState) return;
     const message = {

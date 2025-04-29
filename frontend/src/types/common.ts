@@ -1,23 +1,4 @@
-export interface ApiResponse<T> {
-  result_code: number;
-  result: T;
-  message: string;
-}
-
-export interface ChampionInfoI {
-  blurb: string;
-  id: string;
-  key: string;
-  name: string;
-  partype: string;
-  tags: string[];
-  title: string;
-  version: string;
-  status: string;
-  line: string[];
-}
-
-export type FormsData = {
+type FormsType = {
   blueTeamName: string;
   redTeamName: string;
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
@@ -34,7 +15,7 @@ export type FormsData = {
   yourImg?: string;
 };
 
-export type RulesType = {
+type RulesType = {
   banpickMode: 'tournament' | 'peerless3' | 'peerless5';
   peopleMode: 'solo' | 'team';
   timeUnlimited: 'true' | 'false';
@@ -44,7 +25,7 @@ export type RulesType = {
   audienceCount: number;
 };
 
-export type InfoType = {
+type InfoType = {
   myTeam: string;
   yourTeam: string;
   myTeamSide: 'blue' | 'red' | 'audience';
@@ -55,14 +36,16 @@ export type InfoType = {
   status?: 'join' | 'ready' | '';
 };
 
-export interface RulesState extends RulesType {
+interface RulesStateI extends RulesType {
   hostInfo: InfoType;
   guestInfo: InfoType;
   setRules: (data: RulesType) => void;
-  setFormRules: (data: FormsData) => void;
-  setHostRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => void;
-  setGuestRules: (data: FormsData & { status: 'join' | 'ready' | '' }) => void;
+  setFormRules: (data: FormsType) => void;
+  setHostRules: (data: FormsType & { status: 'join' | 'ready' | '' }) => void;
+  setGuestRules: (data: FormsType & { status: 'join' | 'ready' | '' }) => void;
   setChangeTeam: () => void;
   setPeerlessSet: () => void;
   setClearPeerlessSet: () => void;
 }
+
+export type { FormsType, RulesType, InfoType, RulesStateI };

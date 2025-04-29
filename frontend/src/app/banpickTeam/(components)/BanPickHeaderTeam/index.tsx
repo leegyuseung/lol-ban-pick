@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useBanStore, useBanTeamStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
-import { InfoType } from '@/types/types';
+import { InfoType } from '@/types';
 
 export default function BanPickHeader() {
   const { banpickMode, timeUnlimited, nowSet } = useRulesStore();

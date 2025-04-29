@@ -2,20 +2,20 @@
 
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import Button from '../Button';
-import TeamLogoPopup from '../TeamLogoPopup';
+import Button from '@/components/Button';
+import TeamLogoPopup from '@/components/TeamLogoPopup';
 import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
-import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
+import { FormsType } from '@/types';
 
 export default function Form() {
   const { socket, setRoomId, setSocket } = useSocketStore();
   const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearHostBan, setClearGuestBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
-  const { register, handleSubmit, watch } = useForm<FormsData>({
+  const { register, handleSubmit, watch } = useForm<FormsType>({
     defaultValues: {
       blueTeamName: '',
       redTeamName: '',
@@ -63,7 +63,7 @@ export default function Form() {
 
   //소켓 팝업 관련
   const [isShareOpen, setIsShareOpen] = useState(false);
-  const onSubmit = async (data: FormsData) => {
+  const onSubmit = async (data: FormsType) => {
     // 이미지 넣어주기
     data.blueImg = blueImage;
     data.redImg = redImage;

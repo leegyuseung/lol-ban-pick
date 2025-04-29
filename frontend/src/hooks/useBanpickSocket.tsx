@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useBanStore, usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { InfoData, usePeerlessStore } from '@/store/banpick';
+import { usePeerlessStore } from '@/store/banpick';
+import { InitailizeInfoData } from '@/constants';
 
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
@@ -97,7 +98,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
     const socket = io(socketUrl, {
       transports: ['websocket'],
-      reconnection: false, // 
+      reconnection: false, //
     }) as Socket;
 
     socketRef.current = socket;
@@ -214,7 +215,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       });
     });
 
-
     socket.on('overCount', () => {
       setIsOpen(true);
       setContent('정원이 초과 되었습니다');
@@ -266,7 +266,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       }
       index += 1;
       setCurrentLocation(index);
-      setCurrentSelectedPick('', InfoData);
+      setCurrentSelectedPick('', InitailizeInfoData);
       setSelectedTeamIndex();
     });
 
@@ -290,7 +290,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
       index += 1;
       setCurrentLocation(index); // 다음 위치를 저장한다
-      setCurrentSelectedPick('', InfoData); // 초기화
+      setCurrentSelectedPick('', InitailizeInfoData); // 초기화
       setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
       setHeaderSecond('5');
     });

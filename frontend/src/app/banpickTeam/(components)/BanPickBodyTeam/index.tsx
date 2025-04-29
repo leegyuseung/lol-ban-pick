@@ -1,3 +1,4 @@
+import { sideOptions, teamSideOptions } from '@/constants';
 import PeerlessList from '../PeerlessListTeam';
 import PickChampions from '../PickChampionsTeam';
 import SelectChampions from '../SelectChampionsTeam';
@@ -5,11 +6,11 @@ import SelectChampions from '../SelectChampionsTeam';
 export default function BanPickBody() {
   return (
     <div className="flex justify-center h-full">
-      <PeerlessList side="left" teamSide="blue" />
-      <PickChampions side="left" />
+      <PeerlessList side={sideOptions.LEFT} teamSide={teamSideOptions.BLUE} />
+      <PickChampions side={sideOptions.LEFT} />
       <SelectChampions />
-      <PickChampions side="right" />
-      <PeerlessList side="right" teamSide="red" />
+      <PickChampions side={sideOptions.RIGHT} />
+      <PeerlessList side={sideOptions.RIGHT} teamSide={teamSideOptions.RED} />
     </div>
   );
 }
