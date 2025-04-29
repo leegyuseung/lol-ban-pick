@@ -1,14 +1,6 @@
 import Image from 'next/image';
-import { currentSelectedPickType, BanPickObjectType } from '@/types';
-
-interface SelectedChampionImageProps {
-  banPickObject: BanPickObjectType;
-  currentLocation: string;
-  currentSelectedPick: currentSelectedPickType;
-  index: number;
-  side: string;
-  location: string;
-}
+import { SelectedChampionImagePropsI } from '@/types';
+import { sideOptions } from '@/constants';
 
 export default function SelectedChampionImage({
   banPickObject,
@@ -17,7 +9,7 @@ export default function SelectedChampionImage({
   index,
   side,
   location,
-}: SelectedChampionImageProps) {
+}: SelectedChampionImagePropsI) {
   return (
     <>
       {(banPickObject[index].use ||
@@ -49,7 +41,7 @@ export default function SelectedChampionImage({
         )}
       {side === location && (
         <div
-          className={`${location === 'left' ? 'bg-blueLineColor' : 'bg-redLineColor'} ${currentLocation === banPickObject[index].location ? (location === 'right' ? 'absolute h-full top-0 right-0 w-[15px] z-10' : 'absolute h-full top-0 left-0 w-[15px] z-10') : ''}`}
+          className={`${location === sideOptions.LEFT ? 'bg-blueLineColor' : 'bg-redLineColor'} ${currentLocation === banPickObject[index].location ? (location === sideOptions.RIGHT ? 'absolute h-full top-0 right-0 w-[15px] z-10' : 'absolute h-full top-0 left-0 w-[15px] z-10') : ''}`}
         />
       )}
     </>

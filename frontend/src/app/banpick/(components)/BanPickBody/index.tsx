@@ -1,7 +1,7 @@
+import PeerlessList from '@/app/banpick/(components)/PeerlessList';
+import PickChampions from '@/app/banpick/(components)/PickChampions';
+import SelectChampions from '@/app/banpick/(components)/SelectChampions';
 import { sideOptions } from '@/constants';
-import PeerlessList from '../PeerlessList';
-import PickChampions from '../PickChampions';
-import SelectChampions from '../SelectChampions';
 
 export default function BanPickBody() {
   return (

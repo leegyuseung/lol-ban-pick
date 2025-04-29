@@ -59,4 +59,12 @@ interface TeamBanI {
   TeamRandomPick: () => void;
 }
 
-export type { BanObjectType, currentSelectedPickType, BanPickObjectType, BanI, TeamBanI };
+interface SelectedChampionImagePropsI {
+  banPickObject: BanPickObjectType;
+  currentSelectedPick: currentSelectedPickType;
+  currentLocation: string;
+  index: number;
+  side: string;
+  location: string;
+}
+export type { BanObjectType, currentSelectedPickType, BanPickObjectType, BanI, TeamBanI, SelectedChampionImagePropsI };

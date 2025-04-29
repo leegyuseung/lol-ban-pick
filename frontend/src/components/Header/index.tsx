@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import NavItem from './NavItem';
-import { navigations } from '@/constants';
+import NavItem from '@/components/Header/NavItem';
+import { images, navigations } from '@/constants';
 
 const Nav = [
   { url: navigations.SIMULATION, name: '시뮬레이터' },
@@ -14,7 +14,7 @@ export default function Header() {
       <div className="flex items-center justify-between px-20 h-16 bg-mainBlack">
         {/* 로고 */}
         <Link href="/" className="">
-          <Image src="/metapick.png" alt="logo" width={64} height={64} />
+          <Image src={images.THUMBNAIL} alt="logo" width={64} height={64} />
         </Link>
 
         {/* 네비게이션 */}

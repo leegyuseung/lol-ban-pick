@@ -5,7 +5,7 @@ import { io, Socket } from 'socket.io-client';
 import { useBanStore, usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { usePeerlessStore } from '@/store/banpick';
-import { InitailizeInfoData } from '@/constants';
+import { InitailizeInfoData, lineMappingOptions } from '@/constants';
 
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
@@ -15,13 +15,6 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
   const searchParams = useSearchParams();
   const pathName = usePathname();
 
-  const lineMapping: Record<string, number> = {
-    top: 0,
-    jungle: 1,
-    mid: 2,
-    ad: 3,
-    sup: 4,
-  };
   const {
     setRules,
     setHostRules,
@@ -259,7 +252,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
         const selectedChampion = {
           name: currentSelectedPick[0].name,
           info: currentSelectedPick[0].info,
-          line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+          line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
         };
         if (selectedTeam[selectedTeamIndex].color === 'blue') setBlueBan(selectedChampion);
         else setRedBan(selectedChampion);
@@ -278,7 +271,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
         const selectedChampion = {
           name: data.data.randomName,
           info: data.data.randomInfo,
-          line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+          line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
         };
         if (selectedTeam[selectedTeamIndex].color === 'blue') setBlueBan(selectedChampion);
         else setRedBan(selectedChampion);

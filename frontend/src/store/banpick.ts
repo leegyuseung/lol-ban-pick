@@ -3,8 +3,17 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { useSocketStore } from '@/store/socket';
 import { useRulesStore } from '@/store/rules';
-import { InitailizeInfoData, InitializeBanPickObject } from '@/constants';
 import { BanObjectType, ChampionInfoType, PeerlessStoreType, ChampionStoreType, BanI, TeamBanI } from '@/types';
+import {
+  InitailizeInfoData,
+  InitializeBanPickObject,
+  InitializeCurrentSelectedPick,
+  InitializeSelectedTeam,
+  locationOptions,
+  roleOptions,
+  statusOptions,
+  teamSideOptions,
+} from '@/constants';
 
 // 챔피언 정보 불러오기
 export const useChampionStore = create<ChampionStoreType>()(
@@ -115,26 +124,21 @@ export const useBanStore = create<BanI>()((set, get) => ({
       const peerChampionInfo = Object.fromEntries(
         Object.entries(state.championInfo).map(([name, info]) => [
           name,
-          bannedChampionNames.includes(name) ? { ...info, status: 'peer' } : info,
+          bannedChampionNames.includes(name) ? { ...info, status: statusOptions.PEER } : info,
         ]),
       );
 
       const BanInitialize = Object.fromEntries(
         Object.entries(peerChampionInfo).map(([name, info]) => [
           name,
-          info.status === 'ban' ? { ...info, status: '' } : info,
+          info.status === statusOptions.BAN ? { ...info, status: statusOptions.NO } : info,
         ]),
       );
 
       return { championInfo: BanInitialize };
     }),
 
-  currentSelectedPick: [
-    {
-      name: '',
-      info: InitailizeInfoData,
-    },
-  ],
+  currentSelectedPick: InitializeCurrentSelectedPick,
 
   setCurrentSelectedPick: (name, info) =>
     set((state) => {
@@ -143,7 +147,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
       return { currentSelectedPick: updatedPick };
     }),
 
-  currentLocation: 'blueBan1',
+  currentLocation: locationOptions.BLUEB1,
 
   setCurrentLocation: (index) =>
     set((state) => {
@@ -153,7 +157,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
 
   setClearCurrentLocation: () =>
     set(() => {
-      return { currentLocation: 'blueBan1' };
+      return { currentLocation: locationOptions.BLUEB1 };
     }),
 
   banPickObject: InitializeBanPickObject,
@@ -181,32 +185,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
       return { selectedTeamIndex: 0 };
     }),
 
-  selectedTeam: [
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    // 1번 밴 끝
-    { color: 'blue', banpick: 'pick', line: 'top' },
-    { color: 'red', banpick: 'pick', line: 'top' },
-    { color: 'red', banpick: 'pick', line: 'jungle' },
-    { color: 'blue', banpick: 'pick', line: 'jungle' },
-    { color: 'blue', banpick: 'pick', line: 'mid' },
-    { color: 'red', banpick: 'pick', line: 'mid' },
-    // 1번 픽 끝
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'pick', line: 'ad' },
-    { color: 'blue', banpick: 'pick', line: 'ad' },
-    { color: 'blue', banpick: 'pick', line: 'sup' },
-    { color: 'red', banpick: 'pick', line: 'sup' },
-    // 2번 픽 끝
-    { color: '', banpick: '', line: '' },
-  ],
+  selectedTeam: InitializeSelectedTeam,
 
   RandomPick: () => {
     const {
@@ -229,7 +208,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
     const randomIndex = Math.floor(Math.random() * availableChampions.length);
     const [randomName, randomInfo] = availableChampions[randomIndex];
 
-    if (selectedTeam[selectedTeamIndex].banpick === 'ban') {
+    if (selectedTeam[selectedTeamIndex].banpick === statusOptions.BAN) {
       setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
     } else {
       setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
@@ -291,19 +270,19 @@ export const usePeerlessStore = create<PeerlessStoreType>()(
           let updatedHostban: BanObjectType[][] = [];
           let updatedGuestban: BanObjectType[][] = [];
 
-          if (role === 'host' || role === 'audience') {
-            if (hostInfo.myTeamSide === 'blue') {
+          if (role === roleOptions.HOST || role === roleOptions.AUD) {
+            if (hostInfo.myTeamSide === teamSideOptions.BLUE) {
               updatedHostban = [...state.hostBan, blue];
               updatedGuestban = [...state.guestBan, red];
             } else if (hostInfo.myTeamSide === 'red') {
               updatedHostban = [...state.hostBan, red];
               updatedGuestban = [...state.guestBan, blue];
             }
-          } else if (role === 'guest') {
-            if (guestInfo.myTeamSide === 'blue') {
+          } else if (role === roleOptions.GUEST) {
+            if (guestInfo.myTeamSide === teamSideOptions.BLUE) {
               updatedHostban = [...state.hostBan, red];
               updatedGuestban = [...state.guestBan, blue];
-            } else if (guestInfo.myTeamSide === 'red') {
+            } else if (guestInfo.myTeamSide === teamSideOptions.RED) {
               updatedHostban = [...state.hostBan, blue];
               updatedGuestban = [...state.guestBan, red];
             }

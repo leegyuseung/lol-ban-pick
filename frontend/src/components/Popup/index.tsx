@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { usePopupStore } from '@/store';
 import { usePathname } from 'next/navigation';
 

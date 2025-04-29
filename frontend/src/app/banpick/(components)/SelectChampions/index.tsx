@@ -8,7 +8,14 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { throttle } from 'lodash';
-import { filterOptions, InitailizeInfoData, lineMapping } from '@/constants';
+import {
+  banPickModeOptions,
+  filterOptions,
+  InitailizeInfoData,
+  lineMappingOptions,
+  statusOptions,
+  teamSideOptions,
+} from '@/constants';
 import { BanObjectType, ChampionInfoType } from '@/types';
 
 // search Icon 최적화
@@ -107,11 +114,11 @@ export default function SelectChampions() {
     const selectedChampion = {
       name: currentSelectedPick[0].name,
       info: currentSelectedPick[0].info,
-      line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+      line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
     };
 
-    if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
-      if (selectedTeam[selectedTeamIndex].color === 'red') {
+    if (selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK) {
+      if (selectedTeam[selectedTeamIndex].color === teamSideOptions.RED) {
         setRedPeerlessArray((prev) => [...prev, selectedChampion]);
       } else {
         setBluePeerlessArray((prev) => [...prev, selectedChampion]);
@@ -127,7 +134,7 @@ export default function SelectChampions() {
   // 다음 세트 버튼 클릭시
   const onNextSet = () => {
     // 피어리스 밴픽 추가
-    if (hostInfo.myTeamSide === 'blue') {
+    if (hostInfo.myTeamSide === teamSideOptions.BLUE) {
       setHostBan(bluePeerlessArray); // 내 밴 추가
       setGuestBan(redPeerlessArray); // 상대 밴 추가
     } else {
@@ -153,7 +160,7 @@ export default function SelectChampions() {
     setClearCurrentLocation(); // 현재 위치 초기화
 
     // 피어리스 밴픽 초기화
-    if (banpickMode !== 'tournament') {
+    if (banpickMode !== banPickModeOptions.TNM) {
       setClearPeerlessSet(); // 피어리스 세트 초기화
       setRedPeerlessArray([]); // 레드피어리스 초기화
       setBluePeerlessArray([]); // 블루피어리스 초기화
@@ -267,9 +274,9 @@ export default function SelectChampions() {
         <ImageComp className="border border-mainGold" width={60} height={60} src={hoverImg} />
       </div>
       <div className="relative flex justify-center">
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
-          (banpickMode === 'tournament' && headerSecond === '') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '')) && (
+        {((banpickMode === banPickModeOptions.PRL3 && nowSet === 3 && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.TNM && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.PRL5 && nowSet === 5 && headerSecond === '')) && (
           <div className="absolute left-0">
             <Button
               text={'뒤로가기'}
@@ -289,9 +296,9 @@ export default function SelectChampions() {
           </div>
         )}
 
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '') ||
-          (banpickMode === 'tournament' && headerSecond === '')) && (
+        {((banpickMode === banPickModeOptions.PRL3 && nowSet === 3 && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.PRL5 && nowSet === 5 && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.TNM && headerSecond === '')) && (
           <div className="absolute right-0">
             <Button
               text={'다시하기'}
@@ -301,8 +308,14 @@ export default function SelectChampions() {
           </div>
         )}
 
-        {((banpickMode !== 'tournament' && banpickMode === 'peerless3' && nowSet < 3 && headerSecond === '') ||
-          (banpickMode !== 'tournament' && banpickMode === 'peerless5' && nowSet < 5 && headerSecond === '')) && (
+        {((banpickMode !== banPickModeOptions.TNM &&
+          banpickMode === banPickModeOptions.PRL3 &&
+          nowSet < 3 &&
+          headerSecond === '') ||
+          (banpickMode !== banPickModeOptions.TNM &&
+            banpickMode === banPickModeOptions.PRL5 &&
+            nowSet < 5 &&
+            headerSecond === '')) && (
           <div className="absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}

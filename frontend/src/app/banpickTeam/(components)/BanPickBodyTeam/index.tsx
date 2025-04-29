@@ -1,7 +1,7 @@
 import { sideOptions, teamSideOptions } from '@/constants';
-import PeerlessList from '../PeerlessListTeam';
-import PickChampions from '../PickChampionsTeam';
-import SelectChampions from '../SelectChampionsTeam';
+import PeerlessList from '@/app/banpickTeam/(components)/PeerlessListTeam';
+import PickChampions from '@/app/banpickTeam/(components)/PickChampionsTeam';
+import SelectChampions from '@/app/banpickTeam/(components)/SelectChampionsTeam';
 
 export default function BanPickBody() {
   return (

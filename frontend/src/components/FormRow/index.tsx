@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { FormsType } from '@/types';
+import { banPickModeOptions, peopleModeOptions, teamSideOptions } from '@/constants';
 
 export default function Form() {
   const { socket, setRoomId, setSocket } = useSocketStore();
@@ -19,11 +20,11 @@ export default function Form() {
     defaultValues: {
       blueTeamName: '',
       redTeamName: '',
-      banpickMode: 'tournament',
-      peopleMode: 'solo',
+      banpickMode: banPickModeOptions.TNM,
+      peopleMode: peopleModeOptions.SOLO,
       timeUnlimited: 'true',
-      myTeamSide: 'blue',
-      yourTeamSide: 'red',
+      myTeamSide: teamSideOptions.BLUE,
+      yourTeamSide: teamSideOptions.RED,
       blueImg: '',
       redImg: '',
       nowSet: 1,
@@ -69,7 +70,7 @@ export default function Form() {
     data.redImg = redImage;
     setFormRules(data);
     setHostRules({ ...data, status: '' });
-    if (data.peopleMode === 'team') {
+    if (data.peopleMode === peopleModeOptions.TEAM) {
       openSharePopup();
     } else {
       router.push('/banpick');
@@ -81,8 +82,6 @@ export default function Form() {
   };
 
   const setSharePopup = (b: boolean) => {
-    // if(!b)socket?.close();
-    // setSocket(null);
     setIsShareOpen(b);
   };
   const openPopup = (teamColor: string) => {
@@ -106,7 +105,7 @@ export default function Form() {
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
         <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
-          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('blue')}>
+          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{blueTeam}</label>
@@ -196,7 +195,7 @@ export default function Form() {
 
         {/* 레드팀 */}
         <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
-          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('red')}>
+          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.RED)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{redTeam}</label>

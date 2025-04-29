@@ -3,4 +3,8 @@ const navigations = {
   INFORMATION: '/about',
 };
 
-export { navigations };
+const images = {
+  THUMBNAIL: '/metapick.png',
+};
+
+export { navigations, images };

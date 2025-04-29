@@ -1,8 +1,9 @@
 'use client';
-import PeerlessImage from './PeerlessImageTeam';
+import PeerlessImage from '@/app/banpickTeam/(components)/PeerlessListTeam/PeerlessImageTeam';
 import { useEffect, useRef } from 'react';
 import { usePeerlessStore, useRulesStore } from '@/store';
 import { BanObjectType } from '@/types';
+import { banPickModeOptions, sideOptions, teamSideOptions } from '@/constants';
 
 type PropsType = {
   side: string;
@@ -20,10 +21,10 @@ export default function PeerlessList({ side, teamSide }: PropsType) {
     const { hostBan, guestBan } = initialState;
     const { myTeamSide } = useRulesStore.getState().hostInfo;
 
-    if (myTeamSide === 'blue') {
+    if (myTeamSide === teamSideOptions.BLUE) {
       BlueBanDataRef.current = hostBan;
       RedBanDataRef.current = guestBan;
-    } else if (myTeamSide === 'red') {
+    } else if (myTeamSide === teamSideOptions.RED) {
       RedBanDataRef.current = hostBan;
       BlueBanDataRef.current = guestBan;
     }
@@ -33,10 +34,10 @@ export default function PeerlessList({ side, teamSide }: PropsType) {
       const { hostBan, guestBan } = state;
       const { myTeamSide } = useRulesStore.getState().hostInfo;
 
-      if (myTeamSide === 'blue') {
+      if (myTeamSide === teamSideOptions.BLUE) {
         BlueBanDataRef.current = hostBan;
         RedBanDataRef.current = guestBan;
-      } else if (myTeamSide === 'red') {
+      } else if (myTeamSide === teamSideOptions.RED) {
         RedBanDataRef.current = hostBan;
         BlueBanDataRef.current = guestBan;
       }
@@ -47,10 +48,10 @@ export default function PeerlessList({ side, teamSide }: PropsType) {
       const { hostBan, guestBan } = usePeerlessStore.getState();
       const { myTeamSide } = state.hostInfo;
 
-      if (myTeamSide === 'blue') {
+      if (myTeamSide === teamSideOptions.BLUE) {
         BlueBanDataRef.current = hostBan;
         RedBanDataRef.current = guestBan;
-      } else if (myTeamSide === 'red') {
+      } else if (myTeamSide === teamSideOptions.RED) {
         RedBanDataRef.current = hostBan;
         BlueBanDataRef.current = guestBan;
       }
@@ -65,14 +66,14 @@ export default function PeerlessList({ side, teamSide }: PropsType) {
 
   return (
     <div className="flex flex-col flex-[2]">
-      {banpickMode !== 'tournament' &&
-        side === 'left' &&
-        teamSide === 'blue' &&
+      {banpickMode !== banPickModeOptions.TNM &&
+        side === sideOptions.LEFT &&
+        teamSide === teamSideOptions.BLUE &&
         BlueBanDataRef.current.map((ban, index) => <PeerlessImage key={index} ban={ban} />)}
 
-      {banpickMode !== 'tournament' &&
-        side === 'right' &&
-        teamSide === 'red' &&
+      {banpickMode !== banPickModeOptions.TNM &&
+        side === sideOptions.RIGHT &&
+        teamSide === teamSideOptions.RED &&
         RedBanDataRef.current.map((ban, index) => <PeerlessImage key={index} ban={ban} />)}
     </div>
   );

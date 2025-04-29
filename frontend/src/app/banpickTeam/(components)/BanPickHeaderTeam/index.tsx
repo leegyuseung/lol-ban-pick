@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useBanStore, useBanTeamStore, useRulesStore } from '@/store';
 import { useState, useEffect, useRef } from 'react';
 import { InfoType } from '@/types';
+import { banPickModeOptions, booleanOptions, roleOptions, teamcolorOptions, teamSideOptions } from '@/constants';
 
 export default function BanPickHeader() {
   const { banpickMode, timeUnlimited, nowSet } = useRulesStore();
@@ -18,16 +19,16 @@ export default function BanPickHeader() {
     const initialState = useRulesStore.getState();
     const { hostInfo, guestInfo, role } = initialState;
 
-    if (role === 'host') {
+    if (role === roleOptions.HOST) {
       InfoDataRef.current = hostInfo;
-    } else if (role === 'guest') {
+    } else if (role === roleOptions.GUEST) {
       InfoDataRef.current = guestInfo;
-    } else if (role === 'audience') {
+    } else if (role === roleOptions.AUD) {
       InfoDataRef.current = {
         myTeam: '',
         yourTeam: '',
-        myTeamSide: 'audience',
-        yourTeamSide: 'audience',
+        myTeamSide: teamSideOptions.AUD,
+        yourTeamSide: teamSideOptions.AUD,
         myImg: '',
         yourImg: '',
       };
@@ -35,16 +36,16 @@ export default function BanPickHeader() {
 
     const unsubscribe = useRulesStore.subscribe((state) => {
       const { hostInfo, guestInfo, role } = state;
-      if (role === 'host') {
+      if (role === roleOptions.HOST) {
         InfoDataRef.current = hostInfo;
-      } else if (role === 'guest') {
+      } else if (role === roleOptions.GUEST) {
         InfoDataRef.current = guestInfo;
-      } else if (role === 'audience') {
+      } else if (role === roleOptions.AUD) {
         InfoDataRef.current = {
           myTeam: hostInfo.myTeam,
           yourTeam: hostInfo.yourTeam,
-          myTeamSide: 'audience',
-          yourTeamSide: 'audience',
+          myTeamSide: teamSideOptions.AUD,
+          yourTeamSide: teamSideOptions.AUD,
           myImg: hostInfo.myImg,
           yourImg: hostInfo.yourImg,
         };
@@ -56,12 +57,12 @@ export default function BanPickHeader() {
   }, []);
 
   useEffect(() => {
-    setHeaderSecond(timeUnlimited === 'true' ? '∞' : '5');
+    setHeaderSecond(timeUnlimited === booleanOptions.TRUE ? '∞' : '5');
   }, [timeUnlimited]);
 
   // 시간
   useEffect(() => {
-    if (timeUnlimited === 'true' || headerSecond === '') return;
+    if (timeUnlimited === booleanOptions.TRUE || headerSecond === '') return;
 
     timerRef.current = setInterval(() => {
       if (secondRef.current === '0') {
@@ -87,11 +88,14 @@ export default function BanPickHeader() {
   useEffect(() => {
     if (!selectedTeam[selectedTeamIndex]) return;
 
-    if (selectedTeam[selectedTeamIndex].color === '') {
+    if (selectedTeam[selectedTeamIndex].color === teamcolorOptions.NO) {
       setHeaderSecond('');
       setCurrentColor(selectedTeam[selectedTeamIndex].color);
-    } else if (selectedTeam[selectedTeamIndex].color === 'blue' || selectedTeam[selectedTeamIndex].color === 'red') {
-      if (timeUnlimited !== 'true') {
+    } else if (
+      selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE ||
+      selectedTeam[selectedTeamIndex].color === teamcolorOptions.RED
+    ) {
+      if (timeUnlimited !== booleanOptions.TRUE) {
         secondRef.current = '5';
         setHeaderSecond('5');
       } else {
@@ -107,7 +111,7 @@ export default function BanPickHeader() {
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
           <div className="relative w-[80px] h-[65px] ml-10">
-            {InfoDataRef.current?.myTeamSide === 'blue'
+            {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE
               ? InfoDataRef.current?.myImg && (
                   <Image
                     sizes="w-[80px] h-[65px]"
@@ -129,7 +133,7 @@ export default function BanPickHeader() {
                   />
                 )}
           </div>
-          {InfoDataRef.current?.myTeamSide === 'blue' ? (
+          {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE ? (
             <span className="text-2xl mr-10">{InfoDataRef.current?.myTeam}</span>
           ) : (
             <span className="text-2xl mr-10">{InfoDataRef.current?.yourTeam}</span>
@@ -137,23 +141,25 @@ export default function BanPickHeader() {
         </div>
         <div className="flex-[1] w-full relative overflow-hidden h-4">
           <div
-            className={`absolute top-0 right-0 h-full w-full ${currentColor === 'blue' ? 'bg-blue-500 animate-fill-left-half' : ''}`}
+            className={`absolute top-0 right-0 h-full w-full ${currentColor === teamSideOptions.BLUE ? 'bg-blue-500 animate-fill-left-half' : ''}`}
           />
         </div>
       </div>
       <div className="flex-[1] flex flex-col justify-center items-center">
-        <span className="text-xs">{banpickMode === 'tournament' ? '드리프트 토너먼트' : `${nowSet} 세트`}</span>
+        <span className="text-xs">
+          {banpickMode === banPickModeOptions.TNM ? '드리프트 토너먼트' : `${nowSet} 세트`}
+        </span>
         <span className="text-3xl">{`:${headerSecond}`}</span>
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
-          {InfoDataRef.current?.myTeamSide === 'blue' ? (
+          {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE ? (
             <span className="text-2xl ml-10">{InfoDataRef.current?.yourTeam}</span>
           ) : (
             <span className="text-2xl ml-10">{InfoDataRef.current?.myTeam}</span>
           )}
           <div className="relative w-[80px] h-[65px] mr-10">
-            {InfoDataRef.current?.myTeamSide === 'blue'
+            {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE
               ? InfoDataRef.current?.yourImg && (
                   <Image
                     className="object-contain"
@@ -178,7 +184,7 @@ export default function BanPickHeader() {
         </div>
         <div className="flex-[1] w-full relative overflow-hidden">
           <div
-            className={`absolute top-0 left-0 h-full w-full ${currentColor === 'red' ? 'bg-red-500 animate-fill-right-half' : ''}`}
+            className={`absolute top-0 left-0 h-full w-full ${currentColor === teamSideOptions.RED ? 'bg-red-500 animate-fill-right-half' : ''}`}
           />
         </div>
       </div>

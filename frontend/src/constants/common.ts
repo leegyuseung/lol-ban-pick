@@ -1,11 +1,31 @@
 const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
 
-const lineMapping: Record<string, number> = {
+const lineMappingOptions: Record<string, number> = {
   top: 0,
   jungle: 1,
   mid: 2,
   ad: 3,
   sup: 4,
+};
+
+const ImageList = ['t1', 'hanwha', 'geng', 'kia', 'kt', 'dn', 'ok'];
+const ImageListPng = ['drx', 'ns'];
+
+const banPickModeOptions = {
+  TNM: 'tournament',
+  PRL3: 'peerless3',
+  PRL5: 'peerless5',
+} as const;
+
+const peopleModeOptions = {
+  SOLO: 'solo',
+  TEAM: 'team',
+} as const;
+
+const infoStatusOptions = {
+  JOIN: 'join',
+  READY: 'ready',
+  NO: 'no',
 };
 
 const roleOptions = {
@@ -25,208 +45,70 @@ const sideOptions = {
   RIGHT: 'right',
 } as const;
 
-const InitailizeInfoData = {
-  blurb: '',
-  id: '',
-  key: '',
-  name: '',
-  partype: '',
-  tags: [],
-  title: '',
-  version: '',
-  status: '',
-  line: [],
+const locationOptions = {
+  BLUEB1: 'blueBan1',
+  BLUEB2: 'blueBan2',
+  BLUEB3: 'blueBan3',
+  BLUEB4: 'blueBan4',
+  BLUEB5: 'blueBan5',
+  REDB1: 'redBan1',
+  REDB2: 'redBan2',
+  REDB3: 'redBan3',
+  REDB4: 'redBan4',
+  REDB5: 'redBan5',
+  REDP1: 'redPick1',
+  REDP2: 'redPick2',
+  REDP3: 'redPick3',
+  REDP4: 'redPick4',
+  REDP5: 'redPick5',
+  BLUEP1: 'bluePick1',
+  BLUEP2: 'bluePick2',
+  BLUEP3: 'bluePick3',
+  BLUEP4: 'bluePick4',
+  BLUEP5: 'bluePick5',
+} as const;
+
+const statusOptions = {
+  PICK: 'pick',
+  BAN: 'ban',
+  PEER: 'peer',
+  NO: '',
+} as const;
+
+const lineOptions = {
+  TOP: 'top',
+  JUG: 'jungle',
+  MID: 'mid',
+  AD: 'ad',
+  SUP: 'sup',
+  NO: '',
+} as const;
+
+const teamcolorOptions = {
+  BLUE: 'blue',
+  RED: 'red',
+  NO: '',
+} as const;
+
+const booleanOptions = {
+  TRUE: 'true',
+  FALSE: 'false',
 };
 
-const InitializeBanPickObject = [
-  {
-    index: 0,
-    location: 'blueBan1',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 1,
-    location: 'redBan1',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 2,
-    location: 'blueBan2',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 3,
-    location: 'redBan2',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 4,
-    location: 'blueBan3',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 5,
-    location: 'redBan3',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 6,
-    location: 'bluePick1',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 7,
-    location: 'redPick1',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 8,
-    location: 'redPick2',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 9,
-    location: 'bluePick2',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 10,
-    location: 'bluePick3',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 11,
-    location: 'redPick3',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 12,
-    location: 'redBan4',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 13,
-    location: 'blueBan4',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 14,
-    location: 'redBan5',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 15,
-    location: 'blueBan5',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 16,
-    location: 'redPick4',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 17,
-    location: 'bluePick4',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 18,
-    location: 'bluePick5',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 19,
-    location: 'redPick5',
-    name: '',
-    info: InitailizeInfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-];
-
 export {
+  ImageList,
+  ImageListPng,
   filterOptions,
   roleOptions,
   teamSideOptions,
-  lineMapping,
+  lineMappingOptions,
   sideOptions,
-  InitailizeInfoData,
-  InitializeBanPickObject,
+  locationOptions,
+  statusOptions,
+  lineOptions,
+  teamcolorOptions,
+  banPickModeOptions,
+  peopleModeOptions,
+  infoStatusOptions,
+  booleanOptions,
 };

@@ -7,7 +7,7 @@ import { useRulesStore, usePeerlessStore } from '@/store';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { useBanTeamStore, useBanStore } from '@/store';
-import { filterOptions, roleOptions, teamSideOptions } from '@/constants';
+import { banPickModeOptions, filterOptions, roleOptions, teamSideOptions } from '@/constants';
 import { ChampionInfoType, InfoType } from '@/types';
 
 // search Icon 최적화
@@ -199,9 +199,15 @@ export default function SelectChampions() {
         ))}
       </div>
       <div className="relative flex justify-center">
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '' && role === 'host') ||
-          (banpickMode === 'tournament' && headerSecond === '' && role === 'host') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '' && role === 'host')) && (
+        {((banpickMode === banPickModeOptions.PRL3 &&
+          nowSet === 3 &&
+          headerSecond === '' &&
+          role === roleOptions.HOST) ||
+          (banpickMode === banPickModeOptions.TNM && headerSecond === '' && role === roleOptions.HOST) ||
+          (banpickMode === banPickModeOptions.PRL5 &&
+            nowSet === 5 &&
+            headerSecond === '' &&
+            role === roleOptions.HOST)) && (
           <div className="absolute left-0">
             <Button
               text={'뒤로가기'}
@@ -221,16 +227,16 @@ export default function SelectChampions() {
           </div>
         )}
 
-        {((banpickMode !== 'tournament' &&
-          banpickMode === 'peerless3' &&
+        {((banpickMode !== banPickModeOptions.TNM &&
+          banpickMode === banPickModeOptions.PRL3 &&
           nowSet < 3 &&
           headerSecond === '' &&
-          role === 'host') ||
-          (banpickMode !== 'tournament' &&
-            banpickMode === 'peerless5' &&
+          role === roleOptions.HOST) ||
+          (banpickMode !== banPickModeOptions.TNM &&
+            banpickMode === banPickModeOptions.PRL5 &&
             nowSet < 5 &&
             headerSecond === '' &&
-            role === 'host')) && (
+            role === roleOptions.HOST)) && (
           <div className="absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}
