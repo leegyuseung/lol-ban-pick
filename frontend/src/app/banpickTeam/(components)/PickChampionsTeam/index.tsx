@@ -11,7 +11,9 @@ type PropsType = {
 
 // SelectChampions 부분에서 선택하면 이미지 렌더링
 export default function PickChampions({ side }: PropsType) {
-  const { currentSelectedPick, banPickObject, currentLocation } = useBanStore();
+  const currentSelectedPick = useBanStore((state) => state.currentSelectedPick);
+  const banPickObject = useBanStore((state) => state.banPickObject);
+  const currentLocation = useBanStore((state) => state.currentLocation);
   return (
     <div className="flex flex-col flex-[3] m-1">
       {/* 상단부 */}

@@ -287,13 +287,13 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       if (banpickMode !== banPickModeOptions.TNM) {
         const selectedChampion = {
           name: data.data.randomName,
-          info: data.data.randomInfo,
+          info: data.data.newRandomInfo,
           line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
         };
         if (selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE) setBlueBan(selectedChampion);
         else setRedBan(selectedChampion);
       }
-      setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
+      setBanPickObject(index, data.data.randomName, data.data.newRandomInfo, true); // 랜덤 챔피언을 선택해준다
       if (selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK) {
         setChangeChampionInfo(data.data.randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
       }

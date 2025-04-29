@@ -3,13 +3,13 @@ import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
 import TeamChangePopup from '@/components/TeamChangePopup';
+import useSimplify from '@/hooks/useSimplify';
 import { useRulesStore, usePeerlessStore } from '@/store';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { useBanTeamStore, useBanStore } from '@/store';
 import { banPickModeOptions, filterOptions, roleOptions, teamSideOptions } from '@/constants';
 import { ChampionInfoI, InfoType } from '@/types';
-import useSimplify from '@/hooks/useSimplify';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
