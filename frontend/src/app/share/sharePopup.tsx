@@ -7,7 +7,9 @@ import ShareUrl from '@/components/Share/ShareUrl';
 import ConfirmPopup from '@/components/Popup/confirm';
 import { useSocketStore, useRulesStore, usePopupStore, useUserStore } from '@/store';
 import { usePathname, useRouter } from 'next/navigation';
-import { roleOptions, socketType, teamSideOptions } from '@/constants';
+import socketType  from '@common/constants';
+
+import { roleOptions, teamSideOptions } from '@/constants';
 interface PropType {
   setSharePopup: (b: boolean) => void;
   userId: string;

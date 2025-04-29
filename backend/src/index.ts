@@ -3,6 +3,7 @@ import { Server } from 'socket.io';
 import http from 'http';
 import cors from 'cors';
 import { config } from 'dotenv';
+import socketType  from '@common/constants';
 config({ path: './.env.production' });
 
 const app = express();
@@ -17,13 +18,12 @@ const io = new Server(server, {
 const PORT = process.env.PORT || 4000;
 
 const clients = new Map();
-
 app.get('/', (req, res) => {
-  res.send('Backend is running');
+  res.send('Backend is running', socketType.default);
 });
 
 io.on('connection', (socket) => {
-  console.log('🔌 New client connected:', socket.id);
+  console.log('🔌 New client connected:' + JSON.stringify(socketType)+ socket.id);
 
   let roomId = '';
   let userId = '';
@@ -33,9 +33,9 @@ io.on('connection', (socket) => {
 
   console.log(`📝 Connection details - roomId: ${roomId}, userId: ${userId}, position: ${position}, host: ${host}`);
 
-  socket.on('init', (_data) => {
+  socket.on(socketType.INIT, (_data) => {
     console.log('🎮 Initializing game settings');
-    let data = JSON.parse(JSON.stringify(_data));
+    const data = JSON.parse(JSON.stringify(_data));
     roomId = data.roomId; //roomId
     userId = data.userId; //userId
     position = data.position; //블루인지. 레드인지
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
     clients.set(data.userId, initInfo);
   });
 
-  socket.on('join', (data) => {
+  socket.on(socketType.JOIN, (data) => {
     //대기방에 들어왔을때로 guestinfo나 hostinfo가 join이 됨
     console.log('🚪 Processing join request', JSON.stringify(data));
 
@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
     const guestClients = roomsClient.filter((client) => !client.host && client.role === 'guest');
     const audienceClients = roomsClient.filter((client) => !client.host && client.role === 'audience');
     //hostRules로 반대의 정보를 guestinfo로 설정
-    let hostRules = roomsClient.find((client) => {
+    const hostRules = roomsClient.find((client) => {
       return client.host;
     });
     //host일때
@@ -139,7 +139,7 @@ io.on('connection', (socket) => {
       });
     });
   });
-  socket.on('emit', (data) => {
+  socket.on(socketType.EMIT, (data) => {
     const { roomId, params } = data;
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === roomId);
 
@@ -148,7 +148,7 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('ready', (data) => {
+  socket.on(socketType.READY, (data) => {
     const { roomId, role } = data;
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === roomId);
     const audienceClients = roomsClient.filter((client) => !client.host && client.role === 'audience');
@@ -168,7 +168,7 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('readyCancel', (data) => {
+  socket.on(socketType.READYCANCEL, (data) => {
     const { roomId, role } = data;
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === roomId);
     const audienceClients = roomsClient.filter((client) => !client.host && client.role === 'audience');
@@ -187,56 +187,56 @@ io.on('connection', (socket) => {
       });
     });
   });
-  socket.on('banpickStart', (data) => {
+  socket.on(socketType.BANPICKSTART, (data) => {
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('banpickStart');
     });
   });
 
-  socket.on('image', (data) => {
+  socket.on(socketType.IMAGE, (data) => {
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('image', { params: data.data });
     });
   });
 
-  socket.on('champion', (data) => {
+  socket.on(socketType.CHAMPION, (data) => {
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('champion');
     });
   });
 
-  socket.on('random', (data) => {
+  socket.on(socketType.RANDOM, (data) => {
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('random', { data: data.data });
     });
   });
 
-  socket.on('Peerless', (data) => {
+  socket.on(socketType.PEERLESS, (data) => {
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('Peerless');
     });
   });
 
-  socket.on('clearPeerless', (data) => {
+  socket.on(socketType.CLEARPEERLESS, (data) => {
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('clearPeerless');
     });
   });
 
-  socket.on('teamChange', (data) => {
+  socket.on(socketType.TEAMCHANGE, (data) => {
     const roomsClient = Array.from(clients.values()).filter((client) => client.roomId === data.roomId);
     roomsClient.forEach((client) => {
       client.socket.emit('teamChange');
     });
   });
 
-  socket.on('closeSharePopup', (data) => {
+  socket.on(socketType.CLOSESHAREPOPUP, (data) => {
     console.log(
       'closeSharePopup',
       Array.from(clients.values()).map((v) => ({
@@ -268,7 +268,7 @@ io.on('connection', (socket) => {
     );
   });
 
-  socket.on('closeByHost', (data) => {
+  socket.on(socketType.CLOSEBYHOST, (data) => {
     const target = Array.from(clients.values()).find((c) => c.userId === data.userId);
 
     console.log(
@@ -299,7 +299,7 @@ io.on('connection', (socket) => {
     console.log(target, '??' + data.roomId);
   });
   // 소켓 연결 끊어졌을 때
-  socket.on('disconnect', (reason) => {
+  socket.on(socketType.DISCONNECT, (reason) => {
     console.log(
       `❌ Client disconnecting - roomId: ${roomId}, userId: ${userId},`,
       Array.from(clients.values()).map((e) => ({ roomId: e.roomId, userId: e.userId })),
