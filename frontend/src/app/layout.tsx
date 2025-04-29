@@ -24,7 +24,7 @@ export default function RootLayout({
         {/* Google ads */}
         <Script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6368269150151357"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3412811676948831"
           strategy="afterInteractive"
           crossOrigin="anonymous"
         />
