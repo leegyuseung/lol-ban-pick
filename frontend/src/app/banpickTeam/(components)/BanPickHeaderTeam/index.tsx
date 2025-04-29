@@ -57,7 +57,7 @@ export default function BanPickHeader() {
   }, []);
 
   useEffect(() => {
-    setHeaderSecond(timeUnlimited === booleanOptions.TRUE ? '∞' : '5');
+    setHeaderSecond(timeUnlimited === booleanOptions.TRUE ? '∞' : '30');
   }, [timeUnlimited]);
 
   // 시간
@@ -70,8 +70,8 @@ export default function BanPickHeader() {
         if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide) {
           TeamRandomPick();
         } else {
-          secondRef.current = '5';
-          setHeaderSecond('5');
+          secondRef.current = '30';
+          setHeaderSecond('30');
         }
       } else {
         secondRef.current = String(Number(secondRef.current) - 1);
@@ -96,8 +96,8 @@ export default function BanPickHeader() {
       selectedTeam[selectedTeamIndex].color === teamcolorOptions.RED
     ) {
       if (timeUnlimited !== booleanOptions.TRUE) {
-        secondRef.current = '5';
-        setHeaderSecond('5');
+        secondRef.current = '30';
+        setHeaderSecond('30');
       } else {
         secondRef.current = '∞';
         setHeaderSecond('∞');

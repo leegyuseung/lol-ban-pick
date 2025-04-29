@@ -322,7 +322,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       setCurrentLocation(index); // 다음 위치를 저장한다
       setCurrentSelectedPick('', InitailizeInfoData); // 초기화
       setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
-      setHeaderSecond('5');
+      setHeaderSecond('30');
     });
 
     socket.on(socketType.PEERLESS, () => {
