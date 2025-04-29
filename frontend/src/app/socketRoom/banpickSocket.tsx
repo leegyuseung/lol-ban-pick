@@ -1,12 +1,13 @@
 //소켓 연결 페이지
 'use client';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useRulesStore, useSocketStore } from '@/store';
-import { useSearchParams } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
 import Image from 'next/image';
 import ConfirmPopup from '@/components/Popup/confirm';
+import { useRulesStore, useSocketStore } from '@/store';
+import { useSearchParams } from 'next/navigation';
 import { FaCheck, FaCopy } from 'react-icons/fa6';
+import { infoStatusOptions, roleOptions, socketType, teamSideOptions } from '@/constants';
 
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const [copyedText, setCopyedText] = useState('');
@@ -24,55 +25,59 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   //room id
   const { roomId, shareUrl } = useSocketStore();
   //user id
-  const { ws } = useSocketStore();
+  const { socket } = useSocketStore();
   const { audienceCount, role, hostInfo, guestInfo, position } = useRulesStore();
-  const { setSocket } = useBanpickSocket({ userId: _userId, roomId });
+  const { setSocketFunc } = useBanpickSocket({ userId: _userId, roomId });
   const onReady = () => {
-    ws?.send(JSON.stringify({ type: 'ready', role, roomId }));
+    socket?.emit(socketType.READY, { role, roomId });
   };
   const onCancel = () => {
-    ws?.send(JSON.stringify({ type: 'readyCancel', role, roomId }));
+    socket?.emit(socketType.READYCANCEL, { role, roomId });
   };
   useEffect(() => {
-    if (!searchParams?.get('roomId') && !roomId && role === 'host') {
-      ws?.send(JSON.stringify({ type: 'noRoom' }));
+    if (!searchParams?.get('roomId') && !roomId && role === roleOptions.HOST) {
+      socket?.emit(socketType.NOROOM);
     }
-    setSocket();
+    setSocketFunc();
   }, [role]);
   const goEnter = () => {
-    ws?.send(JSON.stringify({ type: 'banpickStart', roomId }));
+    socket?.emit(socketType.BANPICKSTART, { roomId });
   };
   const redCount = useMemo(() => {
-    const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
-    return !teamSide || !teamSide.status || !['join', 'ready'].includes(teamSide.status) ? 0 : 1;
+    const teamSide = hostInfo.myTeamSide === teamSideOptions.RED ? hostInfo : guestInfo;
+    return !teamSide || !teamSide.status || ![infoStatusOptions.JOIN, infoStatusOptions.READY].includes(teamSide.status)
+      ? 0
+      : 1;
   }, [guestInfo, hostInfo]);
   const blueCount = useMemo(() => {
-    const teamSide = hostInfo.myTeamSide === 'blue' ? hostInfo : guestInfo;
+    const teamSide = hostInfo.myTeamSide === teamSideOptions.BLUE ? hostInfo : guestInfo;
 
-    return !teamSide || !teamSide.status || !['join', 'ready'].includes(teamSide.status) ? 0 : 1;
+    return !teamSide || !teamSide.status || ![infoStatusOptions.JOIN, infoStatusOptions.READY].includes(teamSide.status)
+      ? 0
+      : 1;
   }, [guestInfo, hostInfo]);
   const redTeamName = useMemo(() => {
-    const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
+    const teamSide = hostInfo.myTeamSide === teamSideOptions.RED ? hostInfo : guestInfo;
     return teamSide.myTeam;
   }, [guestInfo, hostInfo]);
   const blueTeamName = useMemo(() => {
-    const teamSide = hostInfo.myTeamSide === 'blue' ? hostInfo : guestInfo;
+    const teamSide = hostInfo.myTeamSide === teamSideOptions.BLUE ? hostInfo : guestInfo;
 
     return teamSide.myTeam;
   }, [guestInfo, hostInfo]);
 
   const blueTeamImg = useMemo(() => {
-    const teamSide = hostInfo.myTeamSide === 'blue' ? hostInfo : guestInfo;
+    const teamSide = hostInfo.myTeamSide === teamSideOptions.BLUE ? hostInfo : guestInfo;
 
     return teamSide.myImg ? teamSide.myImg : '/images/t1.webp';
   }, [guestInfo, hostInfo]);
   const redTeamImg = useMemo(() => {
-    const teamSide = hostInfo.myTeamSide === 'red' ? hostInfo : guestInfo;
+    const teamSide = hostInfo.myTeamSide === teamSideOptions.RED ? hostInfo : guestInfo;
 
     return teamSide.myImg ? teamSide.myImg : '/images/hanwha.webp';
   }, [guestInfo, hostInfo]);
-  const isHostReady = useMemo(() => hostInfo.status === 'ready', [hostInfo]);
-  const isGuestReady = useMemo(() => guestInfo.status === 'ready', [guestInfo]);
+  const isHostReady = useMemo(() => hostInfo.status === infoStatusOptions.READY, [hostInfo]);
+  const isGuestReady = useMemo(() => guestInfo.status === infoStatusOptions.READY, [guestInfo]);
   return (
     <>
       <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
@@ -99,8 +104,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               />
             </div>
             <h2 className="text-xl font-semibold">
-              {role === 'host' ? (
-                position === 'red' ? (
+              {role === roleOptions.HOST ? (
+                position === teamSideOptions.RED ? (
                   <i className="w-[20px] h-[20px]" onClick={() => copyText(shareUrl.yourTeamUrl)}>
                     {shareUrl.yourTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
                   </i>
@@ -116,7 +121,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
           </div>
           {/* 관전자 */}
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg border-2 border-gray-600">
-            {role === 'host' ? (
+            {role === roleOptions.HOST ? (
               <i className="w-5 h-5" onClick={() => copyText(shareUrl.audienceTeamUrl)}>
                 {shareUrl.audienceTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
               </i>
@@ -140,8 +145,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redTeamImg} alt="logo" fill priority />
             </div>
             <h2 className="text-xl font-semibold">
-              {role === 'host' ? (
-                position === 'blue' ? (
+              {role === roleOptions.HOST ? (
+                position === teamSideOptions.BLUE ? (
                   <i className="w-5 h-5" onClick={() => copyText(shareUrl.yourTeamUrl)}>
                     {shareUrl.yourTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
                   </i>
@@ -160,8 +165,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
           <div className="flex w-[300px] justify-evenly mt-5">
-            {role === 'host' || role === 'guest' ? (
-              (role === 'host' && isHostReady) || (role === 'guest' && isGuestReady) ? (
+            {role === roleOptions.HOST || role === roleOptions.GUEST ? (
+              (role === roleOptions.HOST && isHostReady) || (role === roleOptions.GUEST && isGuestReady) ? (
                 <button
                   className="cursor-pointer h-8 px-8 text-mainText bg-orange-700 font-medium text-xs rounded-sm hover:bg-opacity-65"
                   onClick={onCancel}
@@ -179,7 +184,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             ) : (
               <></>
             )}
-            {role === 'host' ? (
+            {role === roleOptions.HOST ? (
               <button
                 className={`${!isHostReady || !isGuestReady ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
                 onClick={goEnter}

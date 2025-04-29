@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import update from '../../data/updates.json';
-import developer from '../../data/developer.json';
+import update from '@/data/updates.json';
+import developer from '@/data/developer.json';
 import { useState } from 'react';
 
 export default function About() {

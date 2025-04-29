@@ -3,11 +3,13 @@ import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
 import TeamChangePopup from '@/components/TeamChangePopup';
+import useSimplify from '@/hooks/useSimplify';
 import { useRulesStore, usePeerlessStore } from '@/store';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
-import { ChampionInfoI, InfoType } from '@/types/types';
 import { useBanTeamStore, useBanStore } from '@/store';
+import { banPickModeOptions, filterOptions, roleOptions, teamSideOptions } from '@/constants';
+import { ChampionInfoI, InfoType } from '@/types';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
@@ -22,30 +24,27 @@ export default function SelectChampions() {
     currentSelectedPick,
     selectedTeamIndex,
   } = useBanStore();
-  const { SelectTeamImage, SelectTeamChampion } = useBanTeamStore();
+  const { SelectChampionImage, SelectTeamChampion } = useBanTeamStore();
   const { banpickMode, nowSet, role, hostInfo, guestInfo } = useRulesStore();
   const { hostBan, guestBan, setTeamPeerless, clearTeamPeerless, setTeamChange } = usePeerlessStore();
-
   const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
   const [showPopup, setShowPopup] = useState(false); // 팀 변경 팝업 상태
   const [resolveFn, setResolveFn] = useState<((value: boolean) => void) | null>(null); // 팀 변경 팝업 확인 함수
-
-  const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
   const InfoDataRef = useRef<InfoType>();
 
   // InfoData 세팅
   useEffect(() => {
-    if (role === 'host') {
+    if (role === roleOptions.HOST) {
       InfoDataRef.current = hostInfo;
-    } else if (role === 'guest') {
+    } else if (role === roleOptions.GUEST) {
       InfoDataRef.current = guestInfo;
-    } else if (role === 'audience') {
+    } else if (role === roleOptions.AUD) {
       InfoDataRef.current = {
         myTeam: '',
         yourTeam: '',
-        myTeamSide: 'audience',
-        yourTeamSide: 'audience',
+        myTeamSide: teamSideOptions.AUD,
+        yourTeamSide: teamSideOptions.AUD,
         myImg: '',
         yourImg: '',
       };
@@ -103,12 +102,13 @@ export default function SelectChampions() {
   );
 
   // Image 클릭시
-  const onClick = useCallback(
-    (pickName: string, info: ChampionInfoI) => {
+  const onClickImage = useCallback(
+    async (pickName: string, info: ChampionInfoI) => {
       if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || pickName === '') return;
-      SelectTeamImage(pickName, info); // 선택한 챔피언 정보를 저장
+      const newInfoData = await useSimplify(info);
+      SelectChampionImage(pickName, newInfoData); // 선택한 챔피언 정보를 저장
     },
-    [SelectTeamImage, selectedTeamIndex],
+    [SelectChampionImage, selectedTeamIndex],
   );
 
   // 챔피언 선택 버튼 클릭시
@@ -192,7 +192,7 @@ export default function SelectChampions() {
               width={60}
               height={60}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
-              onClick={headerSecond !== '' ? () => onClick(name, info) : undefined}
+              onClick={headerSecond !== '' ? () => onClickImage(name, info) : undefined}
             />
             <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
             {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}
@@ -201,9 +201,15 @@ export default function SelectChampions() {
         ))}
       </div>
       <div className="relative flex justify-center">
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '' && role === 'host') ||
-          (banpickMode === 'tournament' && headerSecond === '' && role === 'host') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '' && role === 'host')) && (
+        {((banpickMode === banPickModeOptions.PRL3 &&
+          nowSet === 3 &&
+          headerSecond === '' &&
+          role === roleOptions.HOST) ||
+          (banpickMode === banPickModeOptions.TNM && headerSecond === '' && role === roleOptions.HOST) ||
+          (banpickMode === banPickModeOptions.PRL5 &&
+            nowSet === 5 &&
+            headerSecond === '' &&
+            role === roleOptions.HOST)) && (
           <div className="absolute left-0">
             <Button
               text={'뒤로가기'}
@@ -223,16 +229,16 @@ export default function SelectChampions() {
           </div>
         )}
 
-        {((banpickMode !== 'tournament' &&
-          banpickMode === 'peerless3' &&
+        {((banpickMode !== banPickModeOptions.TNM &&
+          banpickMode === banPickModeOptions.PRL3 &&
           nowSet < 3 &&
           headerSecond === '' &&
-          role === 'host') ||
-          (banpickMode !== 'tournament' &&
-            banpickMode === 'peerless5' &&
+          role === roleOptions.HOST) ||
+          (banpickMode !== banPickModeOptions.TNM &&
+            banpickMode === banPickModeOptions.PRL5 &&
             nowSet < 5 &&
             headerSecond === '' &&
-            role === 'host')) && (
+            role === roleOptions.HOST)) && (
           <div className="absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}

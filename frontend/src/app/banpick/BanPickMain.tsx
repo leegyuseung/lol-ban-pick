@@ -1,5 +1,5 @@
-import BanPickBody from './(components)/BanPickBody';
-import BanPickHeader from './(components)/BanPickHeader';
+import BanPickBody from '@/app/banpick/(components)/BanPickBody';
+import BanPickHeader from '@/app/banpick/(components)/BanPickHeader';
 
 export default function BanPickMain() {
   return (

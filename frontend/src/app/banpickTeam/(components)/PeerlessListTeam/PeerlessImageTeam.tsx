@@ -1,9 +1,9 @@
 import React from 'react';
-import { BanArray } from '@/store/banpick';
 import Image from 'next/image';
+import { BanObjectType } from '@/types';
 
 interface PeerlessImageProps {
-  ban: BanArray[];
+  ban: BanObjectType[];
 }
 
 const PeerlessImage = ({ ban }: PeerlessImageProps) => {

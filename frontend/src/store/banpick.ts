@@ -1,301 +1,39 @@
-import championData from '../data/champions.json';
-import { ChampionInfoI } from '@/types/types';
+import championData from '@/data/champions.json';
+import useSimplify from '@/hooks/useSimplify';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { useSocketStore } from './socket';
-import { useRulesStore } from './rules';
-
-type Store = {
-  championInfo: Record<string, ChampionInfoI>;
-  setChampionInfo: () => Promise<void>;
-  setChangeChampionInfo: (name: string, banPick: string) => void;
-};
-
-export type BanArray = {
-  name: string;
-  info: ChampionInfoI;
-  line: number;
-};
-
-type PeerlessStore = {
-  redBan: BanArray[];
-  blueBan: BanArray[];
-
-  setRedBan: (obj: BanArray) => void;
-  setBlueBan: (obj: BanArray) => void;
-
-  setRedBanClear: () => void;
-  setBlueBanClear: () => void;
-
-  hostBan: BanArray[][];
-  guestBan: BanArray[][];
-  setHostBan: (array: BanArray[]) => void;
-  setTeamBan: (blue: BanArray[], red: BanArray[]) => void;
-  setGuestBan: (array: BanArray[]) => void;
-  setClearHostBan: () => void;
-  setClearGuestBan: () => void;
-  setTeamPeerless: () => void;
-  clearTeamPeerless: () => void;
-  setTeamChange: () => void;
-};
-
-export type BanPickObjectType = {
-  index: number;
-  location: string;
-  name: string;
-  info: ChampionInfoI;
-  use: boolean;
-  random: boolean;
-  status: string;
-}[];
-
-export type currentSelectedPickType = {
-  name: string;
-  info: ChampionInfoI;
-}[];
-
-export const InfoData = {
-  blurb: '',
-  id: '',
-  key: '',
-  name: '',
-  partype: '',
-  tags: [],
-  title: '',
-  version: '',
-  status: '',
-  line: [],
-};
-
-const InitializeBanPickObject = [
-  {
-    index: 0,
-    location: 'blueBan1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 1,
-    location: 'redBan1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 2,
-    location: 'blueBan2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 3,
-    location: 'redBan2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 4,
-    location: 'blueBan3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 5,
-    location: 'redBan3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 6,
-    location: 'bluePick1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 7,
-    location: 'redPick1',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 8,
-    location: 'redPick2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 9,
-    location: 'bluePick2',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 10,
-    location: 'bluePick3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 11,
-    location: 'redPick3',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 12,
-    location: 'redBan4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 13,
-    location: 'blueBan4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 14,
-    location: 'redBan5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 15,
-    location: 'blueBan5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'ban',
-  },
-  {
-    index: 16,
-    location: 'redPick4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 17,
-    location: 'bluePick4',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 18,
-    location: 'bluePick5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-  {
-    index: 19,
-    location: 'redPick5',
-    name: '',
-    info: InfoData,
-    use: false,
-    random: false,
-    status: 'pick',
-  },
-];
-
-interface BanI {
-  championInfo: Record<string, ChampionInfoI>;
-  setChampionInfo: () => Promise<void>;
-  setChangeChampionInfo: (name: string, banPick: string) => void;
-  setChangeChampionPeerInfo: (myBan: BanArray[][], yourBan: BanArray[][]) => void;
-
-  currentSelectedPick: currentSelectedPickType;
-  setCurrentSelectedPick: (name: string, info: ChampionInfoI) => void;
-
-  banPickObject: BanPickObjectType;
-  setBanPickObject: (index: number, name: string, info: ChampionInfoI, ran: boolean) => void;
-  setClearBanPickObject: () => void;
-
-  currentLocation: string;
-  setCurrentLocation: (index: number) => void;
-  setClearCurrentLocation: () => void;
-
-  selectedTeam: {
-    color: string;
-    banpick: string;
-    line: string;
-  }[];
-  selectedTeamIndex: number;
-  setSelectedTeamIndex: () => void;
-  setClearSelectTeamIndex: () => void;
-
-  RandomPick: () => void;
-
-  headerSecond: string;
-  setHeaderSecond: (second: string) => void;
-}
-
-interface TeamBanI {
-  SelectTeamImage: (name: string, info: ChampionInfoI) => void;
-  SelectTeamChampion: () => void;
-  TeamRandomPick: () => void;
-}
+import { useRulesStore } from '@/store/rules';
+import { useSendSocket } from '@/hooks/useTeamSocket';
+import {
+  BanObjectType,
+  ChampionInfoI,
+  PeerlessStoreType,
+  ChampionStoreType,
+  BanI,
+  TeamBanI,
+  ChampionInfoType,
+} from '@/types';
+import {
+  InitailizeInfoData,
+  InitializeBanPickObject,
+  InitializeCurrentSelectedPick,
+  InitializeSelectedTeam,
+  locationOptions,
+  navigations,
+  roleOptions,
+  socketType,
+  statusOptions,
+  teamSideOptions,
+} from '@/constants';
 
 // 챔피언 정보 불러오기
-export const useBanpickStore = create<Store>()(
+export const useChampionStore = create<ChampionStoreType>()(
   devtools(
     (set) => ({
       championInfo: {} as Record<string, ChampionInfoI>,
       setChampionInfo: async () => {
         try {
-          const response = await fetch('/api/banpick/name');
+          const response = await fetch(navigations.BANPICKNAME);
           const { championInfo } = await response.json();
 
           const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
@@ -341,7 +79,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
   championInfo: {} as Record<string, ChampionInfoI>,
   setChampionInfo: async () => {
     try {
-      const response = await fetch('/api/banpick/name');
+      const response = await fetch(navigations.BANPICKNAME);
       const { championInfo } = await response.json();
 
       const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
@@ -397,26 +135,21 @@ export const useBanStore = create<BanI>()((set, get) => ({
       const peerChampionInfo = Object.fromEntries(
         Object.entries(state.championInfo).map(([name, info]) => [
           name,
-          bannedChampionNames.includes(name) ? { ...info, status: 'peer' } : info,
+          bannedChampionNames.includes(name) ? { ...info, status: statusOptions.PEER } : info,
         ]),
       );
 
       const BanInitialize = Object.fromEntries(
         Object.entries(peerChampionInfo).map(([name, info]) => [
           name,
-          info.status === 'ban' ? { ...info, status: '' } : info,
+          info.status === statusOptions.BAN ? { ...info, status: statusOptions.NO } : info,
         ]),
       );
 
       return { championInfo: BanInitialize };
     }),
 
-  currentSelectedPick: [
-    {
-      name: '',
-      info: InfoData,
-    },
-  ],
+  currentSelectedPick: InitializeCurrentSelectedPick,
 
   setCurrentSelectedPick: (name, info) =>
     set((state) => {
@@ -425,7 +158,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
       return { currentSelectedPick: updatedPick };
     }),
 
-  currentLocation: 'blueBan1',
+  currentLocation: locationOptions.BLUEB1,
 
   setCurrentLocation: (index) =>
     set((state) => {
@@ -435,7 +168,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
 
   setClearCurrentLocation: () =>
     set(() => {
-      return { currentLocation: 'blueBan1' };
+      return { currentLocation: locationOptions.BLUEB1 };
     }),
 
   banPickObject: InitializeBanPickObject,
@@ -463,32 +196,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
       return { selectedTeamIndex: 0 };
     }),
 
-  selectedTeam: [
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    // 1번 밴 끝
-    { color: 'blue', banpick: 'pick', line: 'top' },
-    { color: 'red', banpick: 'pick', line: 'top' },
-    { color: 'red', banpick: 'pick', line: 'jungle' },
-    { color: 'blue', banpick: 'pick', line: 'jungle' },
-    { color: 'blue', banpick: 'pick', line: 'mid' },
-    { color: 'red', banpick: 'pick', line: 'mid' },
-    // 1번 픽 끝
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'ban', line: '' },
-    { color: 'blue', banpick: 'ban', line: '' },
-    { color: 'red', banpick: 'pick', line: 'ad' },
-    { color: 'blue', banpick: 'pick', line: 'ad' },
-    { color: 'blue', banpick: 'pick', line: 'sup' },
-    { color: 'red', banpick: 'pick', line: 'sup' },
-    // 2번 픽 끝
-    { color: '', banpick: '', line: '' },
-  ],
+  selectedTeam: InitializeSelectedTeam,
 
   RandomPick: () => {
     const {
@@ -511,7 +219,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
     const randomIndex = Math.floor(Math.random() * availableChampions.length);
     const [randomName, randomInfo] = availableChampions[randomIndex];
 
-    if (selectedTeam[selectedTeamIndex].banpick === 'ban') {
+    if (selectedTeam[selectedTeamIndex].banpick === statusOptions.BAN) {
       setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
     } else {
       setBanPickObject(index, randomName, randomInfo, true); // 랜덤 챔피언을 선택해준다
@@ -520,7 +228,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
 
     index += 1;
     setCurrentLocation(index); // 다음 위치를 저장한다
-    setCurrentSelectedPick('', InfoData); // 초기화
+    setCurrentSelectedPick('', InitailizeInfoData); // 초기화
     setSelectedTeamIndex(); // 헤더 변경을 위한 Index값 수정
   },
 
@@ -531,7 +239,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
     })),
 }));
 
-export const usePeerlessStore = create<PeerlessStore>()(
+export const usePeerlessStore = create<PeerlessStoreType>()(
   persist(
     (set) => ({
       redBan: [],
@@ -570,22 +278,22 @@ export const usePeerlessStore = create<PeerlessStore>()(
       setTeamBan: (blue, red) =>
         set((state) => {
           const { role, hostInfo, guestInfo } = useRulesStore.getState();
-          let updatedHostban: BanArray[][] = [];
-          let updatedGuestban: BanArray[][] = [];
+          let updatedHostban: BanObjectType[][] = [];
+          let updatedGuestban: BanObjectType[][] = [];
 
-          if (role === 'host' || role === 'audience') {
-            if (hostInfo.myTeamSide === 'blue') {
+          if (role === roleOptions.HOST || role === roleOptions.AUD) {
+            if (hostInfo.myTeamSide === teamSideOptions.BLUE) {
               updatedHostban = [...state.hostBan, blue];
               updatedGuestban = [...state.guestBan, red];
-            } else if (hostInfo.myTeamSide === 'red') {
+            } else if (hostInfo.myTeamSide === teamSideOptions.RED) {
               updatedHostban = [...state.hostBan, red];
               updatedGuestban = [...state.guestBan, blue];
             }
-          } else if (role === 'guest') {
-            if (guestInfo.myTeamSide === 'blue') {
+          } else if (role === roleOptions.GUEST) {
+            if (guestInfo.myTeamSide === teamSideOptions.BLUE) {
               updatedHostban = [...state.hostBan, red];
               updatedGuestban = [...state.guestBan, blue];
-            } else if (guestInfo.myTeamSide === 'red') {
+            } else if (guestInfo.myTeamSide === teamSideOptions.RED) {
               updatedHostban = [...state.hostBan, blue];
               updatedGuestban = [...state.guestBan, red];
             }
@@ -614,43 +322,15 @@ export const usePeerlessStore = create<PeerlessStore>()(
         }),
 
       setTeamPeerless: () => {
-        const socketState = useSocketStore.getState();
-
-        if (!socketState) return;
-        const message = {
-          type: 'Peerless',
-          roomId: socketState.roomId,
-        };
-
-        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-          socketState.ws?.send(JSON.stringify(message));
-        }
+        useSendSocket(socketType.PEERLESS);
       },
 
       clearTeamPeerless: () => {
-        const socketState = useSocketStore.getState();
-        if (!socketState) return;
-        const message = {
-          type: 'clearPeerless',
-          roomId: socketState.roomId,
-        };
-
-        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-          socketState.ws?.send(JSON.stringify(message));
-        }
+        useSendSocket(socketType.CLEARTEAMPEERLESS);
       },
 
       setTeamChange: () => {
-        const socketState = useSocketStore.getState();
-        if (!socketState) return;
-        const message = {
-          type: 'teamChange',
-          roomId: socketState.roomId,
-        };
-
-        if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-          socketState.ws?.send(JSON.stringify(message));
-        }
+        useSendSocket(socketType.TEAMCHANGE);
       },
     }),
     {
@@ -662,52 +342,23 @@ export const usePeerlessStore = create<PeerlessStore>()(
 // Team Banpick Store
 export const useBanTeamStore = create<TeamBanI>()((set, get) => ({
   // 챔피언을 선택했을 때
-  SelectTeamImage: (name: string, info: ChampionInfoI) => {
-    const socketState = useSocketStore.getState();
-    if (!socketState) return;
-    const message = {
-      type: 'image',
-      data: { name, info },
-      roomId: socketState.roomId,
-    };
-
-    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-      socketState.ws?.send(JSON.stringify(message));
-    }
+  SelectChampionImage: (name: string, info: ChampionInfoType) => {
+    useSendSocket(socketType.IMAGE, { name, info });
   },
 
   // 챔피언을 선택하고 버튼을 클릭했을 때
   SelectTeamChampion: () => {
-    const socketState = useSocketStore.getState();
-    if (!socketState) return;
-    const message = {
-      type: 'champion',
-      roomId: socketState.roomId,
-    };
-
-    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-      socketState.ws?.send(JSON.stringify(message));
-    }
+    useSendSocket(socketType.CHAMPION);
   },
 
   // Random Pick
-  TeamRandomPick: () => {
-    const socketState = useSocketStore.getState();
-    if (!socketState) return;
-
+  TeamRandomPick: async () => {
     const { championInfo } = useBanStore.getState();
     const availableChampions = Object.entries(championInfo).filter(([_, info]) => info.status === '');
     const randomIndex = Math.floor(Math.random() * availableChampions.length);
     const [randomName, randomInfo] = availableChampions[randomIndex];
+    const newRandomInfo = await useSimplify(randomInfo);
 
-    const message = {
-      type: 'random',
-      data: { randomName, randomInfo },
-      roomId: socketState.roomId,
-    };
-
-    if (socketState.ws && socketState.ws.readyState === WebSocket.OPEN) {
-      socketState.ws?.send(JSON.stringify(message));
-    }
+    useSendSocket(socketType.RANDOM, { randomName, newRandomInfo });
   },
 }));
