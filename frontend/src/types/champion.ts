@@ -1,14 +1,17 @@
-interface ChampionInfoType {
-  blurb: string;
+type ChampionInfoType = {
   id: string;
-  key: string;
+  line: string[];
   name: string;
+  version: string;
+  status: string;
+};
+
+interface ChampionInfoI extends ChampionInfoType {
+  blurb: string;
+  key: string;
   partype: string;
   tags: string[];
   title: string;
-  version: string;
-  status: string;
-  line: string[];
 }
 
-export type { ChampionInfoType };
+export type { ChampionInfoI, ChampionInfoType };

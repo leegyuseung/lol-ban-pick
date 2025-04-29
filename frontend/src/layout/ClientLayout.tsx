@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const showHeader = pathname === navigations.SIMULATION || pathname.startsWith(navigations.SIMULATION);
+  const showHeader = pathname === navigations.SIMULATION || pathname.startsWith(navigations.INFORMATION);
   return (
     <div className="flex flex-col min-h-screen">
       {showHeader && <Header />}

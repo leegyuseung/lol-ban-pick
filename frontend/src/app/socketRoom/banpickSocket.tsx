@@ -7,7 +7,7 @@ import ConfirmPopup from '@/components/Popup/confirm';
 import { useRulesStore, useSocketStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import { FaCheck, FaCopy } from 'react-icons/fa6';
-import { infoStatusOptions, roleOptions, teamSideOptions } from '@/constants';
+import { infoStatusOptions, roleOptions, socketType, teamSideOptions } from '@/constants';
 
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const [copyedText, setCopyedText] = useState('');
@@ -29,19 +29,19 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const { audienceCount, role, hostInfo, guestInfo, position } = useRulesStore();
   const { setSocketFunc } = useBanpickSocket({ userId: _userId, roomId });
   const onReady = () => {
-    socket?.emit('ready', { role, roomId });
+    socket?.emit(socketType.READY, { role, roomId });
   };
   const onCancel = () => {
-    socket?.emit('readyCancel', { role, roomId });
+    socket?.emit(socketType.READYCANCEL, { role, roomId });
   };
   useEffect(() => {
     if (!searchParams?.get('roomId') && !roomId && role === roleOptions.HOST) {
-      socket?.emit('noRoom');
+      socket?.emit(socketType.NOROOM);
     }
     setSocketFunc();
   }, [role]);
   const goEnter = () => {
-    socket?.emit('banpickStart', { roomId });
+    socket?.emit(socketType.BANPICKSTART, { roomId });
   };
   const redCount = useMemo(() => {
     const teamSide = hostInfo.myTeamSide === teamSideOptions.RED ? hostInfo : guestInfo;

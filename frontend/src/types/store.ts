@@ -1,7 +1,7 @@
-import { BanObjectType, ChampionInfoType } from '.';
+import { BanObjectType, ChampionInfoI } from '.';
 
 type ChampionStoreType = {
-  championInfo: Record<string, ChampionInfoType>;
+  championInfo: Record<string, ChampionInfoI>;
   setChampionInfo: () => Promise<void>;
   setChangeChampionInfo: (name: string, banPick: string) => void;
 };

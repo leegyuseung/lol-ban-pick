@@ -1,16 +1,27 @@
 import championData from '@/data/champions.json';
+import useSimplify from '@/hooks/useSimplify';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { useSocketStore } from '@/store/socket';
 import { useRulesStore } from '@/store/rules';
-import { BanObjectType, ChampionInfoType, PeerlessStoreType, ChampionStoreType, BanI, TeamBanI } from '@/types';
+import { useSendSocket } from '@/hooks/useTeamSocket';
+import {
+  BanObjectType,
+  ChampionInfoI,
+  PeerlessStoreType,
+  ChampionStoreType,
+  BanI,
+  TeamBanI,
+  ChampionInfoType,
+} from '@/types';
 import {
   InitailizeInfoData,
   InitializeBanPickObject,
   InitializeCurrentSelectedPick,
   InitializeSelectedTeam,
   locationOptions,
+  navigations,
   roleOptions,
+  socketType,
   statusOptions,
   teamSideOptions,
 } from '@/constants';
@@ -19,19 +30,19 @@ import {
 export const useChampionStore = create<ChampionStoreType>()(
   devtools(
     (set) => ({
-      championInfo: {} as Record<string, ChampionInfoType>,
+      championInfo: {} as Record<string, ChampionInfoI>,
       setChampionInfo: async () => {
         try {
-          const response = await fetch('/api/banpick/name');
+          const response = await fetch(navigations.BANPICKNAME);
           const { championInfo } = await response.json();
 
-          const updatedChampionInfo: Record<string, ChampionInfoType> = Object.fromEntries(
+          const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
             Object.entries(championInfo)
               .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
               .map(([key, value]) => [
                 key,
                 {
-                  ...(value as ChampionInfoType),
+                  ...(value as ChampionInfoI),
                   status: '',
                   line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
                 },
@@ -65,22 +76,22 @@ export const useChampionStore = create<ChampionStoreType>()(
 
 // BanPick에서 사용
 export const useBanStore = create<BanI>()((set, get) => ({
-  championInfo: {} as Record<string, ChampionInfoType>,
+  championInfo: {} as Record<string, ChampionInfoI>,
   setChampionInfo: async () => {
     try {
-      const response = await fetch('/api/banpick/name');
+      const response = await fetch(navigations.BANPICKNAME);
       const { championInfo } = await response.json();
 
-      const updatedChampionInfo: Record<string, ChampionInfoType> = Object.fromEntries(
+      const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
         Object.entries(championInfo)
           .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
           .sort(([, infoA], [, infoB]) =>
-            (infoA as ChampionInfoType).name.localeCompare((infoB as ChampionInfoType).name, 'ko-KR'),
+            (infoA as ChampionInfoI).name.localeCompare((infoB as ChampionInfoI).name, 'ko-KR'),
           )
           .map(([key, value]) => [
             key,
             {
-              ...(value as ChampionInfoType),
+              ...(value as ChampionInfoI),
               status: '',
               line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
             },
@@ -274,7 +285,7 @@ export const usePeerlessStore = create<PeerlessStoreType>()(
             if (hostInfo.myTeamSide === teamSideOptions.BLUE) {
               updatedHostban = [...state.hostBan, blue];
               updatedGuestban = [...state.guestBan, red];
-            } else if (hostInfo.myTeamSide === 'red') {
+            } else if (hostInfo.myTeamSide === teamSideOptions.RED) {
               updatedHostban = [...state.hostBan, red];
               updatedGuestban = [...state.guestBan, blue];
             }
@@ -311,43 +322,15 @@ export const usePeerlessStore = create<PeerlessStoreType>()(
         }),
 
       setTeamPeerless: () => {
-        const socketState = useSocketStore.getState();
-
-        if (!socketState) return;
-        const message = {
-          type: 'Peerless',
-          roomId: socketState.roomId,
-        };
-
-        if (socketState.socket && socketState.socket.connected) {
-          socketState.socket?.send(JSON.stringify(message));
-        }
+        useSendSocket(socketType.PEERLESS);
       },
 
       clearTeamPeerless: () => {
-        const socketState = useSocketStore.getState();
-        if (!socketState) return;
-        const message = {
-          type: 'clearPeerless',
-          roomId: socketState.roomId,
-        };
-
-        if (socketState.socket && socketState.socket.connected) {
-          socketState.socket?.send(JSON.stringify(message));
-        }
+        useSendSocket(socketType.CLEARTEAMPEERLESS);
       },
 
       setTeamChange: () => {
-        const socketState = useSocketStore.getState();
-        if (!socketState) return;
-        const message = {
-          type: 'teamChange',
-          roomId: socketState.roomId,
-        };
-
-        if (socketState.socket && socketState.socket.connected) {
-          socketState.socket?.send(JSON.stringify(message));
-        }
+        useSendSocket(socketType.TEAMCHANGE);
       },
     }),
     {
@@ -359,52 +342,23 @@ export const usePeerlessStore = create<PeerlessStoreType>()(
 // Team Banpick Store
 export const useBanTeamStore = create<TeamBanI>()((set, get) => ({
   // 챔피언을 선택했을 때
-  SelectTeamImage: (name: string, info: ChampionInfoType) => {
-    const socketState = useSocketStore.getState();
-    if (!socketState) return;
-    const message = {
-      type: 'image',
-      data: { name, info },
-      roomId: socketState.roomId,
-    };
-
-    if (socketState.socket && socketState.socket.connected) {
-      socketState.socket?.send(JSON.stringify(message));
-    }
+  SelectChampionImage: (name: string, info: ChampionInfoType) => {
+    useSendSocket(socketType.IMAGE, { name, info });
   },
 
   // 챔피언을 선택하고 버튼을 클릭했을 때
   SelectTeamChampion: () => {
-    const socketState = useSocketStore.getState();
-    if (!socketState) return;
-    const message = {
-      type: 'champion',
-      roomId: socketState.roomId,
-    };
-
-    if (socketState.socket && socketState.socket.connected) {
-      socketState.socket?.send(JSON.stringify(message));
-    }
+    useSendSocket(socketType.CHAMPION);
   },
 
   // Random Pick
-  TeamRandomPick: () => {
-    const socketState = useSocketStore.getState();
-    if (!socketState) return;
-
+  TeamRandomPick: async () => {
     const { championInfo } = useBanStore.getState();
     const availableChampions = Object.entries(championInfo).filter(([_, info]) => info.status === '');
     const randomIndex = Math.floor(Math.random() * availableChampions.length);
     const [randomName, randomInfo] = availableChampions[randomIndex];
+    const newRandomInfo = await useSimplify(randomInfo);
 
-    const message = {
-      type: 'random',
-      data: { randomName, randomInfo },
-      roomId: socketState.roomId,
-    };
-
-    if (socketState.socket && socketState.socket.connected) {
-      socketState.socket?.send(JSON.stringify(message));
-    }
+    useSendSocket(socketType.RANDOM, { randomName, newRandomInfo });
   },
 }));

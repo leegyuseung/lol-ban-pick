@@ -5,7 +5,16 @@ import { io, Socket } from 'socket.io-client';
 import { useBanStore, usePopupStore, useRulesStore, useSocketStore, useUserStore } from '@/store';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { usePeerlessStore } from '@/store/banpick';
-import { InitailizeInfoData, lineMappingOptions } from '@/constants';
+import {
+  banPickModeOptions,
+  InitailizeInfoData,
+  lineMappingOptions,
+  navigations,
+  roleOptions,
+  socketType,
+  statusOptions,
+  teamcolorOptions,
+} from '@/constants';
 
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
@@ -79,7 +88,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       nowSet,
       audienceCount,
       position: positionValue,
-      role: isHost ? 'host' : positionValue === 'audience' ? 'audience' : 'guest',
+      role: isHost ? roleOptions.HOST : positionValue === roleOptions.AUD ? roleOptions.AUD : roleOptions.GUEST,
     });
 
     if (!roomIdValue) return;
@@ -99,8 +108,8 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
 
     socket.on('connect', () => {
       if (isHost && pathName === '/') {
-        socket.emit('init', {
-          type: 'init',
+        socket.emit(socketType.INIT, {
+          type: socketType.INIT,
           userId: localStorage.getItem('lol_ban_host_id') as string,
           roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
           banpickMode,
@@ -109,11 +118,11 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           nowSet,
           hostInfo,
           host: true,
-          role: 'host',
+          role: roleOptions.HOST,
           position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
         });
       } else if (pathName !== '/' && roomId && !searchParams?.get('roomId')) {
-        socket.emit('join', {
+        socket.emit(socketType.JOIN, {
           userId: _userId,
           roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
           banpickMode,
@@ -122,48 +131,54 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
           nowSet,
           hostInfo,
           host: true,
-          role: 'host',
+          role: roleOptions.HOST,
           position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
         });
       } else {
-        socket.emit('init', {
-          type: 'init',
+        socket.emit(socketType.INIT, {
+          type: socketType.INIT,
           userId: userId,
           roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
           host: false,
           position: `${searchParams!.get('position') ? searchParams!.get('position') : position}`,
-          role: (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience' ? 'audience' : 'guest',
+          role:
+            (searchParams!.get('position') as 'blue' | 'red' | 'audience') === roleOptions.AUD
+              ? roleOptions.AUD
+              : roleOptions.GUEST,
         });
-        socket.emit('join', {
-          type: 'join',
+        socket.emit(socketType.JOIN, {
+          type: socketType.JOIN,
           roomId: `${searchParams!.get('roomId') ? searchParams!.get('roomId') : roomId}`,
           userId,
-          role: (searchParams!.get('position') as 'blue' | 'red' | 'audience') === 'audience' ? 'audience' : 'guest',
+          role:
+            (searchParams!.get('position') as 'blue' | 'red' | 'audience') === roleOptions.AUD
+              ? roleOptions.AUD
+              : roleOptions.GUEST,
         });
       }
     });
 
-    socket.on('ready', (data) => {
+    socket.on(socketType.READY, (data) => {
       setHostRules(data.hostInfo);
       setGuestRules(data.guestInfo);
     });
 
-    socket.on('readyCancel', (data) => {
+    socket.on(socketType.READYCANCEL, (data) => {
       setHostRules(data.hostInfo);
       setGuestRules(data.guestInfo);
     });
 
-    socket.on('banpickStart', () => {
-      router.push('/banpickTeam');
+    socket.on(socketType.BANPICKSTART, () => {
+      router.push(navigations.BANPICKTEAM);
     });
 
-    socket.on('join', (data) => {
+    socket.on(socketType.JOIN, (data) => {
       setRules(data);
       setHostRules(data.hostInfo);
       setGuestRules(data.guestInfo);
     });
 
-    socket.on('closeByHost', () => {
+    socket.on(socketType.CLOSEBYHOST, () => {
       setIsOpen(true);
       setContent('게임 주최자가 게임을 종료했습니다.');
       setBtnList([
@@ -177,7 +192,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       ]);
     });
 
-    socket.on('closeSharePopup', (data) => {
+    socket.on(socketType.CLOSESHAREPOP, (data) => {
       setIsOpen(true);
       setContent('게임 주최자가 게임을 종료했습니다.');
       setBtnList([
@@ -222,7 +237,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       ]);
     });
 
-    socket.on('noRoom', () => {
+    socket.on(socketType.NOROOM, () => {
       setIsOpen(true);
       setContent('공유된 게임이 없습니다.');
       setBtnList([
@@ -236,25 +251,27 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       ]);
     });
 
-    socket.on('image', (data) => {
+    socket.on(socketType.IMAGE, (data) => {
       setCurrentSelectedPick(data.params.name, data.params.info);
     });
 
-    socket.on('champion', () => {
+    socket.on(socketType.CHAMPION, () => {
+      const { banpickMode } = useRulesStore.getState();
       const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam, currentSelectedPick } =
         useBanStore.getState();
-      const { banpickMode } = useRulesStore.getState();
 
       let index = banPickObject.find((v) => v.location === currentLocation)?.index as number;
       setBanPickObject(index, currentSelectedPick[0].name, currentSelectedPick[0].info, false);
       setChangeChampionInfo(currentSelectedPick[0].name, selectedTeam[selectedTeamIndex].banpick);
-      if (banpickMode !== 'tournament') {
+
+      if (banpickMode !== banPickModeOptions.TNM) {
         const selectedChampion = {
           name: currentSelectedPick[0].name,
           info: currentSelectedPick[0].info,
           line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
         };
-        if (selectedTeam[selectedTeamIndex].color === 'blue') setBlueBan(selectedChampion);
+
+        if (selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE) setBlueBan(selectedChampion);
         else setRedBan(selectedChampion);
       }
       index += 1;
@@ -263,21 +280,21 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       setSelectedTeamIndex();
     });
 
-    socket.on('random', (data) => {
+    socket.on(socketType.RANDOM, (data) => {
       const { banPickObject, currentLocation, selectedTeamIndex, selectedTeam } = useBanStore.getState();
       const { banpickMode } = useRulesStore.getState();
       let index = banPickObject.find((v) => v.location === currentLocation)?.index as number;
-      if (banpickMode !== 'tournament') {
+      if (banpickMode !== banPickModeOptions.TNM) {
         const selectedChampion = {
           name: data.data.randomName,
           info: data.data.randomInfo,
           line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
         };
-        if (selectedTeam[selectedTeamIndex].color === 'blue') setBlueBan(selectedChampion);
+        if (selectedTeam[selectedTeamIndex].color === teamcolorOptions.BLUE) setBlueBan(selectedChampion);
         else setRedBan(selectedChampion);
       }
       setBanPickObject(index, data.data.randomName, data.data.randomInfo, true); // 랜덤 챔피언을 선택해준다
-      if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
+      if (selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK) {
         setChangeChampionInfo(data.data.randomName, selectedTeam[selectedTeamIndex].banpick); // 현재 선택된 챔피언의 status 변경
       }
 
@@ -288,14 +305,14 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       setHeaderSecond('5');
     });
 
-    socket.on('Peerless', () => {
+    socket.on(socketType.PEERLESS, () => {
       const { blueBan, redBan } = usePeerlessStore.getState();
       setTeamBan(blueBan, redBan);
       setBlueBanClear();
       setRedBanClear();
     });
 
-    socket.on('clearPeerless', () => {
+    socket.on(socketType.CLEARTEAMPEERLESS, () => {
       setPeerlessSet();
       setClearBanPickObject();
       setClearSelectTeamIndex();
@@ -303,7 +320,7 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
       router.refresh();
     });
 
-    socket.on('teamChange', () => {
+    socket.on(socketType.TEAMCHANGE, () => {
       setChangeTeam();
     });
 

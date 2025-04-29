@@ -16,7 +16,7 @@ import {
   statusOptions,
   teamSideOptions,
 } from '@/constants';
-import { BanObjectType, ChampionInfoType } from '@/types';
+import { BanObjectType, ChampionInfoI } from '@/types';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
@@ -99,7 +99,7 @@ export default function SelectChampions() {
   );
 
   // Image 클릭시
-  const onClick = (pickName: string, info: ChampionInfoType) => {
+  const onClick = (pickName: string, info: ChampionInfoI) => {
     if (pickName === '') return;
     setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
   };

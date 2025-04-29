@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { FormsType } from '@/types';
-import { banPickModeOptions, peopleModeOptions, teamSideOptions } from '@/constants';
+import { banPickModeOptions, navigations, peopleModeOptions, socketType, teamSideOptions } from '@/constants';
 
 export default function Form() {
   const { socket, setRoomId, setSocket } = useSocketStore();
@@ -43,7 +43,7 @@ export default function Form() {
     setRedBanClear();
     setBlueBanClear();
     if (socket) {
-      socket.emit('closeByHost', {
+      socket.emit(socketType.CLOSEBYHOST, {
         userId: localStorage.getItem('lol_ban_host_id') as string,
       });
       setSocket(null);
@@ -73,7 +73,7 @@ export default function Form() {
     if (data.peopleMode === peopleModeOptions.TEAM) {
       openSharePopup();
     } else {
-      router.push('/banpick');
+      router.push(navigations.BANPICK);
     }
   };
 
@@ -95,8 +95,8 @@ export default function Form() {
 
   // 경로의 페이지를 미리 로드
   useEffect(() => {
-    router.prefetch('/banpick');
-    router.prefetch('/banpickTeam');
+    router.prefetch(navigations.BANPICK);
+    router.prefetch(navigations.BANPICKTEAM);
   }, [router]);
 
   return (

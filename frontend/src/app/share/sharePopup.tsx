@@ -7,7 +7,7 @@ import ShareUrl from '@/components/Share/ShareUrl';
 import ConfirmPopup from '@/components/Popup/confirm';
 import { useSocketStore, useRulesStore, usePopupStore, useUserStore } from '@/store';
 import { usePathname, useRouter } from 'next/navigation';
-import { roleOptions, teamSideOptions } from '@/constants';
+import { roleOptions, socketType, teamSideOptions } from '@/constants';
 interface PropType {
   setSharePopup: (b: boolean) => void;
   userId: string;
@@ -99,7 +99,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
           if (pathName != '/') {
             return;
           }
-          socket.emit('closeSharePopup', {
+          socket.emit(socketType.CLOSESHAREPOP, {
             roomId,
             userId: localStorage.getItem('lol_ban_host_id') as string,
           });
@@ -124,7 +124,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
       if (socket)
         socket.send(
           JSON.stringify({
-            type: 'init',
+            type: socketType.INIT,
             userId,
             roomId: randomId.current,
             banpickMode,
