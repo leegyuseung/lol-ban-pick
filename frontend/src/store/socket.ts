@@ -1,37 +1,26 @@
 import { create } from 'zustand';
-import { useRulesStore } from './rules';
+import { useRulesStore } from '@/store/rules';
+import { SocketStateType } from '@/types';
+import { Socket } from 'socket.io-client';
 
-type SocketState = {
-  roomId: string;
-  setRoomId: (roomId: string) => void;
-  ws: WebSocket | null;
-  setWs: (ws: any) => void;
-  emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, side?: string) => void;
-  shareUrl: {
-    yourTeamUrl: string;
-    audienceTeamUrl: string;
-  };
-  setShareUrl: (arg: { yourTeamUrl: string; audienceTeamUrl: string }) => void;
-};
-
-export const useSocketStore = create<SocketState>((set, get) => ({
+export const useSocketStore = create<SocketStateType>((set, get) => ({
   roomId: '',
   setRoomId: (roomId: string) =>
     set({
       roomId: roomId,
     }),
 
-  ws: null,
-  setWs: (ws?: WebSocket | null) =>
+  socket: null,
+  setSocket: (socket?: Socket | null) =>
     set({
-      ws,
+      socket,
     }),
   emitFunc: <T extends (...args: unknown[]) => unknown>(func: T, params: any): void => {
     const rulesState = useRulesStore.getState(); // rules 상태 가져오기
     if (!rulesState) return;
     func(); // 함수 실행
     const state = get();
-    state.ws?.send(JSON.stringify({ type: 'emit', rule: rulesState, params, roomId: state.roomId }));
+    state.socket?.send(JSON.stringify({ type: 'emit', rule: rulesState, params, roomId: state.roomId }));
     // }
   },
   shareUrl: {

@@ -1,5 +1,6 @@
 'use client';
-import PeerlessImage from './PeerlessImage';
+import PeerlessImage from '@/app/banpick/(components)/PeerlessList/PeerlessImage';
+import { banPickModeOptions, sideOptions, teamSideOptions } from '@/constants';
 import { usePeerlessStore, useRulesStore } from '@/store';
 
 type PropsType = {
@@ -13,23 +14,23 @@ export default function PeerlessList({ side }: PropsType) {
 
   const Mode = [
     {
-      TeamSide: 'blue',
-      Side: 'left',
+      TeamSide: teamSideOptions.BLUE,
+      Side: sideOptions.LEFT,
       Ban: hostBan,
     },
     {
-      TeamSide: 'red',
-      Side: 'left',
+      TeamSide: teamSideOptions.RED,
+      Side: sideOptions.LEFT,
       Ban: guestBan,
     },
     {
-      TeamSide: 'blue',
-      Side: 'right',
+      TeamSide: teamSideOptions.BLUE,
+      Side: sideOptions.RIGHT,
       Ban: guestBan,
     },
     {
-      TeamSide: 'red',
-      Side: 'right',
+      TeamSide: teamSideOptions.RED,
+      Side: sideOptions.RIGHT,
       Ban: hostBan,
     },
   ];
@@ -38,7 +39,7 @@ export default function PeerlessList({ side }: PropsType) {
     <div className="flex flex-col flex-[2]">
       {Mode.map(
         (mode) =>
-          banpickMode !== 'tournament' &&
+          banpickMode !== banPickModeOptions.TNM &&
           hostInfo.myTeamSide === mode.TeamSide &&
           side === mode.Side &&
           mode.Ban.map((ban, index) => <PeerlessImage key={index} ban={ban} />),

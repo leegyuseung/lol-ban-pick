@@ -1,6 +1,13 @@
 const navigations = {
   SIMULATION: '/',
   INFORMATION: '/about',
+  BANPICK: '/banpick',
+  BANPICKTEAM: '/banpickTeam',
+  BANPICKNAME: '/api/banpick/name',
 };
 
-export { navigations };
+const images = {
+  THUMBNAIL: '/metapick.png',
+};
+
+export { navigations, images };

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
-import BanpickSocket from './banpickSocket';
+import { images } from '@/constants';
+import BanpickSocket from '@/app/socketRoom/banpickSocket';
 import Loading from '@/components/Loading';
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'MetaPick - 대기방',
     description: '팀모드 대기방입니다.',
-    images: ['/metapick.png'],
+    images: [images.THUMBNAIL],
     url: process.env.NEXT_PUBLIC_URL,
   },
 };

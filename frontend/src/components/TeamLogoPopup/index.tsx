@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { ImageList, ImageListPng, teamSideOptions } from '@/constants';
 
 interface PropsI {
   closePopup: () => void;
@@ -17,10 +18,6 @@ export default function TeamLogoPopup({
   blueImage,
   redImage,
 }: PropsI) {
-  // const ImageList = ['t1', 'hanwha', 'geng', 'kia', 'kt', 'dn', 'drx', 'ns', 'ok'];
-  const ImageList = ['t1', 'hanwha', 'geng', 'kia', 'kt', 'dn', 'ok'];
-  const ImageListPng = ['drx','ns'];
-
   const selectImage = (url: string) => {
     if (selectedTeamColor === 'blue') {
       setBlueImage(url);
@@ -47,7 +44,7 @@ export default function TeamLogoPopup({
                   priority
                   className={`object-contain cursor-pointer border-2 
                     ${
-                      selectedTeamColor === 'blue'
+                      selectedTeamColor === teamSideOptions.BLUE
                         ? blueImage === imageUrl
                           ? 'border-blue-500'
                           : 'border-transparent'
@@ -74,7 +71,7 @@ export default function TeamLogoPopup({
                   priority
                   className={`object-contain cursor-pointer border-2 
                     ${
-                      selectedTeamColor === 'blue'
+                      selectedTeamColor === teamSideOptions.BLUE
                         ? blueImage === imageUrl
                           ? 'border-blue-500'
                           : 'border-transparent'

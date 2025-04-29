@@ -2,12 +2,12 @@
 
 'use client';
 import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
-
-import { useSocketStore, useRulesStore, usePopupStore, useUserStore } from '@/store';
-import { usePathname, useRouter } from 'next/navigation';
 import useBanpickSocket from '@/hooks/useBanpickSocket';
 import ShareUrl from '@/components/Share/ShareUrl';
 import ConfirmPopup from '@/components/Popup/confirm';
+import { useSocketStore, useRulesStore, usePopupStore, useUserStore } from '@/store';
+import { usePathname, useRouter } from 'next/navigation';
+import { roleOptions, socketType, teamSideOptions } from '@/constants';
 interface PropType {
   setSharePopup: (b: boolean) => void;
   userId: string;
@@ -23,8 +23,8 @@ function ShareItem({
   position: string | undefined;
 }) {
   const [_shareUrl, _setShareUrl] = useState({
-    yourTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`,
-    audienceTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=audience`,
+    yourTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${myTeamSide === teamSideOptions.RED ? teamSideOptions.BLUE : teamSideOptions.RED}`,
+    audienceTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${roleOptions.AUD}`,
   });
   const [copyedText, setCopyedText] = useState('');
   const [showConfirmPopup, setIsShowConfirmPopup] = useState(false);
@@ -40,13 +40,13 @@ function ShareItem({
   return (
     <>
       <ShareUrl
-        url={`${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${myTeamSide === 'red' ? 'blue' : 'red'}`}
-        role={position === 'red' ? '블루팀 공유' : '레드팀'}
+        url={`${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${myTeamSide === teamSideOptions.RED ? teamSideOptions.BLUE : teamSideOptions.RED}`}
+        role={position === teamSideOptions.RED ? '블루팀 공유' : '레드팀'}
         copyText={copyText}
         isCopyed={_shareUrl.yourTeamUrl === copyedText}
       />
       <ShareUrl
-        url={`${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=audience`}
+        url={`${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${roomId}&position=${roleOptions.AUD}`}
         role={'관전자'}
         copyText={copyText}
         isCopyed={_shareUrl.audienceTeamUrl === copyedText}
@@ -64,13 +64,13 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   //랜덤
   const randomId = useRef<string>(Math.random().toString(36).substr(2, 20));
   const router = useRouter();
-  const { ws, setShareUrl, shareUrl } = useSocketStore();
-  const { roomId, setRoomId } = useSocketStore();
-  const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet, role } = useRulesStore();
-  const { setBtnList, setIsOpen, setTitle, setContent, setPopup, isOpen } = usePopupStore();
-  const { userId: userIdStore } = useUserStore();
   const pathName = usePathname();
-  const { setSocket } = useBanpickSocket({
+  const { socket, setShareUrl, setSocket } = useSocketStore();
+  const { setRoomId } = useSocketStore();
+  const { hostInfo, position, banpickMode, peopleMode, timeUnlimited, nowSet, role } = useRulesStore();
+  const { setIsOpen, setPopup } = usePopupStore();
+  const { userId: userIdStore } = useUserStore();
+  const { setSocketFunc } = useBanpickSocket({
     userId: localStorage.getItem('lol_ban_host_id') as string,
     roomId: randomId.current,
   });
@@ -78,11 +78,11 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   const unsubscribeWsRef = useRef<(() => void) | null>(null);
   useEffect(() => {
     unsubscribeWsRef.current = useSocketStore.subscribe((state) => {
-      console.log('WebSocket 상태 변경됨::', state.ws);
+      console.log('WebSocket 상태 변경됨::', state.socket);
       userId = userIdStore;
       //host시에는 고유한 userId를 계속 사용해야하기때문에 localstorage에 저장
       //guest는 새창이 나올때마다 새로운 id부여
-      if (role === 'host') {
+      if (role === roleOptions.HOST) {
         if (!localStorage.getItem('lol_ban_host_id')) {
           localStorage.setItem('lol_ban_host_id', `${Math.floor(Math.random() * 100000000)}`);
         }
@@ -93,19 +93,17 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
 
     unsubscribeIsOpenRef.current = usePopupStore.subscribe((state) => {
       console.log('Popup 상태 변경됨:', state.isOpen);
-      const { ws, roomId } = useSocketStore.getState(); // 최신 상태 가져오기
-      if (ws && ws.readyState === WebSocket.OPEN) {
+      const { socket, roomId } = useSocketStore.getState(); // 최신 상태 가져오기
+      if (socket && socket.connected) {
         if (!state.isOpen) {
           if (pathName != '/') {
             return;
           }
-          ws.send(
-            JSON.stringify({
-              type: 'closeSharePopup',
-              roomId,
-              userId: localStorage.getItem('lol_ban_host_id') as string,
-            }),
-          );
+          socket.emit(socketType.CLOSESHAREPOP, {
+            roomId,
+            userId: localStorage.getItem('lol_ban_host_id') as string,
+          });
+          setSocket(null);
           // randomId.current = Math.random().toString(36).substr(2, 20);
         }
       }
@@ -121,12 +119,12 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
     if (isShareOpen) {
       setRoomId(randomId.current);
       //가장 처음 소켓 세팅
-      if (!ws) setSocket();
-      //팝업 닫고 다시 실행 시나 ws가 세팅 되어있을때
-      if (ws)
-        ws.send(
+      if (!socket) setSocketFunc();
+      //팝업 닫고 다시 실행 시나 socket가 세팅 되어있을때
+      if (socket)
+        socket.send(
           JSON.stringify({
-            type: 'init',
+            type: socketType.INIT,
             userId,
             roomId: randomId.current,
             banpickMode,
@@ -135,13 +133,13 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
             nowSet,
             hostInfo,
             host: true,
-            role: 'host',
+            role: roleOptions.HOST,
             position,
           }),
         );
       setShareUrl({
-        yourTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${randomId.current}&position=${hostInfo.myTeamSide === 'red' ? 'blue' : 'red'}`,
-        audienceTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${randomId.current}&position=audience`,
+        yourTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${randomId.current}&position=${hostInfo.myTeamSide === teamSideOptions.RED ? teamSideOptions.BLUE : teamSideOptions.RED}`,
+        audienceTeamUrl: `${process.env.NEXT_PUBLIC_URL}/socketRoom?roomId=${randomId.current}&position=${roleOptions.AUD}`,
       });
       setPopup({
         title: `공유하기`,

@@ -1,14 +1,6 @@
 import Image from 'next/image';
-import { BanPickObjectType, currentSelectedPickType } from '@/store/banpick';
-
-interface SelectedChampionImageProps {
-  banPickObject: BanPickObjectType;
-  currentLocation: string;
-  currentSelectedPick: currentSelectedPickType;
-  index: number;
-  side: string;
-  location: string;
-}
+import { SelectedChampionImagePropsI } from '@/types';
+import { sideOptions } from '@/constants';
 
 export default function SelectedChampionImage({
   banPickObject,
@@ -17,7 +9,7 @@ export default function SelectedChampionImage({
   index,
   side,
   location,
-}: SelectedChampionImageProps) {
+}: SelectedChampionImagePropsI) {
   return (
     <>
       {(banPickObject[index].use ||
@@ -32,9 +24,8 @@ export default function SelectedChampionImage({
                     ? `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${currentSelectedPick[0]?.name}_0.jpg`
                     : ``
               }
-                          
-              placeholder="blur" 
-              blurDataURL={'/images/default_champ.png'}  // 사전 생성된 저해상도 이미지
+              placeholder="blur"
+              blurDataURL={'/images/default_champ.png'} // 사전 생성된 저해상도 이미지
               loading="eager" // 바로 로드
               fill
               sizes="h-10"
@@ -54,7 +45,7 @@ export default function SelectedChampionImage({
         )}
       {side === location && (
         <div
-          className={`${location === 'left' ? 'bg-blueLineColor' : 'bg-redLineColor'} ${currentLocation === banPickObject[index].location ? (location === 'right' ? 'absolute h-full top-0 right-0 w-[15px] z-10' : 'absolute h-full top-0 left-0 w-[15px] z-10') : ''}`}
+          className={`${location === sideOptions.LEFT ? 'bg-blueLineColor' : 'bg-redLineColor'} ${currentLocation === banPickObject[index].location ? (location === sideOptions.RIGHT ? 'absolute h-full top-0 right-0 w-[15px] z-10' : 'absolute h-full top-0 left-0 w-[15px] z-10') : ''}`}
         />
       )}
     </>

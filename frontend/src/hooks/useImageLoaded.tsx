@@ -1,8 +1,8 @@
 import { useLayoutEffect } from 'react';
-import { useBanpickStore } from '@/store';
+import { useChampionStore } from '@/store';
 
 function useImageLoaded() {
-  const { championInfo, setChampionInfo } = useBanpickStore();
+  const { championInfo, setChampionInfo } = useChampionStore();
   useLayoutEffect(() => {
     //이미지 미리 로드
     const hoverImgPreload = (src: string) => {

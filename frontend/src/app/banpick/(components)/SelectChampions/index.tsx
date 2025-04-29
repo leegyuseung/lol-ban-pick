@@ -2,22 +2,21 @@
 import ImageComp from '@/components/Image';
 import Button from '@/components/Button';
 import MiniIcon from '@/components/MiniIcon';
-import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
-import { memo, Suspense, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
-import { ChampionInfoI } from '@/types/types';
-import { BanArray, InfoData } from '@/store/banpick';
-import { useRouter } from 'next/navigation';
 import Loading from '@/components/Loading';
+import { useBanStore, useRulesStore, usePeerlessStore } from '@/store';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import { throttle } from 'lodash';
-
-const lineMapping: Record<string, number> = {
-  top: 0,
-  jungle: 1,
-  mid: 2,
-  ad: 3,
-  sup: 4,
-};
+import {
+  banPickModeOptions,
+  filterOptions,
+  InitailizeInfoData,
+  lineMappingOptions,
+  statusOptions,
+  teamSideOptions,
+} from '@/constants';
+import { BanObjectType, ChampionInfoI } from '@/types';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
@@ -46,12 +45,11 @@ export default function SelectChampions() {
   const { setHostBan, setGuestBan, hostBan, guestBan, setClearHostBan, setClearGuestBan } = usePeerlessStore();
   const [filteredChampions, setFilteredChampions] = useState(championInfo); // 검색기능, 라인별 조회 기능
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // 라인별 조회 기능용 on/off
-  const [bluePeerlessArray, setBluePeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 블루팀 배열
-  const [redPeerlessArray, setRedPeerlessArray] = useState<BanArray[]>([]); // 피어리스 밴픽 레드팀 배열
-  const filterOptions = ['top', 'jungle', 'mid', 'ad', 'sup'];
+  const [bluePeerlessArray, setBluePeerlessArray] = useState<BanObjectType[]>([]); // 피어리스 밴픽 블루팀 배열
+  const [redPeerlessArray, setRedPeerlessArray] = useState<BanObjectType[]>([]); // 피어리스 밴픽 레드팀 배열
   const [hoverImg, setHoverImg] = useState('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Garen_0.jpg');
-  const loadImgCnt = useRef(0);
   const [isLoadImg, setIsLoadImg] = useState(false);
+  const loadImgCnt = useRef(0);
   const router = useRouter();
   const headerSecondRef = useRef(headerSecond);
   useEffect(() => {
@@ -116,11 +114,11 @@ export default function SelectChampions() {
     const selectedChampion = {
       name: currentSelectedPick[0].name,
       info: currentSelectedPick[0].info,
-      line: lineMapping[selectedTeam[selectedTeamIndex].line] ?? -1,
+      line: lineMappingOptions[selectedTeam[selectedTeamIndex].line] ?? -1,
     };
 
-    if (selectedTeam[selectedTeamIndex].banpick === 'pick') {
-      if (selectedTeam[selectedTeamIndex].color === 'red') {
+    if (selectedTeam[selectedTeamIndex].banpick === statusOptions.PICK) {
+      if (selectedTeam[selectedTeamIndex].color === teamSideOptions.RED) {
         setRedPeerlessArray((prev) => [...prev, selectedChampion]);
       } else {
         setBluePeerlessArray((prev) => [...prev, selectedChampion]);
@@ -129,14 +127,14 @@ export default function SelectChampions() {
 
     index += 1;
     setCurrentLocation(index);
-    setCurrentSelectedPick('', InfoData);
+    setCurrentSelectedPick('', InitailizeInfoData);
     setSelectedTeamIndex();
   }, [banPickObject, currentLocation, currentSelectedPick, selectedTeam, selectedTeamIndex]);
 
   // 다음 세트 버튼 클릭시
   const onNextSet = () => {
     // 피어리스 밴픽 추가
-    if (hostInfo.myTeamSide === 'blue') {
+    if (hostInfo.myTeamSide === teamSideOptions.BLUE) {
       setHostBan(bluePeerlessArray); // 내 밴 추가
       setGuestBan(redPeerlessArray); // 상대 밴 추가
     } else {
@@ -162,7 +160,7 @@ export default function SelectChampions() {
     setClearCurrentLocation(); // 현재 위치 초기화
 
     // 피어리스 밴픽 초기화
-    if (banpickMode !== 'tournament') {
+    if (banpickMode !== banPickModeOptions.TNM) {
       setClearPeerlessSet(); // 피어리스 세트 초기화
       setRedPeerlessArray([]); // 레드피어리스 초기화
       setBluePeerlessArray([]); // 블루피어리스 초기화
@@ -178,12 +176,14 @@ export default function SelectChampions() {
     setClearHostBan,
     setClearGuestBan,
   ]);
+
   const preloadImg = useCallback(
     (name: string) => {
       setHoverImg((_) => `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${name}_0.jpg`);
     },
     [hoverImg],
   );
+
   const imgLoadF = () => {
     if (!isNaN(loadImgCnt.current)) {
       loadImgCnt.current++;
@@ -192,25 +192,33 @@ export default function SelectChampions() {
       }
     }
   };
+
   useEffect(() => {
     headerSecondRef.current = headerSecond;
   }, [headerSecond]);
+
   const throttledClick = useRef(
     throttle((name, info) => {
-      console.log("header", headerSecondRef.current);
       if (headerSecondRef.current !== '') {
-        console.log('✅ throttle 발동!');
         onClick(name, info);
       }
-    }, 700)
+    }, 700),
   ).current;
-  const handleClick = (name:string, info:any) => {
+
+  const handleClick = (name: string, info: any) => {
     throttledClick(name, info);
   };
+
   return (
     <div className="flex flex-col gap-3 w-[508px]">
       {/* 이미지 로드 될때 loading 해제 */}
-      {!isLoadImg ? <><Loading/></> : <></>}
+      {!isLoadImg ? (
+        <>
+          <Loading />
+        </>
+      ) : (
+        <></>
+      )}
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
           {filterOptions.map((type) => (
@@ -253,7 +261,7 @@ export default function SelectChampions() {
               height={60}
               onMouseOver={(e) => preloadImg(name)}
               src={`https://ddragon.leagueoflegends.com/cdn/${info.version}/img/champion/${name}.png`}
-              onClick={()=>handleClick(name, info)}
+              onClick={() => handleClick(name, info)}
             />
             <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
             {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}
@@ -266,9 +274,9 @@ export default function SelectChampions() {
         <ImageComp className="border border-mainGold" width={60} height={60} src={hoverImg} />
       </div>
       <div className="relative flex justify-center">
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
-          (banpickMode === 'tournament' && headerSecond === '') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '')) && (
+        {((banpickMode === banPickModeOptions.PRL3 && nowSet === 3 && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.TNM && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.PRL5 && nowSet === 5 && headerSecond === '')) && (
           <div className="absolute left-0">
             <Button
               text={'뒤로가기'}
@@ -288,9 +296,9 @@ export default function SelectChampions() {
           </div>
         )}
 
-        {((banpickMode === 'peerless3' && nowSet === 3 && headerSecond === '') ||
-          (banpickMode === 'peerless5' && nowSet === 5 && headerSecond === '') ||
-          (banpickMode === 'tournament' && headerSecond === '')) && (
+        {((banpickMode === banPickModeOptions.PRL3 && nowSet === 3 && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.PRL5 && nowSet === 5 && headerSecond === '') ||
+          (banpickMode === banPickModeOptions.TNM && headerSecond === '')) && (
           <div className="absolute right-0">
             <Button
               text={'다시하기'}
@@ -300,8 +308,14 @@ export default function SelectChampions() {
           </div>
         )}
 
-        {((banpickMode !== 'tournament' && banpickMode === 'peerless3' && nowSet < 3 && headerSecond === '') ||
-          (banpickMode !== 'tournament' && banpickMode === 'peerless5' && nowSet < 5 && headerSecond === '')) && (
+        {((banpickMode !== banPickModeOptions.TNM &&
+          banpickMode === banPickModeOptions.PRL3 &&
+          nowSet < 3 &&
+          headerSecond === '') ||
+          (banpickMode !== banPickModeOptions.TNM &&
+            banpickMode === banPickModeOptions.PRL5 &&
+            nowSet < 5 &&
+            headerSecond === '')) && (
           <div className="absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}

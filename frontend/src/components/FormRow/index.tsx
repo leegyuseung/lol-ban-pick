@@ -2,28 +2,29 @@
 
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import Button from '../Button';
-import TeamLogoPopup from '../TeamLogoPopup';
+import Button from '@/components/Button';
+import TeamLogoPopup from '@/components/TeamLogoPopup';
 import SharePopupWrapper from '@/app/share/sharePopupWrapper';
 import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
-import { FormsData } from '@/types/types';
 import { useRouter } from 'next/navigation';
+import { FormsType } from '@/types';
+import { banPickModeOptions, navigations, peopleModeOptions, socketType, teamSideOptions } from '@/constants';
 
 export default function Form() {
-  const { ws, setRoomId, setWs } = useSocketStore();
+  const { socket, setRoomId, setSocket } = useSocketStore();
   const { setChampionInfo, setClearBanPickObject, setClearSelectTeamIndex, setClearCurrentLocation } = useBanStore();
   const { setFormRules, setHostRules, setClearPeerlessSet } = useRulesStore();
   const { setClearHostBan, setClearGuestBan, setRedBanClear, setBlueBanClear } = usePeerlessStore();
-  const { register, handleSubmit, watch } = useForm<FormsData>({
+  const { register, handleSubmit, watch } = useForm<FormsType>({
     defaultValues: {
       blueTeamName: '',
       redTeamName: '',
-      banpickMode: 'tournament',
-      peopleMode: 'solo',
+      banpickMode: banPickModeOptions.TNM,
+      peopleMode: peopleModeOptions.SOLO,
       timeUnlimited: 'true',
-      myTeamSide: 'blue',
-      yourTeamSide: 'red',
+      myTeamSide: teamSideOptions.BLUE,
+      yourTeamSide: teamSideOptions.RED,
       blueImg: '',
       redImg: '',
       nowSet: 1,
@@ -41,8 +42,11 @@ export default function Form() {
     setClearGuestBan();
     setRedBanClear();
     setBlueBanClear();
-    if (ws) {
-      setWs(null);
+    if (socket) {
+      socket.emit(socketType.CLOSEBYHOST, {
+        userId: localStorage.getItem('lol_ban_host_id') as string,
+      });
+      setSocket(null);
       setRoomId('');
     }
   }, []);
@@ -60,16 +64,16 @@ export default function Form() {
 
   //소켓 팝업 관련
   const [isShareOpen, setIsShareOpen] = useState(false);
-  const onSubmit = async (data: FormsData) => {
+  const onSubmit = async (data: FormsType) => {
     // 이미지 넣어주기
     data.blueImg = blueImage;
     data.redImg = redImage;
     setFormRules(data);
     setHostRules({ ...data, status: '' });
-    if (data.peopleMode === 'team') {
+    if (data.peopleMode === peopleModeOptions.TEAM) {
       openSharePopup();
     } else {
-      router.push('/banpick');
+      router.push(navigations.BANPICK);
     }
   };
 
@@ -78,8 +82,6 @@ export default function Form() {
   };
 
   const setSharePopup = (b: boolean) => {
-    // if(!b)ws?.close();
-    // setWs(null);
     setIsShareOpen(b);
   };
   const openPopup = (teamColor: string) => {
@@ -93,8 +95,8 @@ export default function Form() {
 
   // 경로의 페이지를 미리 로드
   useEffect(() => {
-    router.prefetch('/banpick');
-    router.prefetch('/banpickTeam');
+    router.prefetch(navigations.BANPICK);
+    router.prefetch(navigations.BANPICKTEAM);
   }, [router]);
 
   return (
@@ -103,7 +105,7 @@ export default function Form() {
       <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
         {/* 블루팀 */}
         <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
-          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('blue')}>
+          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{blueTeam}</label>
@@ -193,7 +195,7 @@ export default function Form() {
 
         {/* 레드팀 */}
         <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
-          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup('red')}>
+          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.RED)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>
           <label className="text-lg font-semibold mb-2">{redTeam}</label>

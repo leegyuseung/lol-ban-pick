@@ -1,8 +1,7 @@
 'use client';
+import React, { ReactEventHandler, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { DebouncedFuncLeading, throttle } from 'lodash';
-import { MutableRefObject } from 'react';
-import React, { ReactEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { throttle } from 'lodash';
 interface PropType {
   src: string;
   width?: number | `${number}` | undefined;
@@ -16,9 +15,7 @@ interface PropType {
   onMouseOver?: ReactEventHandler<HTMLImageElement> | undefined;
   throttlingTime?: number;
 }
-const myLoader = () => {
-  return `/images/default_champ.png`;
-};
+
 function ImageComp({
   src,
   width = 100,
@@ -46,7 +43,6 @@ function ImageComp({
 
   // ✅ 클릭할 때는 ref에 있는 throttled 함수만 실행
   const handleClick = (e: React.MouseEvent<HTMLImageElement>) => {
-    console.log(throttledRef);
     throttledRef.current?.(e);
   };
 
