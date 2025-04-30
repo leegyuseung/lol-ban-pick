@@ -14,6 +14,7 @@ const ContentSecurityPolicy = `
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@common/constants'],
   reactStrictMode: false,
   async headers() {
     return [

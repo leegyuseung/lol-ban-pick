@@ -9,7 +9,8 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { FormsType } from '@/types';
-import { banPickModeOptions, navigations, peopleModeOptions, socketType, teamSideOptions } from '@/constants';
+import { banPickModeOptions, navigations, peopleModeOptions, teamSideOptions } from '@/constants';
+import socketType  from '@common/constants';
 
 export default function Form() {
   const { socket, setRoomId, setSocket } = useSocketStore();
