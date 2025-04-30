@@ -13,6 +13,19 @@ const ContentSecurityPolicy = `
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
+          },
+        ],
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
@@ -36,19 +49,6 @@ const nextConfig = {
         hostname: 'avatars.githubusercontent.com',
       },
     ],
-    async headers() {
-      return [
-        {
-          source: '/(.*)',
-          headers: [
-            {
-              key: 'Content-Security-Policy',
-              value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
-            },
-          ],
-        },
-      ];
-    },
   },
 };
 
