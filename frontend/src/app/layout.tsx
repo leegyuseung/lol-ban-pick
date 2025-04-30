@@ -28,6 +28,8 @@ export default function RootLayout({
           strategy="afterInteractive"
           crossOrigin="anonymous"
         />
+        {/* naver */}
+        <meta name="naver-site-verification" content="82e619b7e36c7f2f1c5ffaebe478276dbbba8000" />
       </head>
       <body>
         <ClientLayout>{children}</ClientLayout>
