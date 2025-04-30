@@ -11,10 +11,10 @@ import {
   lineMappingOptions,
   navigations,
   roleOptions,
+  socketType,
   statusOptions,
   teamcolorOptions,
 } from '@/constants';
-import socketType  from '@common/constants';
 
 function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId: string }) {
   const { setIsOpen, setBtnList, setContent } = usePopupStore();
