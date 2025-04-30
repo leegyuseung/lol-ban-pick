@@ -1,9 +1,5 @@
-# *
 User-agent: *
 Allow: /
 
-# Host
-Host: http://43.200.250.245:3000
-
-# Sitemaps
-Sitemap: http://43.200.250.245:3000/sitemap.xml
+Host: https://metapick.site
+Sitemap: https://metapick.site/sitemap.xml
