@@ -36,19 +36,19 @@ const nextConfig = {
         hostname: 'avatars.githubusercontent.com',
       },
     ],
-    async headers() {
-      return [
-        {
-          source: '/(.*)',
-          headers: [
-            {
-              key: 'Content-Security-Policy',
-              value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
-            },
-          ],
-        },
-      ];
-    },
+    // async headers() {
+    //   return [
+    //     {
+    //       source: '/(.*)',
+    //       headers: [
+    //         {
+    //           key: 'Content-Security-Policy',
+    //           value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
+    //         },
+    //       ],
+    //     },
+    //   ];
+    // },
   },
 };
 
