@@ -21,10 +21,10 @@ import {
   locationOptions,
   navigations,
   roleOptions,
+  socketType,
   statusOptions,
   teamSideOptions,
 } from '@/constants';
-import socketType  from '@common/constants';
 
 // 챔피언 정보 불러오기
 export const useChampionStore = create<ChampionStoreType>()(
