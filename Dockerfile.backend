@@ -7,7 +7,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY backend ./backend
 COPY packages ./packages
 
-RUN yarn workspaces focus backend
+RUN yarn workspaces focus backend --production
 
 EXPOSE 3001
 
