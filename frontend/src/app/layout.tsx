@@ -12,7 +12,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Google Analytics */}
-        <Script src={`https://www.googletagmanager.com/gtag/js?id=G-LR8THS5Y4C`} strategy="afterInteractive" />
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=G-ZG0QZP6MLJ`} strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
