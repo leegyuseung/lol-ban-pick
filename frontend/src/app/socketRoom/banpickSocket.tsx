@@ -7,8 +7,7 @@ import ConfirmPopup from '@/components/Popup/confirm';
 import { useRulesStore, useSocketStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import { FaCheck, FaCopy } from 'react-icons/fa6';
-import { infoStatusOptions, roleOptions, teamSideOptions } from '@/constants';
-import socketType  from '@common/constants';
+import { infoStatusOptions, roleOptions, socketType, teamSideOptions } from '@/constants';
 
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const [copyedText, setCopyedText] = useState('');

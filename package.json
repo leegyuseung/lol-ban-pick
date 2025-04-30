@@ -7,8 +7,7 @@
   "private": true,
   "workspaces": [
     "backend",
-    "frontend",
-    "packages/common/*"
+    "frontend"
   ],
   "scripts": {
     "dev": "concurrently \"yarn dev:frontend\" \"yarn dev:backend\"",
