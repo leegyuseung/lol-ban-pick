@@ -18,7 +18,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-LR8THS5Y4C');
+            gtag('config', 'G-ZG0QZP6MLJ');
           `}
         </Script>
         {/* Google ads */}
