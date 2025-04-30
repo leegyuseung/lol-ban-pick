@@ -47,13 +47,33 @@ io.on('connection', (socket) => {
     const target = clients.get(data.userId); // ✅ Map은 get(userId)로 찾는다
     let initInfo;
     //관중아닐때. hostinfo나 guestinfo를 설정하지 않는다. 덮어쓰여지는 경우가 있음
-    if (role !== 'audience') {
+    if (role === 'host') {
       initInfo = {
         ...data,
         socket, // ws 대신 socket
         role: data.host ? 'host' : ['blue', 'red'].includes(data.position) ? 'guest' : 'audience',
         hostInfo: { ...data.hostInfo, status: '' },
-        guestInfo: { status: '' },
+        guestInfo: {
+          myTeam: data.hostInfo.yourTeam,
+          yourTeam: data.hostInfo.myTeam,
+          myTeamSide: data.hostInfo.myTeamSide === 'blue' ? 'red' : 'blue',
+          yourTeamSide: data.hostInfo.myTeamSide === 'blue' ? 'blue' : 'red',
+          myImg: data.hostInfo.yourImg,
+          yourImg: data.hostInfo.myImg,
+          host: false,
+          role: 'guest',
+          status: '',
+        },
+      };
+    } else if (role === 'guest') {
+      initInfo = {
+        ...data,
+        socket, // ws 대신 socket
+        role: data.host ? 'host' : ['blue', 'red'].includes(data.position) ? 'guest' : 'audience',
+        hostInfo: { ...data.hostInfo, status: '' },
+        guestInfo: {
+          status: '',
+        },
       };
     } else {
       initInfo = {
