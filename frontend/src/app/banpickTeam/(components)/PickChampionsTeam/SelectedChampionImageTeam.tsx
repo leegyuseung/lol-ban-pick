@@ -27,10 +27,10 @@ export default function SelectedChampionImage({
               fill
               sizes="h-10"
               style={{ objectFit: 'cover', objectPosition: 'top' }}
-              className="scale-[100%]"
+              className="hidden md:flex scale-[100%]"
               alt=""
             />
-            <span className="relative m-2 text-lg">
+            <span className="relative m-2 text-xs md:text-lg">
               {banPickObject[index].use
                 ? banPickObject[index].info.name
                 : currentLocation === banPickObject[index].location

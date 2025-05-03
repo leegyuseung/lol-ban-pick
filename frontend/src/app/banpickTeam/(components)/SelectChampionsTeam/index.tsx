@@ -153,7 +153,7 @@ export default function SelectChampions() {
   };
 
   return (
-    <div className="flex flex-col gap-3 w-[508px]">
+    <div className="flex flex-col gap-3 md:w-[508px] md:order-3">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 mt-2 ml-2">
           {filterOptions.map((type) => (
@@ -168,7 +168,7 @@ export default function SelectChampions() {
             />
           ))}
         </div>
-        <div className="flex items-center border border-subGold w-full max-w-[200px] px-3">
+        <div className="hidden md:flex items-center border border-subGold w-full max-w-[200px] px-3">
           <MemoizedFaSearch className="text-mainText text-sm mr-2" />
           <input
             className="text-mainText text-xs w-full py-2 bg-transparent focus:ring-0 focus:border-subGold focus:outline-none placeholder:text-xs placeholder:text-mainText"
@@ -195,12 +195,14 @@ export default function SelectChampions() {
               onClick={headerSecond !== '' ? () => onClickImage(name, info) : undefined}
             />
             <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
-            {info.status !== '' && <FaTimes className="absolute text-6xl text-red-500" />}
-            {name === currentSelectedPick[0].name && <FaCheck className="absolute text-6xl text-blue-500" />}
+            {info.status !== '' && <FaTimes className="absolute text-5xl md:text-6xl text-red-500" />}
+            {name === currentSelectedPick[0].name && (
+              <FaCheck className="absolute text-5xl md:text-6xl text-blue-500" />
+            )}
           </div>
         ))}
       </div>
-      <div className="relative flex justify-center">
+      <div className="md:relative flex justify-center">
         {((banpickMode === banPickModeOptions.PRL3 &&
           nowSet === 3 &&
           headerSecond === '' &&
@@ -210,7 +212,7 @@ export default function SelectChampions() {
             nowSet === 5 &&
             headerSecond === '' &&
             role === roleOptions.HOST)) && (
-          <div className="absolute left-0">
+          <div className="md:absolute left-0">
             <Button
               text={'뒤로가기'}
               className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm hover:bg-opacity-65`}
@@ -220,7 +222,7 @@ export default function SelectChampions() {
         )}
 
         {headerSecond !== '' && (
-          <div className="absolute">
+          <div className="md:absolute">
             <Button
               text={'챔피언 선택'}
               className={`${selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
@@ -239,7 +241,7 @@ export default function SelectChampions() {
             nowSet < 5 &&
             headerSecond === '' &&
             role === roleOptions.HOST)) && (
-          <div className="absolute right-0">
+          <div className="md:absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}
               className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm hover:bg-opacity-65`}
