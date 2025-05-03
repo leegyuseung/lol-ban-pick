@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function Loading() {
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
-  if (!mounted) return null
+  if (!mounted) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900">
@@ -26,11 +26,6 @@ export default function Loading() {
           ))}
         </div>
 
-        {/* 로딩 텍스트 */}
-        <p className="text-lg text-white font-bold tracking-wide animate-pulse">
-          로딩 중...
-        </p>
-
         {/* 레드 팀 로딩 애니메이션 */}
         <div className="flex space-x-2">
           {[...Array(6)].map((_, i) => (
@@ -43,6 +38,6 @@ export default function Loading() {
         </div>
       </div>
     </div>,
-    document.body
-  )
+    document.body,
+  );
 }

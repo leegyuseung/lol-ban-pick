@@ -5,7 +5,7 @@ const ContentSecurityPolicy = `
   img-src 'self' https://ddragon.leagueoflegends.com https://avatars.githubusercontent.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google data:;
   font-src 'self';
   connect-src 'self' https://pagead2.googlesyndication.com https://www.google-analytics.com https://www.googletagmanager.com https://ep1.adtrafficquality.google wss://ws.metapick.site;
-  frame-src https://*.google.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://ep2.adtrafficquality.google;
+  frame-src 'self' https://*.google.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://ep2.adtrafficquality.google;
   form-action 'self';
   object-src 'none';
 `

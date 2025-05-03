@@ -60,10 +60,10 @@ export default function BanPickHeader() {
   }, [selectedTeamIndex]);
 
   return (
-    <div className="flex h-20  text-white">
+    <div className="flex min-h-[70px] md:min-h-[80px] text-white">
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
-          <div className="relative w-[80px] h-[65px] ml-10">
+          <div className="hidden md:flex relative w-[80px] h-[65px] ml-10">
             {hostInfo.myTeamSide === teamSideOptions.BLUE
               ? hostInfo.myImg && (
                   <Image
@@ -87,12 +87,12 @@ export default function BanPickHeader() {
                 )}
           </div>
           {hostInfo.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="text-2xl mr-10">{hostInfo.myTeam}</span>
+            <span className="md:text-2xl md:mr-15 ml-5">{hostInfo.myTeam}</span>
           ) : (
-            <span className="text-2xl mr-10">{hostInfo.yourTeam}</span>
+            <span className="md:text-2xl md:mr-15 ml-5">{hostInfo.yourTeam}</span>
           )}
         </div>
-        <div className="flex-[1] w-full relative overflow-hidden h-4">
+        <div className="flex-[1] w-full relative overflow-hidden h-4 ">
           <div
             className={`absolute top-0 right-0 h-full w-full ${currentColor === teamSideOptions.BLUE ? 'bg-blue-500 animate-fill-left-half' : ''}`}
           />
@@ -102,16 +102,16 @@ export default function BanPickHeader() {
         <span className="text-xs">
           {banpickMode === banPickModeOptions.TNM ? '드리프트 토너먼트' : `${nowSet} 세트`}
         </span>
-        <span className="text-3xl">{`:${headerSecond}`}</span>
+        <span className="md:text-3xl">{`:${headerSecond}`}</span>
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
-        <div className="flex h-[65px] w-full justify-between items-center">
+        <div className="flex h-[65px] w-full justify-end md:justify-between items-center">
           {hostInfo.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="text-2xl ml-10">{hostInfo.yourTeam}</span>
+            <span className="md:text-2xl md:ml-15 mr-5">{hostInfo.yourTeam}</span>
           ) : (
-            <span className="text-2xl ml-10">{hostInfo.myTeam}</span>
+            <span className="md:text-2xl md:ml-15 mr-5">{hostInfo.myTeam}</span>
           )}
-          <div className="relative w-[80px] h-[65px] mr-10">
+          <div className="hidden md:flex relative w-[80px] h-[65px] mr-10">
             {hostInfo.myTeamSide === teamSideOptions.BLUE
               ? hostInfo.yourImg && (
                   <Image

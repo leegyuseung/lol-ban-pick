@@ -36,7 +36,7 @@ export default function PeerlessList({ side }: PropsType) {
   ];
 
   return (
-    <div className="flex flex-col flex-[2]">
+    <div className={`flex flex-col flex-[2] ${side === sideOptions.LEFT ? 'md:order-1' : 'md:order-5'}`}>
       {Mode.map(
         (mode) =>
           banpickMode !== banPickModeOptions.TNM &&

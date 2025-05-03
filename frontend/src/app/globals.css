@@ -7,6 +7,12 @@ body {
   @apply bg-mainBlack text-mainText;
 }
 
+html,
+body,
+#__next {
+  height: 100%;
+}
+
 /* 스크롤바 넓이 지정 */
 ::-webkit-scrollbar {
   width: 5px;
