@@ -15,7 +15,7 @@ export default function PickChampions({ side }: PropsType) {
   const banPickObject = useBanStore((state) => state.banPickObject);
   const currentLocation = useBanStore((state) => state.currentLocation);
   return (
-    <div className="flex flex-col flex-[3] m-1">
+    <div className={`flex flex-col flex-[3] m-1 ${side === sideOptions.LEFT ? 'md:order-2' : 'md:order-4'}`}>
       {/* 상단부 */}
       <div className="flex flex-col flex-[2]">
         <div
@@ -164,9 +164,9 @@ export default function PickChampions({ side }: PropsType) {
       </div>
 
       {/* 하단부 */}
-      <div className="flex flex-col flex-[1] gap-2 pt-5">
+      <div className="flex md:flex-col flex-[1] gap-2 pt-5">
         <div className="flex gap-2 justify-center w-full">
-          <div className="relative border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[40px] md:w-[60px] h-[40px] md:h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -185,7 +185,7 @@ export default function PickChampions({ side }: PropsType) {
               location={sideOptions.RIGHT}
             />
           </div>
-          <div className="relative border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[40px] md:w-[60px] h-[40px] md:h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -203,7 +203,7 @@ export default function PickChampions({ side }: PropsType) {
               location={sideOptions.RIGHT}
             />
           </div>
-          <div className="relative border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[40px] md:w-[60px] h-[40px] md:h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -223,7 +223,7 @@ export default function PickChampions({ side }: PropsType) {
           </div>
         </div>
         <div className="flex gap-2 justify-center w-full">
-          <div className="relative border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[40px] md:w-[60px] h-[40px] md:h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
@@ -241,7 +241,7 @@ export default function PickChampions({ side }: PropsType) {
               location={sideOptions.RIGHT}
             />
           </div>
-          <div className="relative border border-mainGold w-[60px] h-[60px]">
+          <div className="relative border border-mainGold w-[40px] md:w-[60px] h-[40px] md:h-[60px]">
             <SelectedBanImage
               banPickObject={banPickObject}
               currentLocation={currentLocation}
