@@ -1,3 +1,4 @@
+import Footer from '@/components/Footer';
 import './globals.css';
 import PopupComp from '@/components/Popup';
 import ClientLayout from '@/layout/ClientLayout';

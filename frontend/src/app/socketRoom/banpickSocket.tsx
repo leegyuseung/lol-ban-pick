@@ -81,15 +81,15 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   return (
     <>
       <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
-        <h1 className="text-3xl font-bold text-center mb-8 text-yellow-400">대기방</h1>
+        <h1 className="md:text-3xl font-bold text-center mb-8 text-mainText">대기방</h1>
 
-        <div className="grid grid-cols-3 gap-6 w-full max-w-4xl">
+        <div className="grid grid-cols-3 gap-1 md:gap-6 w-full max-w-4xl">
           {/* 블루팀 */}
           <div
-            className={`${isHostReady ? 'bg-blue-700' : 'bg-blue-500'} p-6 pt-3 rounded-lg shadow-lg border-2 border-blue-500`}
+            className={`${isHostReady ? 'bg-blue-700' : 'bg-blue-500'} p-2 md:p-6 pt-3 rounded-lg shadow-lg border-2 border-blue-500`}
           >
             <div
-              className={`${isHostReady ? 'bg-yellow-500' : 'bg-gray-500'} text-white w-[30%] text-[12px] rounded-[5px] text-center`}
+              className={`${isHostReady ? 'bg-blue-400' : 'bg-gray-500'} text-white md:w-[30%] text-xs rounded-[5px] text-center`}
             >
               {isHostReady ? '준비 완료' : '준비 중'}
             </div>
@@ -103,7 +103,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
                 priority
               />
             </div>
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xs md:text-xl font-semibold">
               {role === roleOptions.HOST ? (
                 position === teamSideOptions.RED ? (
                   <i className="w-[20px] h-[20px]" onClick={() => copyText(shareUrl.yourTeamUrl)}>
@@ -117,53 +117,58 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               )}
               {blueTeamName} ({blueCount}/1)
             </h2>
-            <p className="mt-2 text-sm text-gray-300">플레이어 1</p>
+            <p className="mt-2 text-xs md:text-sm text-gray-300">플레이어 1</p>
           </div>
           {/* 관전자 */}
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg border-2 border-gray-600">
-            {role === roleOptions.HOST ? (
-              <i className="w-5 h-5" onClick={() => copyText(shareUrl.audienceTeamUrl)}>
-                {shareUrl.audienceTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
-              </i>
-            ) : (
-              <></>
-            )}
-            <h2 className="text-xl font-semibold">관전자 (무제한)</h2>
-            <p className="mt-2 text-sm text-gray-300">현재 접속자: {audienceCount}명</p>
+          <div className="flex flex-col justify-between bg-gray-800 p-2 md:p-6 rounded-lg shadow-lg border-2 border-gray-600">
+            <div>
+              <h2 className="text-ms md:text-xl font-semibold">관전자</h2>
+              <h2 className="text-xs md:text-xl font-semibold">(무제한)</h2>
+            </div>
+            <div>
+              <p className="mt-2 text-xs md:text-sm mb-1 text-gray-300">현재 접속자: {audienceCount}명</p>
+              {role === roleOptions.HOST ? (
+                <i className="w-2 h-2 md:w-5 md:h-5" onClick={() => copyText(shareUrl.audienceTeamUrl)}>
+                  {shareUrl.audienceTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
+                </i>
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
 
           {/* 레드팀 */}
           <div
-            className={`${isGuestReady ? 'bg-red-700' : 'bg-red-500'} p-6 pt-3 rounded-lg shadow-lg border-2 border-red-500`}
+            className={`${isGuestReady ? 'bg-red-700' : 'bg-red-500'} p-2 md:p-6 pt-3 rounded-lg shadow-lg border-2 border-red-500`}
           >
             <div
-              className={`${isGuestReady ? 'bg-yellow-500' : 'bg-gray-500'} text-white w-[30%] text-[12px] rounded-[5px] text-center`}
+              className={`${isGuestReady ? 'bg-red-500' : 'bg-gray-500'} text-white md:w-[30%] text-[12px] rounded-[5px] text-center`}
             >
               {isGuestReady ? '준비 완료' : '준비 중'}
             </div>
             <div className="relative w-full h-[200px]">
               <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redTeamImg} alt="logo" fill priority />
             </div>
-            <h2 className="text-xl font-semibold">
-              {role === roleOptions.HOST ? (
-                position === teamSideOptions.BLUE ? (
-                  <i className="w-5 h-5" onClick={() => copyText(shareUrl.yourTeamUrl)}>
-                    {shareUrl.yourTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
-                  </i>
-                ) : (
-                  <i className="w-5 h-5"></i>
-                )
-              ) : (
-                <></>
-              )}
+            <h2 className="text-xs md:text-xl font-semibold">
               {redTeamName} ({redCount}/1)
             </h2>
-            <p className="mt-2 text-sm text-gray-300">플레이어 2</p>
+            <p className="mt-2 text-xs md:text-sm mb-1 text-gray-300">플레이어 2</p>
+            {role === roleOptions.HOST ? (
+              position === teamSideOptions.BLUE ? (
+                <i className="w-2 h-2 md:w-5 md:h-5" onClick={() => copyText(shareUrl.yourTeamUrl)}>
+                  {shareUrl.yourTeamUrl === copyedText ? <FaCheck /> : <FaCopy />}
+                </i>
+              ) : (
+                <i className="w-2 h-2 md:w-5 md:h-5"></i>
+              )
+            ) : (
+              <></>
+            )}
           </div>
         </div>
 
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-400">게임이 곧 시작됩니다...</p>
+          <p className="text-sm text-gray-400">게임이 곧 시작됩니다.</p>
           <div className="flex w-[300px] justify-evenly mt-5">
             {role === roleOptions.HOST || role === roleOptions.GUEST ? (
               (role === roleOptions.HOST && isHostReady) || (role === roleOptions.GUEST && isGuestReady) ? (

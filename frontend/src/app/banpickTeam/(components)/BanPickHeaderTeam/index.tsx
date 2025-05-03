@@ -110,7 +110,7 @@ export default function BanPickHeader() {
     <div className="flex h-20  text-white">
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
-          <div className="relative w-[80px] h-[65px] ml-10">
+          <div className="hidden md:flex relative w-[80px] h-[65px] ml-10">
             {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE
               ? InfoDataRef.current?.myImg && (
                   <Image
@@ -134,9 +134,9 @@ export default function BanPickHeader() {
                 )}
           </div>
           {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="text-2xl mr-10">{InfoDataRef.current?.myTeam}</span>
+            <span className="md:text-2xl md:mr-15 ml-5">{InfoDataRef.current?.myTeam}</span>
           ) : (
-            <span className="text-2xl mr-10">{InfoDataRef.current?.yourTeam}</span>
+            <span className="md:text-2xl md:mr-15 ml-5">{InfoDataRef.current?.yourTeam}</span>
           )}
         </div>
         <div className="flex-[1] w-full relative overflow-hidden h-4">
@@ -149,16 +149,16 @@ export default function BanPickHeader() {
         <span className="text-xs">
           {banpickMode === banPickModeOptions.TNM ? '드리프트 토너먼트' : `${nowSet} 세트`}
         </span>
-        <span className="text-3xl">{`:${headerSecond}`}</span>
+        <span className="md:text-3xl">{`:${headerSecond}`}</span>
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
-        <div className="flex h-[65px] w-full justify-between items-center">
+        <div className="flex h-[65px] w-full justify-end md:justify-between items-center">
           {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="text-2xl ml-10">{InfoDataRef.current?.yourTeam}</span>
+            <span className="md:text-2xl md:ml-15 mr-5">{InfoDataRef.current?.yourTeam}</span>
           ) : (
-            <span className="text-2xl ml-10">{InfoDataRef.current?.myTeam}</span>
+            <span className="md:text-2xl md:ml-15 mr-5">{InfoDataRef.current?.myTeam}</span>
           )}
-          <div className="relative w-[80px] h-[65px] mr-10">
+          <div className="hidden md:flex relative w-[80px] h-[65px] mr-10">
             {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE
               ? InfoDataRef.current?.yourImg && (
                   <Image

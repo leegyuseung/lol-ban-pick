@@ -100,11 +100,14 @@ export default function Form() {
   }, [router]);
 
   return (
-    <div className="flex flex-col justify-center items-center p-7 mt-20">
-      <span className="text-4xl font-bold pb-6">밴픽 시뮬레이터</span>
-      <form className="grid grid-cols-[1fr_2fr_1fr] h-full justify-between gap-20" onSubmit={handleSubmit(onSubmit)}>
+    <div className="flex flex-col items-center min-h-full pt-20 md:p-7 md:mt-20">
+      <span className="md:text-4xl font-bold pb-6">밴픽 시뮬레이터</span>
+      <form
+        className="md:grid md:grid-cols-[1fr_2fr_1fr] md:justify-between md:gap-20 h-full flex flex-col items-center justify-center"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {/* 블루팀 */}
-        <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
+        <div className="hidden md:flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
           </div>
@@ -116,20 +119,20 @@ export default function Form() {
           />
         </div>
 
-        <div className="flex flex-col gap-10 w-[500px] ">
+        <div className="flex flex-col gap-10 min-w-[375px] md:w-[500px] ">
           <div>
             {/* 밴픽 모드 */}
-            <label className="text-lg font-semibold mb-2 block">밴픽 모드</label>
+            <label className="flex justify-center text-sm md:text-lg font-semibold mb-2 md:block">밴픽 모드</label>
             <div className="flex w-full justify-center gap-x-5">
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
+              <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="tournament" {...register('banpickMode')} defaultChecked />
                 토너먼트 드리프트
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
+              <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="peerless3" {...register('banpickMode')} />
                 피어리스(3판)
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
+              <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="peerless5" {...register('banpickMode')} />
                 피어리스(5판)
               </label>
@@ -138,13 +141,13 @@ export default function Form() {
 
           {/* 참여 모드 */}
           <div>
-            <label className="text-lg font-semibold mb-2 block">참여 모드</label>
+            <label className="flex justify-center text-sm md:text-lg font-semibold mb-2 md:block">참여 모드</label>
             <div className="flex w-full justify-center gap-x-32">
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
+              <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="solo" {...register('peopleMode')} defaultChecked />
                 SOLO
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
+              <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="team" {...register('peopleMode')} />
                 TEAM
               </label>
@@ -154,13 +157,13 @@ export default function Form() {
           {/* 시간제한 */}
           {selectedMode === 'solo' && (
             <div>
-              <label className="text-lg font-semibold mb-2 block">시간 무제한</label>
+              <label className="flex justify-center text-sm md:text-lg font-semibold mb-2 md:block">시간 무제한</label>
               <div className="flex w-full justify-center gap-x-32">
-                <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="true" {...register('timeUnlimited')} defaultChecked />
                   시간 무제한
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="false" {...register('timeUnlimited')} />
                   제한 있음
                 </label>
@@ -171,13 +174,13 @@ export default function Form() {
           {/* 진영선택 */}
           {selectedMode !== 'solo' && (
             <div>
-              <label className="text-lg font-semibold mb-2 block">진영</label>
+              <label className="flex justify-center text-sm md:text-lg font-semibold mb-2 md:block">진영</label>
               <div className="flex w-full justify-center gap-x-32">
-                <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="blue" {...register('myTeamSide')} defaultChecked />
                   블루팀
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="red" {...register('myTeamSide')} />
                   레드팀
                 </label>
@@ -187,14 +190,14 @@ export default function Form() {
           <Button
             type={'submit'}
             className={
-              'w-full border border-mainText text-mainText p-3 rounded-md font-semibold hover:bg-gray-500 transition'
+              'text-xs md:text-base w-full border border-mainText text-mainText p-3 rounded-md font-semibold hover:bg-gray-500 transition'
             }
             text={'시작하기'}
           />
         </div>
 
         {/* 레드팀 */}
-        <div className="flex flex-col justify-center items-center gap-6 w-[230px]">
+        <div className="hidden md:flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.RED)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>

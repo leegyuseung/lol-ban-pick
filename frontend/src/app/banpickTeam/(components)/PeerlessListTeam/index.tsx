@@ -65,7 +65,7 @@ export default function PeerlessList({ side, teamSide }: PropsType) {
   }, []); // 의존성 배열을 비워서 마운트 시에만 실행
 
   return (
-    <div className="flex flex-col flex-[2]">
+    <div className={`flex flex-col flex-[2] ${side === sideOptions.LEFT ? 'md:order-1' : 'md:order-5'}`}>
       {banpickMode !== banPickModeOptions.TNM &&
         side === sideOptions.LEFT &&
         teamSide === teamSideOptions.BLUE &&
