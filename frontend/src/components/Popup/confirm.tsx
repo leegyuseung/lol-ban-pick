@@ -37,14 +37,14 @@ function ConfirmPopup({
 
             {/* 모달 내용 */}
             <div className="flex flex-col items-center w-full gap-5 mt-4">
-              <div className="text-gray-300 text-center text-sm md:text-baes">{content}</div>
+              <div className="text-gray-300 text-center text-base">{content}</div>
 
               {/* 버튼 리스트 */}
               <div className="w-full flex gap-4 justify-center">
                 <button
                   key={btn.text}
                   onClick={btn.func}
-                  className="text-xs md:text-base w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
+                  className="text-sm w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
                 >
                   확인
                 </button>

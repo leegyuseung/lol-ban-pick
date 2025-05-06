@@ -30,7 +30,7 @@ export default function RootLayout({
         {/* naver */}
         <meta name="naver-site-verification" content="82e619b7e36c7f2f1c5ffaebe478276dbbba8000" />
       </head>
-      <body>
+      <body className="font-pretendard">
         <ClientLayout>{children}</ClientLayout>
         <PopupComp />
       </body>

@@ -42,7 +42,7 @@ export default function TeamLogoPopup({
                   fill
                   sizes="w-[80px] h-[80px]"
                   priority
-                  className={`object-contain cursor-pointer border-2 
+                  className={`object-contain cursor-pointer border-2 p-1
                     ${
                       selectedTeamColor === teamSideOptions.BLUE
                         ? blueImage === imageUrl
@@ -87,7 +87,7 @@ export default function TeamLogoPopup({
         </div>
 
         <button
-          className="font-semibold w-[200px] p-3 border border-mainText text-mainText rounded-md hover:bg-gray-500 transition"
+          className="font-medium w-1/4 p-2 border border-mainText text-mainText rounded-md hover:bg-gray-500 transition"
           onClick={closePopup}
         >
           선택
