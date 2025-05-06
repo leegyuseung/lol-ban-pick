@@ -43,7 +43,7 @@ export default function About() {
                 <Image alt="" src={dev.img} width={64} height={64} className="rounded-full object-cover" />
               </div>
               {/* 프로필 이미지 자리 */}
-              <h3 className="text-sm md:text-base font-semibold">{dev.name}</h3>
+              <h3 className="text-sm md:text-base font-medium">{dev.name}</h3>
               <p className="text-xs md:text-base text-gray-400">{dev.role}</p>
               <a href={`mailto:${dev.email}`} className="text-blue-400 mt-2 text-xs md:text-sm hover:underline">
                 {dev.email}

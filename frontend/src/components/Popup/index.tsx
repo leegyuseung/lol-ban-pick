@@ -26,11 +26,11 @@ function PopupComp() {
             </button> */}
 
             {/* 타이틀 */}
-            {title ? <h2 className="text-mainText text-ms md:text-xl font-semibold">{title}</h2> : null}
+            {title ? <h2 className="text-mainText text-xs md:text-2xl font-medium">{title}</h2> : null}
 
             {/* 모달 내용 */}
             <div className="flex flex-col items-center w-full gap-2 md:gap-5 md:mt-4">
-              <div className="text-gray-300 text-center text-xs md:text-base ">{content}</div>
+              <div className="text-mainText text-center text-xs md:text-base ">{content}</div>
 
               {/* 버튼 리스트 */}
               <div className="w-full flex gap-2 md:gap-4 justify-center">
@@ -38,7 +38,7 @@ function PopupComp() {
                   <button
                     key={btn.text}
                     onClick={btn.func}
-                    className="text-xs md:text-baes w-full px-4 py-2 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
+                    className="text-xs md:text-base w-full px-4 py-3 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
                   >
                     {btn.text}
                   </button>

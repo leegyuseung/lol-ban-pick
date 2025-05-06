@@ -103,7 +103,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
                 priority
               />
             </div>
-            <h2 className="text-xs md:text-xl font-semibold">
+            <h2 className="text-xs md:text-xl font-medium">
               {role === roleOptions.HOST ? (
                 position === teamSideOptions.RED ? (
                   <i className="w-[20px] h-[20px]" onClick={() => copyText(shareUrl.yourTeamUrl)}>
@@ -122,8 +122,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
           {/* 관전자 */}
           <div className="flex flex-col justify-between bg-gray-800 p-2 md:p-6 rounded-lg shadow-lg border-2 border-gray-600">
             <div>
-              <h2 className="text-ms md:text-xl font-semibold">관전자</h2>
-              <h2 className="text-xs md:text-xl font-semibold">(무제한)</h2>
+              <h2 className="text-ms md:text-xl font-medium">관전자</h2>
+              <h2 className="text-xs md:text-xl font-medium">(무제한)</h2>
             </div>
             <div>
               <p className="mt-2 text-xs md:text-sm mb-1 text-gray-300">현재 접속자: {audienceCount}명</p>
@@ -149,7 +149,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             <div className="relative w-full h-[200px]">
               <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redTeamImg} alt="logo" fill priority />
             </div>
-            <h2 className="text-xs md:text-xl font-semibold">
+            <h2 className="text-xs md:text-xl font-medium">
               {redTeamName} ({redCount}/1)
             </h2>
             <p className="mt-2 text-xs md:text-sm mb-1 text-gray-300">플레이어 2</p>

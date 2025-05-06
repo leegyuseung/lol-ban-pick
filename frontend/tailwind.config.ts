@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        pretendard: ['Pretendard', 'sans-serif'],
+      },
+
       colors: {
         mainBlack: '#1b1b1b',
         mainText: '#cccccc',
@@ -32,6 +36,7 @@ const config: Config = {
       },
     },
   },
+
   plugins: [],
 };
 export default config;

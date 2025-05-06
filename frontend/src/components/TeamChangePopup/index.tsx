@@ -7,7 +7,7 @@ export default function TeamChangePopup({ onConfirm, onCancel }: TeamChangePopup
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-mainBlack p-6 rounded-lg w-[300px] text-center">
-        <p className="text-lg font-semibold text-mainText">팀을 변경하시겠습니까?</p>
+        <p className="text-lg font-medium text-mainText">팀을 변경하시겠습니까?</p>
         <div className="mt-4 flex justify-center gap-4">
           <button
             onClick={onConfirm}
