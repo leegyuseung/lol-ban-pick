@@ -17,7 +17,7 @@ function ShareUrl({
     <div className="pb-3">
       <div className="w-full text-mainText text-left pb-2">{role} 공유하기</div>
       <div
-        className="flex items-center space-x-2 border p-2 rounded-lg cursor-pointer"
+        className="flex items-center space-x-2 border border-mainGold p-2 rounded-lg cursor-pointer"
         onClick={(e: SyntheticEvent) => copyText(e, url)}
       >
         <i className="w-5 h-5">{isCopyed ? <FaCheck /> : <FaCopy />}</i>
