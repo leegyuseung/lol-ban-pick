@@ -171,14 +171,14 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             {role === roleOptions.HOST || role === roleOptions.GUEST ? (
               (role === roleOptions.HOST && isHostReady) || (role === roleOptions.GUEST && isGuestReady) ? (
                 <button
-                  className="cursor-pointer h-8 px-8 text-mainText bg-orange-700 font-medium text-xs rounded-sm hover:bg-opacity-65"
+                  className="cursor-pointer h-8 px-8 text-mainText bg-orange-700 font-medium text-xs rounded-sm pointerhover:hover:bg-opacity-65"
                   onClick={onCancel}
                 >
                   취소하기
                 </button>
               ) : (
                 <button
-                  className="cursor-pointer h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65"
+                  className="cursor-pointer h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm pointerhover:hover:bg-opacity-65"
                   onClick={onReady}
                 >
                   준비하기
@@ -189,7 +189,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             )}
             {role === roleOptions.HOST ? (
               <button
-                className={`${!isHostReady || !isGuestReady ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm hover:bg-opacity-65`}
+                className={`${!isHostReady || !isGuestReady ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm pointerhover:hover:bg-opacity-65`}
                 onClick={goEnter}
                 disabled={!isHostReady || !isGuestReady}
               >
