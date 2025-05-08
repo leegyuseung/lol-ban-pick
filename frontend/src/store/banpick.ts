@@ -51,7 +51,7 @@ export const useChampionStore = create<ChampionStoreType>()(
 
           set({ championInfo: updatedChampionInfo });
         } catch (error) {
-          console.error('챔피언 가져오는데 에러 발생:', error);
+          // console.error('챔피언 가져오는데 에러 발생:', error);
         }
       },
 
@@ -100,7 +100,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
 
       set({ championInfo: updatedChampionInfo });
     } catch (error) {
-      console.error('챔피언 가져오는데 에러 발생:', error);
+      // console.error('챔피언 가져오는데 에러 발생:', error);
     }
   },
 
