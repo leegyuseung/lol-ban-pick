@@ -101,7 +101,7 @@ export default function Form() {
 
   return (
     <div className="flex flex-col items-center min-h-full pt-20 md:p-7 md:mt-20">
-      <span className="md:text-4xl font-medium pb-6">밴픽 시뮬레이터</span>
+      <h1 className="md:text-4xl font-medium pb-6">밴픽 시뮬레이터</h1>
       <form
         className="md:grid md:grid-cols-[1fr_2fr_1fr] md:justify-between md:gap-20 h-full flex flex-col items-center justify-center"
         onSubmit={handleSubmit(onSubmit)}
@@ -111,7 +111,7 @@ export default function Form() {
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
           </div>
-          <label className="text-lg font-medium mb-2">{blueTeam}</label>
+          <h3 className="text-lg font-medium mb-2">{blueTeam}</h3>
           <input
             className="text-center p-3 bg-blue-700 rounded-md border-mainText placeholder-mainText w-full"
             {...register('blueTeamName')}
@@ -122,7 +122,7 @@ export default function Form() {
         <div className="flex flex-col gap-10 min-w-[375px] md:w-[500px] ">
           <div>
             {/* 밴픽 모드 */}
-            <label className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">밴픽 모드</label>
+            <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">밴픽 모드</h3>
             <div className="flex w-full justify-center gap-x-5">
               <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="tournament" {...register('banpickMode')} defaultChecked />
@@ -141,7 +141,7 @@ export default function Form() {
 
           {/* 참여 모드 */}
           <div>
-            <label className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">참여 모드</label>
+            <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">참여 모드</h3>
             <div className="flex w-full justify-center gap-x-32">
               <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="solo" {...register('peopleMode')} defaultChecked />
@@ -157,7 +157,7 @@ export default function Form() {
           {/* 시간제한 */}
           {selectedMode === 'solo' && (
             <div>
-              <label className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">시간 무제한</label>
+              <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">시간 무제한</h3>
               <div className="flex w-full justify-center gap-x-32">
                 <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="true" {...register('timeUnlimited')} defaultChecked />
@@ -174,7 +174,7 @@ export default function Form() {
           {/* 진영선택 */}
           {selectedMode !== 'solo' && (
             <div>
-              <label className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">진영</label>
+              <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">진영</h3>
               <div className="flex w-full justify-center gap-x-32">
                 <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="blue" {...register('myTeamSide')} defaultChecked />
@@ -204,7 +204,7 @@ export default function Form() {
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.RED)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>
-          <label className="text-lg font-medium mb-2">{redTeam}</label>
+          <h3 className="text-lg font-medium mb-2">{redTeam}</h3>
           <input
             className="text-center p-3 bg-red-700 rounded-md border-mainText placeholder-mainText w-full"
             {...register('redTeamName')}
