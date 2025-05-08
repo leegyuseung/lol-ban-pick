@@ -345,11 +345,11 @@ function useBanpickSocket({ userId: _userId, roomId }: { userId: string; roomId:
     });
 
     socket.on('connect_error', (err) => {
-      console.error('❗ 소켓 연결 에러', err);
+      // console.error('❗ 소켓 연결 에러', err);
     });
 
     socket.on('disconnect', () => {
-      console.log('❌ 소켓 연결 끊김');
+      // console.log('❌ 소켓 연결 끊김');
     });
   };
 

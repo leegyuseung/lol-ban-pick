@@ -78,7 +78,6 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
   const unsubscribeWsRef = useRef<(() => void) | null>(null);
   useEffect(() => {
     unsubscribeWsRef.current = useSocketStore.subscribe((state) => {
-      console.log('WebSocket 상태 변경됨::', state.socket);
       userId = userIdStore;
       //host시에는 고유한 userId를 계속 사용해야하기때문에 localstorage에 저장
       //guest는 새창이 나올때마다 새로운 id부여
@@ -92,7 +91,7 @@ const SharePopup = React.memo(({ setSharePopup, userId, isShareOpen }: PropType)
     });
 
     unsubscribeIsOpenRef.current = usePopupStore.subscribe((state) => {
-      console.log('Popup 상태 변경됨:', state.isOpen);
+      // console.log('Popup 상태 변경됨:', state.isOpen);
       const { socket, roomId } = useSocketStore.getState(); // 최신 상태 가져오기
       if (socket && socket.connected) {
         if (!state.isOpen) {

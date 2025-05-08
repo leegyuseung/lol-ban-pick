@@ -17,7 +17,7 @@ export default function PickChampions({ side }: PropsType) {
   return (
     <div className={`flex flex-col flex-[3] m-1 ${side === sideOptions.LEFT ? 'md:order-2' : 'md:order-4'}`}>
       {/* 상단부 */}
-      <div className="flex flex-col flex-[2]">
+      <div className="flex flex-col flex-[2] md:gap-1">
         <div
           className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-end' : 'items-end'}`}
         >
