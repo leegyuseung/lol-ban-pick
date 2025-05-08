@@ -5,11 +5,13 @@ import React, { useEffect, useState } from 'react';
 import Button from '@/components/Button';
 import TeamLogoPopup from '@/components/TeamLogoPopup';
 import SharePopupWrapper from '@/app/share/sharePopupWrapper';
+import HoverCards from '@/components/HoverCard';
 import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { FormsType } from '@/types';
 import { banPickModeOptions, navigations, peopleModeOptions, socketType, teamSideOptions } from '@/constants';
+import { CircleHelp } from 'lucide-react';
 
 export default function Form() {
   const { socket, setRoomId, setSocket } = useSocketStore();
@@ -110,6 +112,16 @@ export default function Form() {
         <div className="hidden md:flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
             <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
+            <HoverCards
+              message={'로고를 클릭하면 로고를 변경할 수 있습니다.'}
+              side="right"
+              contentClass="text-xs w-[250px] whitespace-pre-line"
+              sideOffset={10}
+            >
+              <span className="absolute top-1 z-20 text-xs text-mainText cursor-pointer">
+                <CircleHelp size={17} />
+              </span>
+            </HoverCards>
           </div>
           <h3 className="text-lg font-medium mb-2">{blueTeam}</h3>
           <input
@@ -122,7 +134,20 @@ export default function Form() {
         <div className="flex flex-col gap-10 min-w-[375px] md:w-[500px] ">
           <div>
             {/* 밴픽 모드 */}
-            <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">밴픽 모드</h3>
+            <div className="flex gap-1 items-center mb-2">
+              <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">밴픽 모드</h3>
+              <HoverCards
+                message={
+                  '* 토너먼트드리프트 : 전통적인 밴픽 방식입니다. \n * 피어리스 : 이전 라운드에서 픽했던 챔피언을 다음 라운드에서 픽할 수 없습니다.'
+                }
+                contentClass="text-xs w-[420px] whitespace-pre-line"
+                sideOffset={10}
+              >
+                <span className="text-xs text-mainText cursor-pointer">
+                  <CircleHelp size={17} />
+                </span>
+              </HoverCards>
+            </div>
             <div className="flex w-full justify-center gap-x-5">
               <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="tournament" {...register('banpickMode')} defaultChecked />
@@ -130,26 +155,39 @@ export default function Form() {
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="peerless3" {...register('banpickMode')} />
-                피어리스(3판)
+                피어리스(3라운드)
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="peerless5" {...register('banpickMode')} />
-                피어리스(5판)
+                피어리스(5라운드)
               </label>
             </div>
           </div>
 
           {/* 참여 모드 */}
           <div>
-            <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">참여 모드</h3>
+            <div className="flex gap-1 items-center mb-2">
+              <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">참여 모드</h3>
+              <HoverCards
+                message={
+                  '* 솔로모드 : 혼자서 레드와 블루 밴픽을 진행합니다. \n * 팀모드 : 상대방을 초대하여 선택한 팀으로 밴픽을 진행합니다.'
+                }
+                contentClass="text-xs w-[330px] whitespace-pre-line"
+                sideOffset={10}
+              >
+                <span className="text-xs text-mainText cursor-pointer">
+                  <CircleHelp size={17} />
+                </span>
+              </HoverCards>
+            </div>
             <div className="flex w-full justify-center gap-x-32">
               <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="solo" {...register('peopleMode')} defaultChecked />
-                SOLO
+                솔로모드
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                 <input type="radio" value="team" {...register('peopleMode')} />
-                TEAM
+                팀모드
               </label>
             </div>
           </div>
@@ -157,15 +195,27 @@ export default function Form() {
           {/* 시간제한 */}
           {selectedMode === 'solo' && (
             <div>
-              <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">시간 무제한</h3>
+              <div className="flex gap-1 items-center mb-2">
+                <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">시간 설정</h3>
+                <HoverCards
+                  message={
+                    '* 무제한 : 솔로모드에서 시간제한 없이 밴픽할 수 있습니다. \n * 제한 : 솔로모드에서 30초 제한으로 밴픽을 진행합니다. \n - 팀모드는 시간설정변경 불가능합니다.'
+                  }
+                  contentClass="text-xs w-[320px] whitespace-pre-line"
+                  sideOffset={10}
+                >
+                  <span className="text-xs text-mainText cursor-pointer">
+                    <CircleHelp size={17} />
+                  </span>
+                </HoverCards>
+              </div>
               <div className="flex w-full justify-center gap-x-32">
                 <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
-                  <input type="radio" value="true" {...register('timeUnlimited')} defaultChecked />
-                  시간 무제한
+                  <input type="radio" value="true" {...register('timeUnlimited')} defaultChecked />∞
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="false" {...register('timeUnlimited')} />
-                  제한 있음
+                  30초
                 </label>
               </div>
             </div>
@@ -174,15 +224,28 @@ export default function Form() {
           {/* 진영선택 */}
           {selectedMode !== 'solo' && (
             <div>
-              <h3 className="flex justify-center text-sm md:text-lg font-medium mb-2 md:block">진영</h3>
+              <div className="flex gap-1 items-center mb-2">
+                <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">진영</h3>
+                <HoverCards
+                  message={
+                    '* 블루진영 : 상대방이 레드진영이 됩니다. \n * 레드진영 : 상대방이 블루진영이 됩니다. \n - 피어리스 모드는 진영변경이 가능합니다.'
+                  }
+                  contentClass="text-xs w-[240px] whitespace-pre-line"
+                  sideOffset={10}
+                >
+                  <span className="text-xs text-mainText cursor-pointer">
+                    <CircleHelp size={17} />
+                  </span>
+                </HoverCards>
+              </div>
               <div className="flex w-full justify-center gap-x-32">
                 <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="blue" {...register('myTeamSide')} defaultChecked />
-                  블루팀
+                  블루진영
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer text-xs md:text-sm">
                   <input type="radio" value="red" {...register('myTeamSide')} />
-                  레드팀
+                  레드진영
                 </label>
               </div>
             </div>
