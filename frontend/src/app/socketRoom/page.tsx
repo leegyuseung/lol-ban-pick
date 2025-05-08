@@ -5,11 +5,11 @@ import BanpickSocket from '@/app/socketRoom/banpickSocket';
 import Loading from '@/components/Loading';
 
 export const metadata: Metadata = {
-  title: 'MetaPick(메타픽) - 대기방',
-  description: '팀모드 대기방입니다.',
+  title: 'MetaPick(메타픽) - 밴픽 대기방',
+  description: '팀모드 밴픽 대기방입니다.',
   openGraph: {
-    title: 'MetaPick(메타픽) - 대기방',
-    description: '팀모드 대기방입니다.',
+    title: 'MetaPick(메타픽) - 밴픽 대기방',
+    description: '팀모드 밴픽 대기방입니다.',
     images: [images.THUMBNAIL],
     url: `${process.env.NEXT_PUBLIC_URL}/socketRoom`,
     type: 'website',

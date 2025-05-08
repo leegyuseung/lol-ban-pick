@@ -22,7 +22,7 @@ export default function HoverCards({
   align = 'center',
 }: PropsType) {
   return (
-    <HoverCard>
+    <HoverCard openDelay={200} closeDelay={200}>
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
       <HoverCardContent
         align={align}

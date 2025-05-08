@@ -80,8 +80,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
   const isGuestReady = useMemo(() => guestInfo.status === infoStatusOptions.READY, [guestInfo]);
   return (
     <>
-      <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
-        <h1 className="md:text-3xl font-bold text-center mb-8 text-mainText">대기방</h1>
+      <div className="min-h-screen bg-mainBlack text-white flex flex-col items-center p-6">
+        <h1 className="md:text-3xl font-bold text-center mb-8 text-mainText">밴픽 대기방</h1>
 
         <div className="grid grid-cols-3 gap-1 md:gap-6 w-full max-w-4xl">
           {/* 블루팀 */}
@@ -117,7 +117,6 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
               )}
               {blueTeamName} ({blueCount}/1)
             </h2>
-            <p className="mt-2 text-xs md:text-sm text-gray-300">플레이어 1</p>
           </div>
           {/* 관전자 */}
           <div className="flex flex-col justify-between bg-gray-800 p-2 md:p-6 rounded-lg shadow-lg border-2 border-gray-600">
@@ -152,7 +151,6 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             <h2 className="text-xs md:text-xl font-medium">
               {redTeamName} ({redCount}/1)
             </h2>
-            <p className="mt-2 text-xs md:text-sm mb-1 text-gray-300">플레이어 2</p>
             {role === roleOptions.HOST ? (
               position === teamSideOptions.BLUE ? (
                 <i className="w-2 h-2 md:w-5 md:h-5" onClick={() => copyText(shareUrl.yourTeamUrl)}>
@@ -168,7 +166,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
         </div>
 
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-400">게임이 곧 시작됩니다.</p>
+          <p className="text-sm text-mainText">게임이 곧 시작됩니다.</p>
           <div className="flex w-[300px] justify-evenly mt-5">
             {role === roleOptions.HOST || role === roleOptions.GUEST ? (
               (role === roleOptions.HOST && isHostReady) || (role === roleOptions.GUEST && isGuestReady) ? (
@@ -176,7 +174,7 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
                   className="cursor-pointer h-8 px-8 text-mainText bg-orange-700 font-medium text-xs rounded-sm hover:bg-opacity-65"
                   onClick={onCancel}
                 >
-                  준비취소하기
+                  취소하기
                 </button>
               ) : (
                 <button
