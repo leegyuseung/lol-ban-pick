@@ -23,7 +23,9 @@ export default function HoverCards({
 }: PropsType) {
   return (
     <HoverCard openDelay={200} closeDelay={200}>
-      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
+      <HoverCardTrigger className="md:flex hidden" asChild>
+        {children}
+      </HoverCardTrigger>
       <HoverCardContent
         align={align}
         alignOffset={alignOffset}
