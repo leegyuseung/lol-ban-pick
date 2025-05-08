@@ -16,7 +16,7 @@ export default function NavItem({ text, href }: PropType) {
       className={`relative text-sm md:text-base font-medium group ${isActive ? 'text-mainText' : 'text-gray-400'}`}
     >
       {text}
-      <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+      <h3 className="absolute left-0 bottom-0 w-0 h-[2px] bg-mainText group-hover:w-full"></h3>
     </Link>
   );
 }
