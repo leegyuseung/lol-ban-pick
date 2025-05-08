@@ -87,7 +87,7 @@ export default function TeamLogoPopup({
         </div>
 
         <button
-          className="font-medium w-1/4 p-2 border border-mainText text-mainText rounded-md hover:bg-gray-500 transition"
+          className="font-medium w-1/4 p-2 border border-mainText text-mainText rounded-md pointerhover:hover:bg-gray-500 transition"
           onClick={closePopup}
         >
           선택

@@ -38,7 +38,7 @@ function PopupComp() {
                   <button
                     key={btn.text}
                     onClick={btn.func}
-                    className="text-xs md:text-base w-full px-4 py-3 rounded-lg border-2 border-mainGold text-mainText hover:bg-gray-500 hover:text-mainText transition"
+                    className="text-xs md:text-base w-full px-4 py-3 rounded-lg border-2 border-mainGold text-mainText pointerhover:hover:bg-gray-500 pointerhover:hover:text-mainText transition"
                   >
                     {btn.text}
                   </button>
