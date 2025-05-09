@@ -11,13 +11,13 @@ export default function TeamChangePopup({ onConfirm, onCancel }: TeamChangePopup
         <div className="mt-4 flex justify-center gap-4">
           <button
             onClick={onConfirm}
-            className="cursor-pointer h-8 px-8 bg-mainGold font-medium text-white rounded-sm pointerhover:hover:bg-opacity-65"
+            className="cursor-pointer h-8 px-8 bg-mainGold font-medium text-white rounded-sm md:hover:bg-opacity-65"
           >
             예
           </button>
           <button
             onClick={onCancel}
-            className="cursor-pointer h-8 px-8 bg-gray-300 font-medium text-gray-900 rounded-sm pointerhover:hover:bg-opacity-65"
+            className="cursor-pointer h-8 px-8 bg-gray-300 font-medium text-gray-900 rounded-sm md:hover:bg-opacity-65"
           >
             아니오
           </button>

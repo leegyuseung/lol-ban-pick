@@ -270,7 +270,7 @@ export default function Form() {
             <Button
               type={'submit'}
               className={
-                'text-xs md:text-base w-2/3 md:w-full border border-mainText text-mainText p-3 rounded-md font-medium hover:bg-gray-500 transition'
+                'text-xs md:text-base w-2/3 md:w-full border border-mainText text-mainText p-3 rounded-md font-medium md:hover:bg-gray-500 transition'
               }
               text={'시작하기'}
             />
