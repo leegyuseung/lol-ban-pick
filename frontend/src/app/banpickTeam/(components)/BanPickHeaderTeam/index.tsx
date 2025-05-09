@@ -107,7 +107,7 @@ export default function BanPickHeader() {
   }, [selectedTeamIndex]);
 
   return (
-    <div className="flex h-20  text-white">
+    <div className="flex min-h-[70px] md:min-h-[80px]  text-white">
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-between items-center">
           <div className="hidden md:flex relative w-[80px] h-[65px] ml-10">

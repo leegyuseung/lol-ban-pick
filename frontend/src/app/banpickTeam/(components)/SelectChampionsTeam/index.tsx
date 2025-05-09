@@ -195,9 +195,9 @@ export default function SelectChampions() {
               onClick={headerSecond !== '' ? () => onClickImage(name, info) : undefined}
             />
             <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
-            {info.status !== '' && <FaTimes className="absolute text-5xl md:text-6xl text-red-500" />}
+            {info.status !== '' && <FaTimes className="absolute md:top-0 top-1 text-4xl md:text-6xl text-red-500" />}
             {name === currentSelectedPick[0].name && (
-              <FaCheck className="absolute text-5xl md:text-6xl text-blue-500" />
+              <FaCheck className="absolute md:top-0 top-1 text-4xl md:text-6xl text-blue-500" />
             )}
           </div>
         ))}
