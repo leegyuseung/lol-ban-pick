@@ -26,11 +26,35 @@ export default function SelectedChampionImage({
               }
               fill
               sizes="h-10"
-              style={{ objectFit: 'cover', objectPosition: 'top' }}
+              style={{
+                objectFit: 'cover',
+                objectPosition: banPickObject[index].use
+                  ? banPickObject[index].info.Iposition
+                  : currentLocation === banPickObject[index].location
+                    ? currentSelectedPick[0].info.Iposition
+                    : `top`,
+              }}
               className="hidden md:flex scale-[100%]"
               alt=""
             />
-            <span className="relative m-2 text-xs md:text-lg">
+            <Image
+              src={
+                banPickObject[index].use
+                  ? `https://ddragon.leagueoflegends.com/cdn/${banPickObject[index]?.info.version}/img/champion/${banPickObject[index]?.name}.png`
+                  : currentLocation === banPickObject[index].location
+                    ? `https://ddragon.leagueoflegends.com/cdn/${currentSelectedPick[0]?.info.version}/img/champion/${currentSelectedPick[0]?.name}.png`
+                    : ``
+              }
+              placeholder="blur"
+              blurDataURL={'/images/default_champ.png'} // 사전 생성된 저해상도 이미지
+              loading="eager" // 바로 로드
+              width={70}
+              height={70}
+              className="flex md:hidden"
+              alt=""
+              priority={true} // 즉시 로드
+            />
+            <span className="hidden md:flex relative m-2 text-xs md:text-lg">
               {banPickObject[index].use
                 ? banPickObject[index].info.name
                 : currentLocation === banPickObject[index].location
