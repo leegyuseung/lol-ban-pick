@@ -94,6 +94,7 @@ export const useBanStore = create<BanI>()((set, get) => ({
               ...(value as ChampionInfoI),
               status: '',
               line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
+              Iposition: (championData as Record<string, { line: string[]; Iposition: string }>)[key]?.Iposition || '',
             },
           ]),
       );

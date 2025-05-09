@@ -10,6 +10,7 @@ export default function SelectedChampionImage({
   side,
   location,
 }: SelectedChampionImagePropsI) {
+  console.log('test@@@@', banPickObject[index], currentSelectedPick[0]);
   return (
     <>
       {(banPickObject[index].use ||
@@ -26,7 +27,14 @@ export default function SelectedChampionImage({
               }
               fill
               sizes="h-10"
-              style={{ objectFit: 'cover', objectPosition: 'top' }}
+              style={{
+                objectFit: 'cover',
+                objectPosition: banPickObject[index].use
+                  ? banPickObject[index].info.Iposition
+                  : currentLocation === banPickObject[index].location
+                    ? currentSelectedPick[0].info.Iposition
+                    : `top`,
+              }}
               className="hidden md:flex scale-[100%]"
               alt=""
             />

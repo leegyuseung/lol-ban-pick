@@ -4,6 +4,7 @@ type ChampionInfoType = {
   name: string;
   version: string;
   status: string;
+  Iposition: string;
 };
 
 interface ChampionInfoI extends ChampionInfoType {
