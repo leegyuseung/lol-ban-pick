@@ -22,7 +22,7 @@ export default function About() {
             <li key={index} className="border-b border-gray-700 pb-2">
               <button
                 onClick={() => handleToggle(index)}
-                className="flex justify-between w-full text-left pointerhover:hover:text-gray-400 text-sm md:text-base"
+                className="flex justify-between w-full text-left md:hover:text-gray-400 text-sm md:text-base"
               >
                 <span>{update.title}</span>
                 <span className="text-gray-400 text-[10px] md:text-base">{update.date}</span>
@@ -45,10 +45,7 @@ export default function About() {
               {/* 프로필 이미지 자리 */}
               <h3 className="text-sm md:text-base font-medium">{dev.name}</h3>
               <p className="text-xs md:text-base text-gray-400">{dev.role}</p>
-              <a
-                href={`mailto:${dev.email}`}
-                className="text-blue-400 mt-2 text-xs md:text-sm pointerhover:hover:underline"
-              >
+              <a href={`mailto:${dev.email}`} className="text-blue-400 mt-2 text-xs md:text-sm md:hover:underline">
                 {dev.email}
               </a>
               <a

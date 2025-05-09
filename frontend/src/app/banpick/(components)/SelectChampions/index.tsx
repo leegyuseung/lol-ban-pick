@@ -248,7 +248,7 @@ export default function SelectChampions() {
       >
         {Object.entries(filteredChampions).map(([name, info], idx) => (
           <div
-            className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} pointerhover:hover:opacity-50 ${info.status != '' || name === currentSelectedPick[0].name ? 'opacity-20' : ''}`}
+            className={`relative flex flex-col items-center ${info.status !== '' ? 'cursor-not-allowed' : 'cursor-pointer'} md:hover:opacity-50 ${info.status != '' || name === currentSelectedPick[0].name ? 'opacity-20' : ''}`}
             key={name}
           >
             <ImageComp
@@ -264,9 +264,9 @@ export default function SelectChampions() {
               onClick={() => handleClick(name, info)}
             />
             <p className="text-[9px] text-center text-mainText truncate">{info.name}</p>
-            {info.status !== '' && <FaTimes className="absolute text-5xl md:text-6xl text-red-500" />}
+            {info.status !== '' && <FaTimes className="absolute top-1 md:top-0 text-4xl md:text-6xl text-red-500" />}
             {name === currentSelectedPick[0].name && (
-              <FaCheck className="absolute text-5xl md:text-6xl text-blue-500" />
+              <FaCheck className="absolute md:top-0 top-1 text-4xl md:text-6xl text-blue-500" />
             )}
           </div>
         ))}
@@ -282,7 +282,7 @@ export default function SelectChampions() {
           <div className="md:absolute left-0">
             <Button
               text={'뒤로가기'}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm pointerhover:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={() => (window.location.href = '/')}
             />
           </div>
@@ -292,7 +292,7 @@ export default function SelectChampions() {
           <div className="md:absolute">
             <Button
               text={'챔피언 선택'}
-              className={`${currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm pointerhover:hover:bg-opacity-65`}
+              className={`${currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={currentSelectedPick[0].name === '' || headerSecond === '' ? undefined : onClickButton}
             />
           </div>
@@ -304,7 +304,7 @@ export default function SelectChampions() {
           <div className="md:absolute right-0">
             <Button
               text={'다시하기'}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm pointerhover:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={onReplay}
             />
           </div>
@@ -321,7 +321,7 @@ export default function SelectChampions() {
           <div className="md:absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm pointerhover:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={onNextSet}
             />
           </div>

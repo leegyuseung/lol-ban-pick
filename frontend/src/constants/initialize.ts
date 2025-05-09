@@ -11,6 +11,7 @@ const InitailizeInfoData = {
   version: '',
   status: '',
   line: [],
+  Iposition: '',
 };
 
 const InitializeBanPickObject = [

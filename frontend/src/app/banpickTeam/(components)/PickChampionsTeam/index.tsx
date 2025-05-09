@@ -17,9 +17,9 @@ export default function PickChampions({ side }: PropsType) {
   return (
     <div className={`flex flex-col flex-[3] m-1 ${side === sideOptions.LEFT ? 'md:order-2' : 'md:order-4'}`}>
       {/* 상단부 */}
-      <div className="flex flex-col flex-[2] md:gap-1">
+      <div className="flex justify-center md:flex-col flex-[2] md:gap-1">
         <div
-          className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-end' : 'items-end'}`}
+          className={`relative overflow-hidden w-full h-[70px] md:h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-center md:items-end' : 'items-center md:items-end'}`}
         >
           <MiniIcon
             className={`absolute ${side === sideOptions.LEFT ? 'left-0' : 'right-0'} z-10  m-2`}
@@ -48,7 +48,7 @@ export default function PickChampions({ side }: PropsType) {
           />
         </div>
         <div
-          className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-end' : 'items-end'}`}
+          className={`relative overflow-hidden w-full h-[70px] md:h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-center md:items-end' : 'items-center md:items-end'}`}
         >
           <MiniIcon
             className={`absolute ${side === sideOptions.LEFT ? 'left-0' : 'right-0'} z-10  m-2`}
@@ -77,7 +77,7 @@ export default function PickChampions({ side }: PropsType) {
           />
         </div>
         <div
-          className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-end' : 'items-end'}`}
+          className={`relative overflow-hidden w-full h-[70px] md:h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-center md:items-end' : 'items-center md:items-end'}`}
         >
           <MiniIcon
             className={`absolute ${side === sideOptions.LEFT ? 'left-0' : 'right-0'} z-10  m-2`}
@@ -105,7 +105,7 @@ export default function PickChampions({ side }: PropsType) {
           />
         </div>
         <div
-          className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-end' : 'items-end'}`}
+          className={`relative overflow-hidden w-full h-[70px] md:h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-center md:items-end' : 'items-center md:items-end'}`}
         >
           <MiniIcon
             className={`absolute ${side === sideOptions.LEFT ? 'left-0' : 'right-0'} z-10  m-2`}
@@ -133,7 +133,7 @@ export default function PickChampions({ side }: PropsType) {
           />
         </div>
         <div
-          className={`relative overflow-hidden w-full h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-end' : 'items-end'}`}
+          className={`relative overflow-hidden w-full h-[70px] md:h-10 flex flex-[1] border border-mainGold ${side === sideOptions.LEFT ? 'justify-end items-center md:items-end' : 'items-center md:items-end'}`}
         >
           <MiniIcon
             className={`absolute ${side === sideOptions.LEFT ? 'left-0' : 'right-0'} z-10  m-2`}
@@ -164,7 +164,7 @@ export default function PickChampions({ side }: PropsType) {
       </div>
 
       {/* 하단부 */}
-      <div className="flex md:flex-col flex-[1] gap-2 pt-5">
+      <div className="flex md:flex-col flex-[1] gap-2 pt-1 md:pt-5">
         <div className="flex gap-2 justify-center w-full">
           <div className="relative border border-mainGold w-[40px] md:w-[60px] h-[40px] md:h-[60px]">
             <SelectedBanImage
