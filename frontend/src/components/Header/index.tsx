@@ -11,19 +11,17 @@ const Nav = [
 export default function Header() {
   return (
     <header className="fixed top-0 w-full">
-      <div className="flex items-center justify-between px-20 h-16 bg-mainBlack min-w-[375px]">
+      <div className="flex items-center justify-between px-4 md:px-20 h-16 bg-mainBlack min-w-[320px]">
         {/* 로고 */}
         <Link href={navigations.SIMULATION}>
-          <div className="relative w-14 h-14 sm:w-16 sm:h-16">
-            <Image
-              src={images.THUMBNAIL}
-              alt="logo"
-              fill
-              className="object-contain"
-              sizes="(max-width: 640px) 64px, 80px"
-              priority
-            />
-          </div>
+          <Image
+            src={images.THUMBNAIL}
+            alt="MetaPick_메타픽_logo"
+            width={64}
+            height={64}
+            className="object-contain w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
+            priority
+          />
         </Link>
 
         {/* 네비게이션 */}
