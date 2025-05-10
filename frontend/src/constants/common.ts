@@ -8,8 +8,7 @@ const lineMappingOptions: Record<string, number> = {
   sup: 4,
 };
 
-const ImageList = ['t1', 'hanwha', 'geng', 'kia', 'kt', 'dn', 'ok'];
-const ImageListPng = ['drx', 'ns'];
+const ImageList = ['t1', 'hanwha', 'geng', 'kia', 'kt', 'dn', 'ok', 'drx', 'ns'];
 
 const banPickModeOptions = {
   TNM: 'tournament',
@@ -97,7 +96,6 @@ const booleanOptions = {
 
 export {
   ImageList,
-  ImageListPng,
   filterOptions,
   roleOptions,
   teamSideOptions,

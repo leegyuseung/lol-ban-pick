@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import NextImage from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Button from '@/components/Button';
 import TeamLogoPopup from '@/components/TeamLogoPopup';
@@ -10,7 +10,14 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { FormsType } from '@/types';
-import { banPickModeOptions, navigations, peopleModeOptions, socketType, teamSideOptions } from '@/constants';
+import {
+  banPickModeOptions,
+  ImageList,
+  navigations,
+  peopleModeOptions,
+  socketType,
+  teamSideOptions,
+} from '@/constants';
 import { CircleHelp } from 'lucide-react';
 
 export default function Form() {
@@ -32,6 +39,13 @@ export default function Form() {
       nowSet: 1,
     },
   });
+
+  useEffect(() => {
+    ImageList.forEach((src) => {
+      const img = new Image();
+      img.src = `/images/${src}.webp`;
+    });
+  }, []);
 
   // 전부 초기화
   useEffect(() => {
@@ -110,12 +124,6 @@ export default function Form() {
     setIsOpen(false);
   };
 
-  // 경로의 페이지를 미리 로드
-  useEffect(() => {
-    router.prefetch(navigations.BANPICK);
-    router.prefetch(navigations.BANPICKTEAM);
-  }, [router]);
-
   return (
     <div className="flex flex-col items-center min-h-full pt-20 md:p-7 md:mt-20">
       <h1 className="md:text-4xl font-medium pb-6">밴픽 시뮬레이터</h1>
@@ -126,7 +134,14 @@ export default function Form() {
         {/* 블루팀 */}
         <div className="hidden md:flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
-            <Image className="object-contain" sizes="w-[200px] h-[200px]" src={blueImage} alt="logo" fill priority />
+            <NextImage
+              className="object-contain"
+              sizes="w-[200px] h-[200px]"
+              src={blueImage}
+              alt="logo"
+              fill
+              priority
+            />
             <HoverCards
               message={'로고를 클릭하면 로고를 변경할 수 있습니다.'}
               side="right"
@@ -280,7 +295,7 @@ export default function Form() {
         {/* 레드팀 */}
         <div className="hidden md:flex flex-col justify-center items-center gap-6 w-[230px]">
           <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.RED)}>
-            <Image className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
+            <NextImage className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
           </div>
           <h3 className="text-lg font-medium mb-2">{redTeam}</h3>
           <input
