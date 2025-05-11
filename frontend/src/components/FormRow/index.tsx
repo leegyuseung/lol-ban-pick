@@ -1,5 +1,4 @@
 'use client';
-
 import NextImage from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Button from '@/components/Button';
@@ -10,14 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useRulesStore, usePeerlessStore, useSocketStore, useBanStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import { FormsType } from '@/types';
-import {
-  banPickModeOptions,
-  ImageList,
-  navigations,
-  peopleModeOptions,
-  socketType,
-  teamSideOptions,
-} from '@/constants';
+import { banPickModeOptions, navigations, peopleModeOptions, socketType, teamSideOptions } from '@/constants';
 import { CircleHelp } from 'lucide-react';
 
 export default function Form() {
@@ -40,12 +32,19 @@ export default function Form() {
     },
   });
 
-  useEffect(() => {
-    ImageList.forEach((src) => {
-      const img = new Image();
-      img.src = `/images/${src}.webp`;
-    });
-  }, []);
+  const blueTeam = watch('blueTeamName') || '블루팀';
+  const redTeam = watch('redTeamName') || '레드팀';
+  const router = useRouter();
+  const selectedMode = watch('peopleMode');
+  const [blueImage, setBlueImage] = useState('/images/t1.webp');
+  const [redImage, setRedImage] = useState('/images/geng.webp');
+
+  // 팝업관련
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTeamColor, setSelectedTeamColor] = useState('');
+
+  //소켓 팝업 관련
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   // 전부 초기화
   useEffect(() => {
@@ -82,19 +81,10 @@ export default function Form() {
     }
   }, []);
 
-  const blueTeam = watch('blueTeamName') || '블루팀';
-  const redTeam = watch('redTeamName') || '레드팀';
-  const router = useRouter();
-  const selectedMode = watch('peopleMode');
-  const [blueImage, setBlueImage] = useState('/images/t1.webp');
-  const [redImage, setRedImage] = useState('/images/geng.webp');
+  useEffect(() => {
+    router.prefetch('/banpick');
+  }, [router]);
 
-  // 팝업관련
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedTeamColor, setSelectedTeamColor] = useState('');
-
-  //소켓 팝업 관련
-  const [isShareOpen, setIsShareOpen] = useState(false);
   const onSubmit = async (data: FormsType) => {
     // 이미지 넣어주기
     data.blueImg = blueImage;
@@ -133,14 +123,15 @@ export default function Form() {
       >
         {/* 블루팀 */}
         <div className="hidden md:flex flex-col justify-center items-center gap-6 w-[230px]">
-          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
+          <div className="relative w-[230px] h-[230px] cursor-pointer" onClick={() => openPopup(teamSideOptions.BLUE)}>
             <NextImage
+              sizes="(max-width: 768px) 100vw, 230px"
               className="object-contain"
-              sizes="w-[200px] h-[200px]"
               src={blueImage}
-              alt="logo"
+              alt="blueteam_logo"
               fill
               priority
+              quality={90} // 품질 명시
             />
             <HoverCards
               message={'로고를 클릭하면 로고를 변경할 수 있습니다.'}
@@ -153,9 +144,9 @@ export default function Form() {
               </span>
             </HoverCards>
           </div>
-          <h3 className="text-lg font-medium mb-2">{blueTeam}</h3>
+          <h1 className="text-lg font-medium mb-2">{blueTeam}</h1>
           <input
-            className="text-center p-3 bg-blue-700 rounded-md border-mainText placeholder-mainText w-full"
+            className="text-center p-3 bg-blue-800 rounded-md border-white placeholder-white w-full"
             {...register('blueTeamName')}
             placeholder="블루팀 이름을 입력해주세요."
           />
@@ -165,7 +156,7 @@ export default function Form() {
           <div>
             {/* 밴픽 모드 */}
             <div className="flex gap-1 items-center mb-2">
-              <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">밴픽 모드</h3>
+              <h1 className="flex justify-center text-sm md:text-lg font-medium md:block">밴픽 모드</h1>
               <HoverCards
                 message={
                   '* 토너먼트드리프트 : 전통적인 밴픽 방식입니다. \n * 피어리스 : 이전 라운드에서 픽했던 챔피언을 다음 라운드에서 픽할 수 없습니다.'
@@ -197,7 +188,7 @@ export default function Form() {
           {/* 참여 모드 */}
           <div>
             <div className="flex gap-1 items-center mb-2">
-              <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">참여 모드</h3>
+              <h1 className="flex justify-center text-sm md:text-lg font-medium md:block">참여 모드</h1>
               <HoverCards
                 message={
                   '* 솔로모드 : 혼자서 레드와 블루 밴픽을 진행합니다. \n * 팀모드 : 상대방을 초대하여 선택한 팀으로 밴픽을 진행합니다.'
@@ -226,7 +217,7 @@ export default function Form() {
           {selectedMode === 'solo' && (
             <div>
               <div className="flex gap-1 items-center mb-2">
-                <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">시간 설정</h3>
+                <h1 className="flex justify-center text-sm md:text-lg font-medium md:block">시간 설정</h1>
                 <HoverCards
                   message={
                     '* 무제한 : 솔로모드에서 시간제한 없이 밴픽할 수 있습니다. \n * 제한 : 솔로모드에서 30초 제한으로 밴픽을 진행합니다. \n - 팀모드는 시간설정변경 불가능합니다.'
@@ -255,7 +246,7 @@ export default function Form() {
           {selectedMode !== 'solo' && (
             <div>
               <div className="flex gap-1 items-center mb-2">
-                <h3 className="flex justify-center text-sm md:text-lg font-medium md:block">진영</h3>
+                <h1 className="flex justify-center text-sm md:text-lg font-medium md:block">진영</h1>
                 <HoverCards
                   message={
                     '* 블루진영 : 상대방이 레드진영이 됩니다. \n * 레드진영 : 상대방이 블루진영이 됩니다. \n - 피어리스 모드는 진영변경이 가능합니다.'
@@ -294,12 +285,20 @@ export default function Form() {
 
         {/* 레드팀 */}
         <div className="hidden md:flex flex-col justify-center items-center gap-6 w-[230px]">
-          <div className="relative w-[200px] h-[200px] cursor-pointer" onClick={() => openPopup(teamSideOptions.RED)}>
-            <NextImage className="object-contain" sizes="w-[200px] h-[200px]" src={redImage} alt="logo" fill priority />
+          <div className="relative w-[230px] h-[230px] cursor-pointer" onClick={() => openPopup(teamSideOptions.RED)}>
+            <NextImage
+              sizes="230px"
+              className="object-contain"
+              src={redImage}
+              alt="redteam_logo"
+              priority
+              fill
+              quality={90} // 품질 명시
+            />
           </div>
-          <h3 className="text-lg font-medium mb-2">{redTeam}</h3>
+          <h1 className="text-lg font-medium mb-2">{redTeam}</h1>
           <input
-            className="text-center p-3 bg-red-700 rounded-md border-mainText placeholder-mainText w-full"
+            className="text-center p-3 bg-red-800 rounded-md border-white placeholder-white w-full"
             {...register('redTeamName')}
             placeholder="레드팀 이름을 입력해주세요."
           />

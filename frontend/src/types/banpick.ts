@@ -1,37 +1,37 @@
-import { ChampionInfoI, ChampionInfoType } from '.';
+import { ChampionInfoType } from '.';
 
 type BanObjectType = {
   name: string;
   line: number;
-  info: ChampionInfoI;
+  info: ChampionInfoType;
 };
 
 type currentSelectedPickType = {
   name: string;
-  info: ChampionInfoI;
+  info: ChampionInfoType;
 }[];
 
 type BanPickObjectType = {
   index: number;
   location: string;
   name: string;
-  info: ChampionInfoI;
+  info: ChampionInfoType;
   use: boolean;
   random: boolean;
   status: string;
 }[];
 
 interface BanI {
-  championInfo: Record<string, ChampionInfoI>;
+  championInfo: Record<string, ChampionInfoType>;
   setChampionInfo: () => Promise<void>;
   setChangeChampionInfo: (name: string, banPick: string) => void;
   setChangeChampionPeerInfo: (myBan: BanObjectType[][], yourBan: BanObjectType[][]) => void;
 
   currentSelectedPick: currentSelectedPickType;
-  setCurrentSelectedPick: (name: string, info: ChampionInfoI) => void;
+  setCurrentSelectedPick: (name: string, info: ChampionInfoType) => void;
 
   banPickObject: BanPickObjectType;
-  setBanPickObject: (index: number, name: string, info: ChampionInfoI, ran: boolean) => void;
+  setBanPickObject: (index: number, name: string, info: ChampionInfoType, ran: boolean) => void;
   setClearBanPickObject: () => void;
 
   currentLocation: string;

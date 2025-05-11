@@ -76,27 +76,31 @@ export const useChampionStore = create<ChampionStoreType>()(
 
 // BanPick에서 사용
 export const useBanStore = create<BanI>()((set, get) => ({
-  championInfo: {} as Record<string, ChampionInfoI>,
+  championInfo: {} as Record<string, ChampionInfoType>,
   setChampionInfo: async () => {
     try {
       const response = await fetch(navigations.BANPICKNAME);
       const { championInfo } = await response.json();
 
-      const updatedChampionInfo: Record<string, ChampionInfoI> = Object.fromEntries(
+      const updatedChampionInfo: Record<string, ChampionInfoType> = Object.fromEntries(
         Object.entries(championInfo)
           .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
           .sort(([, infoA], [, infoB]) =>
             (infoA as ChampionInfoI).name.localeCompare((infoB as ChampionInfoI).name, 'ko-KR'),
           )
-          .map(([key, value]) => [
-            key,
-            {
-              ...(value as ChampionInfoI),
-              status: '',
-              line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
-              Iposition: (championData as Record<string, { line: string[]; Iposition: string }>)[key]?.Iposition || '',
-            },
-          ]),
+          .map(([key, value]) => {
+            const data = value as ChampionInfoI;
+
+            return [
+              key,
+              {
+                ...data,
+                status: '',
+                line: (championData as Record<string, { line: string[] }>)[key]?.line || [],
+                Iposition: (championData as Record<string, { Iposition: string }>)[key]?.Iposition || '',
+              },
+            ];
+          }),
       );
 
       set({ championInfo: updatedChampionInfo });

@@ -16,7 +16,7 @@ import {
   statusOptions,
   teamSideOptions,
 } from '@/constants';
-import { BanObjectType, ChampionInfoI } from '@/types';
+import { BanObjectType, ChampionInfoType } from '@/types';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
@@ -99,7 +99,7 @@ export default function SelectChampions() {
   );
 
   // Image 클릭시
-  const onClick = (pickName: string, info: ChampionInfoI) => {
+  const onClick = (pickName: string, info: ChampionInfoType) => {
     if (pickName === '') return;
     setCurrentSelectedPick(pickName, info); // 선택한 챔피언 정보를 저장
   };
@@ -282,7 +282,7 @@ export default function SelectChampions() {
           <div className="md:absolute left-0">
             <Button
               text={'뒤로가기'}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-white font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={() => (window.location.href = '/')}
             />
           </div>
@@ -292,7 +292,7 @@ export default function SelectChampions() {
           <div className="md:absolute">
             <Button
               text={'챔피언 선택'}
-              className={`${currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
+              className={`${currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-white bg-mainGold font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={currentSelectedPick[0].name === '' || headerSecond === '' ? undefined : onClickButton}
             />
           </div>
@@ -304,7 +304,7 @@ export default function SelectChampions() {
           <div className="md:absolute right-0">
             <Button
               text={'다시하기'}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-white font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={onReplay}
             />
           </div>
@@ -321,7 +321,7 @@ export default function SelectChampions() {
           <div className="md:absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-white font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={onNextSet}
             />
           </div>
