@@ -1,3 +1,4 @@
+import { ChampionInfoI, ChampionInfoType } from '@/types';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: { type: string } }) {
@@ -13,7 +14,28 @@ export async function GET(req: Request, { params }: { params: { type: string } }
     const championsRes = await fetch(
       `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/ko_KR/champion.json`,
     );
-    const championInfo = (await championsRes.json()).data;
+    const championInfoData = (await championsRes.json()).data;
+
+    const championInfo = Object.fromEntries(
+      Object.entries(championInfoData)
+        .filter(([_, value]) => typeof value === 'object' && value !== null) // 객체만 필터링
+        .sort(([, infoA], [, infoB]) =>
+          (infoA as ChampionInfoI).name.localeCompare((infoB as ChampionInfoI).name, 'ko-KR'),
+        )
+        .map(([key, value]) => {
+          const data = value as ChampionInfoI;
+
+          return [
+            key,
+            {
+              id: data.id,
+              name: data.name,
+              version: data.version,
+              status: '',
+            },
+          ];
+        }),
+    );
     return NextResponse.json({ championInfo });
   } else {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });

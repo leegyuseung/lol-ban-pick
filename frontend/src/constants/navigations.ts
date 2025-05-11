@@ -7,7 +7,7 @@ const navigations = {
 };
 
 const images = {
-  THUMBNAIL: '/metapick.png',
+  THUMBNAIL: '/metapick.webp',
 };
 
 export { navigations, images };

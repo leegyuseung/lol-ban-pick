@@ -1,6 +1,6 @@
-import { ChampionInfoI, ChampionInfoType } from '@/types';
+import { ChampionInfoType } from '@/types';
 
-export default async function useSimplify(infoData: ChampionInfoI): Promise<ChampionInfoType> {
+export default async function useSimplify(infoData: ChampionInfoType): Promise<ChampionInfoType> {
   if (!infoData) return { id: '', line: [], name: '', status: '', version: '', Iposition: '' };
   const newInfo = {
     id: infoData.id,

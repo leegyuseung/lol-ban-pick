@@ -19,7 +19,6 @@ export default function BanPickHeader() {
   // 시간
   useEffect(() => {
     if (timeUnlimited === booleanOptions.TRUE || headerSecond === '') return;
-
     timerRef.current = setInterval(() => {
       if (secondRef.current === '0') {
         // 30초가 그냥 지나갈 경우 랜덤픽으로 넣어야한다
@@ -67,29 +66,31 @@ export default function BanPickHeader() {
             {hostInfo.myTeamSide === teamSideOptions.BLUE
               ? hostInfo.myImg && (
                   <Image
-                    sizes="w-[80px] h-[65px]"
                     className="object-contain"
-                    src={hostInfo.myImg}
-                    alt="logo"
-                    fill
+                    src={hostInfo.myImg.replace('.webp', '_logo.webp')}
+                    alt="blue_logo"
+                    width={80}
+                    height={65}
                     priority
+                    quality={90} // 품질 명시
                   />
                 )
               : hostInfo.yourImg && (
                   <Image
-                    sizes="w-[80px] h-[65px]"
                     className="object-contain"
-                    src={hostInfo.yourImg}
-                    alt="logo"
-                    fill
+                    src={hostInfo.yourImg.replace('.webp', '_logo.webp')}
+                    alt="blue_logo"
+                    width={80}
+                    height={65}
                     priority
+                    quality={90} // 품질 명시
                   />
                 )}
           </div>
           {hostInfo.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="md:text-2xl md:mr-15 ml-5">{hostInfo.myTeam}</span>
+            <h1 className="md:text-2xl md:mr-15 ml-5">{hostInfo.myTeam}</h1>
           ) : (
-            <span className="md:text-2xl md:mr-15 ml-5">{hostInfo.yourTeam}</span>
+            <h1 className="md:text-2xl md:mr-15 ml-5">{hostInfo.yourTeam}</h1>
           )}
         </div>
         <div className="flex-[1] w-full relative overflow-hidden h-4 ">
@@ -99,38 +100,38 @@ export default function BanPickHeader() {
         </div>
       </div>
       <div className="flex-[1] flex flex-col justify-center items-center">
-        <span className="text-xs">
-          {banpickMode === banPickModeOptions.TNM ? '드리프트 토너먼트' : `${nowSet} 세트`}
-        </span>
-        <span className="md:text-3xl">{`:${headerSecond}`}</span>
+        <h1 className="text-xs">{banpickMode === banPickModeOptions.TNM ? '드리프트 토너먼트' : `${nowSet} 세트`}</h1>
+        <h1 className="md:text-3xl">{`:${headerSecond}`}</h1>
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-end md:justify-between items-center">
           {hostInfo.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="md:text-2xl md:ml-15 mr-5">{hostInfo.yourTeam}</span>
+            <h1 className="md:text-2xl md:ml-15 mr-5">{hostInfo.yourTeam}</h1>
           ) : (
-            <span className="md:text-2xl md:ml-15 mr-5">{hostInfo.myTeam}</span>
+            <h1 className="md:text-2xl md:ml-15 mr-5">{hostInfo.myTeam}</h1>
           )}
           <div className="hidden md:flex relative w-[80px] h-[65px] mr-10">
             {hostInfo.myTeamSide === teamSideOptions.BLUE
               ? hostInfo.yourImg && (
                   <Image
                     className="object-contain"
-                    sizes="w-[80px] h-[65px]"
-                    src={hostInfo.yourImg}
-                    alt="logo"
-                    fill
+                    width={80}
+                    height={65}
+                    src={hostInfo.yourImg.replace('.webp', '_logo.webp')}
+                    alt="red_logo"
                     priority
+                    quality={90} // 품질 명시
                   />
                 )
               : hostInfo.myImg && (
                   <Image
                     className="object-contain"
-                    sizes="w-[80px] h-[65px]"
-                    src={hostInfo.myImg}
-                    alt="logo"
-                    fill
+                    width={80}
+                    height={65}
+                    src={hostInfo.myImg.replace('.webp', '_logo.webp')}
+                    alt="red_logo"
                     priority
+                    quality={90} // 품질 명시
                   />
                 )}
           </div>

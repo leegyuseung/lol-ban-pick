@@ -114,29 +114,31 @@ export default function BanPickHeader() {
             {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE
               ? InfoDataRef.current?.myImg && (
                   <Image
-                    sizes="w-[80px] h-[65px]"
                     className="object-contain"
-                    src={InfoDataRef.current?.myImg}
-                    alt="logo"
-                    fill
+                    src={InfoDataRef.current?.myImg.replace('.webp', '_logo.webp')}
+                    alt="blue_logo"
+                    width={80}
+                    height={65}
                     priority
+                    quality={90}
                   />
                 )
               : InfoDataRef.current?.yourImg && (
                   <Image
-                    sizes="w-[80px] h-[65px]"
                     className="object-contain"
-                    src={InfoDataRef.current?.yourImg}
-                    alt="logo"
-                    fill
+                    src={InfoDataRef.current?.yourImg.replace('.webp', '_logo.webp')}
+                    alt="blue_logo"
+                    width={80}
+                    height={65}
                     priority
+                    quality={90}
                   />
                 )}
           </div>
           {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="md:text-2xl md:mr-15 ml-5">{InfoDataRef.current?.myTeam}</span>
+            <h1 className="md:text-2xl md:mr-15 ml-5">{InfoDataRef.current?.myTeam}</h1>
           ) : (
-            <span className="md:text-2xl md:mr-15 ml-5">{InfoDataRef.current?.yourTeam}</span>
+            <h1 className="md:text-2xl md:mr-15 ml-5">{InfoDataRef.current?.yourTeam}</h1>
           )}
         </div>
         <div className="flex-[1] w-full relative overflow-hidden h-4">
@@ -146,38 +148,38 @@ export default function BanPickHeader() {
         </div>
       </div>
       <div className="flex-[1] flex flex-col justify-center items-center">
-        <span className="text-xs">
-          {banpickMode === banPickModeOptions.TNM ? '드리프트 토너먼트' : `${nowSet} 세트`}
-        </span>
-        <span className="md:text-3xl">{`:${headerSecond}`}</span>
+        <h1 className="text-xs">{banpickMode === banPickModeOptions.TNM ? '드리프트 토너먼트' : `${nowSet} 세트`}</h1>
+        <h1 className="md:text-3xl">{`:${headerSecond}`}</h1>
       </div>
       <div className="flex-[3] flex flex-col justify-center items-center">
         <div className="flex h-[65px] w-full justify-end md:justify-between items-center">
           {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE ? (
-            <span className="md:text-2xl md:ml-15 mr-5">{InfoDataRef.current?.yourTeam}</span>
+            <h1 className="md:text-2xl md:ml-15 mr-5">{InfoDataRef.current?.yourTeam}</h1>
           ) : (
-            <span className="md:text-2xl md:ml-15 mr-5">{InfoDataRef.current?.myTeam}</span>
+            <h1 className="md:text-2xl md:ml-15 mr-5">{InfoDataRef.current?.myTeam}</h1>
           )}
           <div className="hidden md:flex relative w-[80px] h-[65px] mr-10">
             {InfoDataRef.current?.myTeamSide === teamSideOptions.BLUE
               ? InfoDataRef.current?.yourImg && (
                   <Image
                     className="object-contain"
-                    sizes="w-[80px] h-[65px]"
-                    src={InfoDataRef.current?.yourImg}
-                    alt="logo"
-                    fill
+                    src={InfoDataRef.current?.yourImg.replace('.webp', '_logo.webp')}
+                    alt="red_logo"
+                    width={80}
+                    height={65}
                     priority
+                    quality={90}
                   />
                 )
               : InfoDataRef.current?.myImg && (
                   <Image
                     className="object-contain"
-                    sizes="w-[80px] h-[65px]"
-                    src={InfoDataRef.current?.myImg}
-                    alt="logo"
-                    fill
+                    src={InfoDataRef.current?.myImg.replace('.webp', '_logo.webp')}
+                    alt="red_logo"
+                    width={80}
+                    height={65}
                     priority
+                    quality={90}
                   />
                 )}
           </div>
