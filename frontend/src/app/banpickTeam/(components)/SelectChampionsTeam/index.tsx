@@ -9,7 +9,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { FaSearch, FaTimes, FaCheck } from 'react-icons/fa';
 import { useBanTeamStore, useBanStore } from '@/store';
 import { banPickModeOptions, filterOptions, roleOptions, teamSideOptions } from '@/constants';
-import { ChampionInfoI, InfoType } from '@/types';
+import { ChampionInfoType, InfoType } from '@/types';
 
 // search Icon 최적화
 const MemoizedFaSearch = memo(FaSearch);
@@ -103,7 +103,7 @@ export default function SelectChampions() {
 
   // Image 클릭시
   const onClickImage = useCallback(
-    async (pickName: string, info: ChampionInfoI) => {
+    async (pickName: string, info: ChampionInfoType) => {
       if (selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || pickName === '') return;
       const newInfoData = await useSimplify(info);
       SelectChampionImage(pickName, newInfoData); // 선택한 챔피언 정보를 저장
@@ -215,7 +215,7 @@ export default function SelectChampions() {
           <div className="md:absolute left-0">
             <Button
               text={'뒤로가기'}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-white font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={() => (window.location.href = '/')}
             />
           </div>
@@ -225,7 +225,7 @@ export default function SelectChampions() {
           <div className="md:absolute">
             <Button
               text={'챔피언 선택'}
-              className={`${selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-mainText bg-mainGold font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
+              className={`${selectedTeam[selectedTeamIndex].color !== InfoDataRef.current?.myTeamSide || currentSelectedPick[0].name === '' || headerSecond === '' ? 'cursor-not-allowed' : 'cursor-pointer'} h-8 px-8 text-white bg-mainGold font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={currentSelectedPick[0].name === '' || headerSecond === '' ? undefined : onClickButton}
             />
           </div>
@@ -244,7 +244,7 @@ export default function SelectChampions() {
           <div className="md:absolute right-0">
             <Button
               text={`${nowSet + 1}세트`}
-              className={`bg-mainGold cursor-pointer h-8 px-8 text-mainText font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
+              className={`bg-mainGold cursor-pointer h-8 px-8 text-white font-medium text-xs rounded-sm md:hover:bg-opacity-65`}
               onClick={onNextSet}
             />
           </div>

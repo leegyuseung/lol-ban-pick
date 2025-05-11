@@ -1,13 +1,9 @@
 import { lineOptions, locationOptions, statusOptions, teamcolorOptions } from '.';
 
 const InitailizeInfoData = {
-  blurb: '',
   id: '',
-  key: '',
   name: '',
-  partype: '',
   tags: [],
-  title: '',
   version: '',
   status: '',
   line: [],
