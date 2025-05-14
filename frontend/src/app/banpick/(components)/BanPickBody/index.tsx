@@ -1,6 +1,7 @@
 import PeerlessList from '@/app/banpick/(components)/PeerlessList';
 import PickChampions from '@/app/banpick/(components)/PickChampions';
 import SelectChampions from '@/app/banpick/(components)/SelectChampions';
+import { KakaoAdIngame } from '@/components/KaKaoAd';
 import { sideOptions } from '@/constants';
 
 export default function BanPickBody() {
@@ -11,6 +12,7 @@ export default function BanPickBody() {
       <PickChampions side={sideOptions.LEFT} />
       <PickChampions side={sideOptions.RIGHT} />
       <PeerlessList side={sideOptions.RIGHT} />
+      <KakaoAdIngame />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { useRulesStore, useSocketStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import { FaCheck, FaCopy } from 'react-icons/fa6';
 import { infoStatusOptions, roleOptions, socketType, teamSideOptions } from '@/constants';
+import { KakaoAdM, KakaoAdWaiting } from '@/components/KaKaoAd';
 
 function BanpickSocket({ userId: _userId }: { userId: string }) {
   const [copyedText, setCopyedText] = useState('');
@@ -198,6 +199,8 @@ function BanpickSocket({ userId: _userId }: { userId: string }) {
             ) : null}
           </div>
         </div>
+        <KakaoAdWaiting />
+        <KakaoAdM />
       </div>
       <ConfirmPopup
         isOpen={showConfirmPopup}
