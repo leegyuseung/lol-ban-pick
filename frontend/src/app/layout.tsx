@@ -21,12 +21,6 @@ export default function RootLayout({
             gtag('config', 'G-LR8THS5Y4C');
           `}
         </Script>
-        {/* Google ads */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6368269150151357"
-          crossOrigin="anonymous"
-        />
         {/* naver */}
         <meta name="naver-site-verification" content="82e619b7e36c7f2f1c5ffaebe478276dbbba8000" />
       </head>
