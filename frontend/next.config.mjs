@@ -5,7 +5,9 @@ const cspDirectives = {
     'https://pagead2.googlesyndication.com',
     'https://www.googletagmanager.com',
     'https://ep2.adtrafficquality.google',
-    'https://t1.daumcdn.net', // ✅ Kakao AdFit 추가
+    'https://t1.daumcdn.net',
+    'https://display.ad.daum.net',
+    'https://aem-kakao-collector.onkakao.net',
     "'unsafe-inline'",
   ],
   'style-src': ["'self'", "'unsafe-inline'"],
@@ -16,7 +18,8 @@ const cspDirectives = {
     'https://pagead2.googlesyndication.com',
     'https://ep1.adtrafficquality.google',
     'https://www.googletagmanager.com',
-    'https://t1.daumcdn.net', // ✅ Kakao AdFit 이미지 추가
+    'https://t1.daumcdn.net',
+    'https://display.ad.daum.net',
     'data:',
   ],
   'font-src': ["'self'"],
