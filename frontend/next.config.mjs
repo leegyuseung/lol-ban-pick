@@ -36,6 +36,15 @@ const cspDirectives = {
     'https://ep2.adtrafficquality.google',
     'https://t1.daumcdn.net', // ✅ Kakao AdFit frame 추가
   ],
+  'fenced-frame-src': [
+    "'self'",
+    'https://*.google.com',
+    'https://*.googlesyndication.com',
+    'https://googleads.g.doubleclick.net',
+    'https://ep2.adtrafficquality.google',
+    'https://t1.daumcdn.net',
+  ],
+
   'form-action': ["'self'"],
   'object-src': ["'none'"],
 };
