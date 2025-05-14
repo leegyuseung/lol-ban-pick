@@ -27,6 +27,8 @@ const cspDirectives = {
     'https://www.googletagmanager.com',
     'https://ep1.adtrafficquality.google',
     'wss://ws.metapick.site',
+    'https://display.ad.daum.net',
+    'https://aem-kakao-collector.onkakao.net',
   ],
   'frame-src': [
     "'self'",
