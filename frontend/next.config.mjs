@@ -5,6 +5,7 @@ const cspDirectives = {
     'https://pagead2.googlesyndication.com',
     'https://www.googletagmanager.com',
     'https://ep2.adtrafficquality.google',
+    'https://t1.daumcdn.net', // ✅ Kakao AdFit 추가
     "'unsafe-inline'",
   ],
   'style-src': ["'self'", "'unsafe-inline'"],
@@ -15,6 +16,7 @@ const cspDirectives = {
     'https://pagead2.googlesyndication.com',
     'https://ep1.adtrafficquality.google',
     'https://www.googletagmanager.com',
+    'https://t1.daumcdn.net', // ✅ Kakao AdFit 이미지 추가
     'data:',
   ],
   'font-src': ["'self'"],
@@ -32,6 +34,7 @@ const cspDirectives = {
     'https://*.googlesyndication.com',
     'https://googleads.g.doubleclick.net',
     'https://ep2.adtrafficquality.google',
+    'https://t1.daumcdn.net', // ✅ Kakao AdFit frame 추가
   ],
   'form-action': ["'self'"],
   'object-src': ["'none'"],
