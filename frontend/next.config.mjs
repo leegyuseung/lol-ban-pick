@@ -45,6 +45,7 @@ const cspDirectives = {
     'https://googleads.g.doubleclick.net',
     'https://ep2.adtrafficquality.google',
     'https://t1.daumcdn.net',
+    'https://display.ad.daum.net',
   ],
 
   'form-action': ["'self'"],
