@@ -86,6 +86,11 @@ export default function Form() {
   }, [router]);
 
   const onSubmit = async (data: FormsType) => {
+    window.gtag('event', 'form_button_click', {
+      category: 'Button',
+      label: '시작하기',
+    });
+
     // 이미지 넣어주기
     data.blueImg = blueImage;
     data.redImg = redImage;
