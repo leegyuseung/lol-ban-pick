@@ -7,4 +7,5 @@ interface Window {
       display: (unit: string) => void;
     };
   };
+  gtag: (...args: any[]) => void;
 }
