@@ -161,6 +161,7 @@
   "Yasuo": { "line": ["mid", "ad"], "Iposition": "0px -30px" },
   "Yone": { "line": ["top", "mid"], "Iposition": "0px -10px" },
   "Yorick": { "line": ["top"], "Iposition": "0px -10px" },
+  "Yunara": { "line": ["ad"], "Iposition": "top" },
   "Yuumi": { "line": ["sup"], "Iposition": "top" },
   "Zac": { "line": ["top", "jungle"], "Iposition": "center" },
   "Zed": { "line": ["mid", "jungle"], "Iposition": "0px -20px" },
